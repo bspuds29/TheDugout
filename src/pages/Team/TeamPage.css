@@ -1,0 +1,383 @@
+/* ─── TeamPage.css ────────────────────────────────────────────────────── */
+
+.tp-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 0 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ─── Breadcrumb ─────────────────────────────────────────────────────── */
+
+.tp-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  padding: 4px 0;
+}
+.tp-breadcrumb-link {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+.tp-breadcrumb-link:hover { text-decoration: underline; }
+.tp-breadcrumb-sep { opacity: 0.5; }
+.tp-breadcrumb-current { color: var(--color-text-secondary); }
+
+/* ─── Hero ───────────────────────────────────────────────────────────── */
+
+.tp-hero {
+  position: relative;
+  border-radius: var(--radius-xl, 16px);
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 28px 28px 24px;
+}
+
+.tp-hero-glow {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.tp-hero-content {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.tp-hero-logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+}
+
+.tp-hero-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tp-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.tp-hero-division {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.tp-hero-name {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0 0 8px;
+  line-height: 1.1;
+}
+
+.tp-hero-record {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.tp-record-nums {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.tp-record-pct {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.tp-record-gb {
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  padding: 2px 8px;
+  background: var(--color-surface-raised, rgba(255,255,255,0.04));
+  border-radius: 20px;
+  border: 1px solid var(--color-border);
+}
+
+.tp-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tp-tag {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.tp-tag strong {
+  color: var(--color-text-primary);
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+/* ─── Cards ──────────────────────────────────────────────────────────── */
+
+.tp-card {
+  width: 100%;
+}
+
+/* ─── Stats grid ─────────────────────────────────────────────────────── */
+
+.tp-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .tp-stats-grid { grid-template-columns: 1fr; }
+}
+
+.tp-stat-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tp-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 13px;
+}
+.tp-stat-row:last-child { border-bottom: none; }
+
+.tp-stat-label {
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tp-stat-value {
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+}
+
+/* ─── Table ──────────────────────────────────────────────────────────── */
+
+.tp-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tp-th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  padding: 8px 10px 8px 0;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+.tp-th--center { text-align: center; }
+.tp-th--num    { text-align: right; }
+
+.tp-td {
+  padding: 9px 10px 9px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--color-text-primary);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.tp-td--center { text-align: center; }
+.tp-td--num    { text-align: right; }
+
+.tp-tr:last-child .tp-td { border-bottom: none; }
+.tp-tr--win .tp-td--date  { color: var(--color-teal); }
+.tp-tr--loss .tp-td--date { color: #ef4444; }
+
+.tp-tr--clickable {
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.tp-tr--clickable:hover {
+  background: rgba(255,255,255,0.03);
+}
+
+/* ─── Schedule cells ─────────────────────────────────────────────────── */
+
+.tp-td--date    { font-variant-numeric: tabular-nums; color: var(--color-text-secondary); min-width: 52px; }
+.tp-td--matchup { display: flex; align-items: center; gap: 2px; }
+
+.tp-vs {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-tertiary);
+  min-width: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tp-opp-abbr {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono, monospace);
+}
+
+.tp-score {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 13px;
+}
+.tp-no-score { color: var(--color-text-tertiary); }
+
+.tp-result {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+}
+.tp-result--w { background: rgba(20,200,160,0.18); color: var(--color-teal); }
+.tp-result--l { background: rgba(239,68,68,0.15);  color: #ef4444; }
+
+/* ─── Roster ─────────────────────────────────────────────────────────── */
+
+.tp-roster-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tp-roster-group-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+
+.tp-jersey {
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-mono, monospace);
+  min-width: 28px;
+}
+
+.tp-pos-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.04em;
+}
+
+.tp-td--name {
+  font-weight: 600;
+}
+
+/* ─── Skeleton loaders ───────────────────────────────────────────────── */
+
+.tp-skeleton {
+  display: inline-block;
+  background: linear-gradient(90deg, var(--color-border) 25%, rgba(255,255,255,0.05) 50%, var(--color-border) 75%);
+  background-size: 200% 100%;
+  animation: tp-shimmer 1.4s infinite;
+  border-radius: 4px;
+  height: 12px;
+  width: 80%;
+}
+
+.tp-skeleton--row {
+  height: 36px;
+  width: 100%;
+  margin-bottom: 2px;
+  border-radius: 4px;
+}
+
+.tp-skeleton-row .tp-td .tp-skeleton {
+  height: 12px;
+  width: 70%;
+}
+
+@keyframes tp-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── Empty state ────────────────────────────────────────────────────── */
+
+.tp-empty {
+  color: var(--color-text-tertiary);
+  font-size: 13px;
+  padding: 20px 0 8px;
+  text-align: center;
+}
+
+/* ─── Not found ──────────────────────────────────────────────────────── */
+
+.tp-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 40vh;
+  gap: 16px;
+  color: var(--color-text-tertiary);
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────── */
+
+@media (max-width: 520px) {
+  .tp-hero-name  { font-size: 22px; }
+  .tp-record-nums { font-size: 20px; }
+  .tp-hero-logo  { width: 72px; height: 72px; }
+  .tp-hero-logo img { width: 54px !important; height: 54px !important; }
+  .tp-hide-sm    { display: none; }
+  .tp-page       { gap: 16px; }
+}

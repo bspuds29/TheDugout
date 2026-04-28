@@ -1,0 +1,32 @@
+{
+  "name": "The Dugout",
+  "short_name": "The Dugout",
+  "description": "Advanced MLB analytics platform powered by real-time data.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080d14",
+  "theme_color": "#080d14",
+  "icons": [
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "640x628",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

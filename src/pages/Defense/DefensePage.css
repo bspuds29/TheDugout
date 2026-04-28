@@ -1,0 +1,181 @@
+.defense-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.defense-two-col {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.defense-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+.def-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.def-card--pos { border-color: rgba(0, 212, 170, 0.18); }
+.def-card--neg { border-color: rgba(239, 68, 68, 0.18); }
+
+.def-card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.def-card-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.def-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.def-card-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.def-card-meta {
+  font-size: 10.5px;
+  color: var(--color-text-tertiary);
+}
+
+.def-oaa {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  gap: 2px;
+}
+
+.def-oaa span {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.def-oaa--pos { background: var(--color-teal-dim); color: var(--color-teal); }
+.def-oaa--neg { background: var(--color-red-dim); color: var(--color-red); }
+
+.def-card-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: var(--space-2);
+}
+
+.def-stat {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2);
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+}
+
+.def-stat span:last-child {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+  margin-top: 2px;
+}
+
+.table-player-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.table-player-cell .player-avatar {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.table-player-pos {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono);
+}
+
+/* ─── Position / metric tab strip ──────────────────────────────────── */
+.def-pos-tabs,
+.def-metric-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.def-metric-tabs {
+  margin-bottom: var(--space-4);
+}
+
+.def-pos-tab {
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.def-pos-tab:hover {
+  border-color: var(--color-border-hover);
+  color: var(--color-text-primary);
+}
+
+.def-pos-tab--active {
+  border-color: var(--color-teal);
+  background: rgba(0, 212, 170, 0.08);
+  color: var(--color-teal);
+}
+
+@media (max-width: 900px) {
+  .defense-two-col { grid-template-columns: 1fr; }
+  .defense-cards-grid { grid-template-columns: 1fr; }
+}

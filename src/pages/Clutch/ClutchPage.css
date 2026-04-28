@@ -1,0 +1,339 @@
+/* ─── Clutch page ────────────────────────────────────────────────── */
+
+.clutch-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ─── Tab switcher ───────────────────────────────────────────────── */
+
+.clp-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 3px;
+}
+
+.clp-tab {
+  padding: 6px 18px;
+  border-radius: calc(var(--radius-lg) - 2px);
+  border: none;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.clp-tab:hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.clp-tab--active {
+  background: var(--color-accent) !important;
+  color: white !important;
+}
+
+/* ─── Explainer callout ──────────────────────────────────────────── */
+
+.clutch-explainer {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-amber-dim);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: var(--radius-lg);
+}
+
+.clutch-explainer-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--color-amber);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.clutch-explainer-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-amber);
+  margin-bottom: 4px;
+}
+
+.clutch-explainer-desc {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* ─── Player name cell ───────────────────────────────────────────── */
+
+.clp-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Circular headshot in table rows */
+.clp-row-headshot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--color-bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clp-player-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.clp-pos-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+}
+
+.clp-team-abbr {
+  font-size: 10px;
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Section labels ─────────────────────────────────────────────── */
+
+.clp-section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  padding: 0 2px;
+}
+
+/* ─── Loading placeholder ────────────────────────────────────────── */
+
+.clp-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: var(--color-text-tertiary);
+  font-size: 13px;
+}
+
+/* ─── Profile cards grid ─────────────────────────────────────────── */
+
+.clutch-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-4);
+}
+
+.clutch-profile-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transition: border-color var(--transition-fast);
+}
+
+.clutch-profile-card--pos {
+  border-color: rgba(34, 197, 94, 0.25);
+  background: rgba(34, 197, 94, 0.03);
+}
+
+.clutch-profile-card--neg {
+  border-color: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.03);
+}
+
+.clutch-profile-card:hover {
+  border-color: var(--color-border-hover);
+}
+
+/* ─── Card header ────────────────────────────────────────────────── */
+
+.cpc-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Circular headshot with team-color ring */
+.clp-headshot-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--color-bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cpc-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cpc-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.cpc-meta {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  margin-top: 1px;
+}
+
+.cpc-score {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+}
+
+.cpc-score--pos {
+  background: var(--color-green-dim);
+  color: var(--color-green);
+}
+
+.cpc-score--neg {
+  background: var(--color-red-dim);
+  color: var(--color-red);
+}
+
+/* ─── Card stat grid ─────────────────────────────────────────────── */
+
+.cpc-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.cpc-stat {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
+}
+
+.cpc-stat-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-tertiary);
+  margin-bottom: 2px;
+}
+
+.cpc-stat-val {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+}
+
+/* ─── Table cells (shared) ───────────────────────────────────────── */
+
+.table-player-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.table-player-pos {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-tertiary);
+  font-family: var(--font-mono);
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────── */
+
+@media (max-width: 1200px) {
+  .clutch-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .clutch-page {
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .clutch-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .clp-tabs {
+    width: 100%;
+  }
+
+  .clp-tab {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .clutch-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}

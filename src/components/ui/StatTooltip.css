@@ -1,0 +1,93 @@
+/* ─── Trigger label ──────────────────────────────────────────────────────── */
+
+.stat-tt-trigger {
+  cursor: help;
+  border-bottom: 1px dotted var(--color-text-tertiary);
+  text-decoration: none;
+}
+
+/* ─── Portal tooltip box ─────────────────────────────────────────────────── */
+/* Rendered at document.body level so it never gets clipped by overflow */
+
+.stat-tt-portal {
+  position: absolute;
+  z-index: 99999;
+  width: 248px;
+  background: var(--color-bg-primary, #0a1520);
+  border: 1px solid var(--color-border-hover);
+  border-radius: 10px;
+  padding: 11px 13px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  pointer-events: none;
+  animation: tt-fade-in 0.12s ease;
+}
+
+@keyframes tt-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Top variant: tooltip sits above — shift up by its own height */
+.stat-tt-portal--top {
+  transform: translateY(-100%) translateY(-10px);
+}
+
+/* Bottom variant: tooltip sits below — no vertical shift needed */
+.stat-tt-portal--bottom {
+  transform: translateY(0);
+}
+
+/* ─── Arrow ──────────────────────────────────────────────────────────────── */
+
+.stat-tt-portal::after {
+  content: '';
+  position: absolute;
+  left: var(--arrow-left, 50%);
+  border: 6px solid transparent;
+}
+
+.stat-tt-portal--top::after {
+  top: 100%;
+  border-top-color: var(--color-border-hover);
+  margin-top: -1px;
+}
+
+.stat-tt-portal--bottom::after {
+  bottom: 100%;
+  border-bottom-color: var(--color-border-hover);
+  margin-bottom: -1px;
+}
+
+/* ─── Content ────────────────────────────────────────────────────────────── */
+
+.stat-tt-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-accent);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.stat-tt-desc {
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--color-text-secondary, #b0c4d8);
+}
+
+.stat-tt-context {
+  font-size: 10.5px;
+  color: var(--color-text-tertiary);
+  padding-top: 5px;
+  border-top: 1px solid var(--color-border);
+  font-style: italic;
+}
+
+/* ─── Light mode ─────────────────────────────────────────────────────────── */
+
+[data-theme="light"] .stat-tt-portal {
+  background: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.08);
+}

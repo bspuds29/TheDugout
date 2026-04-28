@@ -1,0 +1,357 @@
+/* ─── Standings page ────────────────────────────────────────────────── */
+
+.standings-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ─── AL / NL tab switcher ───────────────────────────────────────────── */
+
+.std-league-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 3px;
+}
+
+.std-league-tab {
+  padding: 7px 22px;
+  border-radius: calc(var(--radius-lg) - 2px);
+  border: none;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: all 0.15s ease;
+}
+
+.std-league-tab:hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.std-league-tab--active {
+  background: var(--color-accent) !important;
+  color: white !important;
+}
+
+/* ─── Playoff legend ────────────────────────────────────────────────── */
+
+.std-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+}
+
+.std-legend-label {
+  margin-right: 14px;
+}
+
+/* ─── Playoff indicator dots ─────────────────────────────────────────── */
+
+.std-playoff-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.std-playoff-dot--div {
+  background: var(--color-teal);
+  box-shadow: 0 0 6px rgba(0, 212, 170, 0.7);
+}
+
+.std-playoff-dot--wc {
+  background: var(--color-accent);
+  box-shadow: 0 0 6px rgba(32, 178, 255, 0.6);
+}
+
+.std-playoff-dot--out {
+  background: var(--color-text-tertiary);
+  opacity: 0.4;
+}
+
+/* ─── Division grid ─────────────────────────────────────────────────── */
+
+.std-divisions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+/* ─── Division card ──────────────────────────────────────────────────── */
+
+.std-division-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.std-division-header {
+  padding: 12px 16px 10px;
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.std-division-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ─── Standings table ────────────────────────────────────────────────── */
+
+.std-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.std-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.std-th {
+  padding: 7px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.std-th--team {
+  text-align: left;
+  padding-left: 14px;
+  min-width: 160px;
+}
+
+.std-td {
+  padding: 9px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+}
+
+.std-td--team {
+  padding-left: 14px;
+}
+
+.std-td--num {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Row variants */
+.std-tr {
+  transition: background 0.1s ease;
+}
+
+.std-tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.std-tr--clickable {
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.std-tr--div {
+  background: rgba(0, 212, 170, 0.04);
+}
+
+.std-tr--div:hover {
+  background: rgba(0, 212, 170, 0.07);
+}
+
+.std-tr--wc {
+  background: rgba(32, 178, 255, 0.03);
+}
+
+.std-tr--wc:hover {
+  background: rgba(32, 178, 255, 0.06);
+}
+
+.std-tr--clickable:not(.std-tr--div):not(.std-tr--wc):hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.std-tr:last-child .std-td {
+  border-bottom: none;
+}
+
+/* ─── Team cell ──────────────────────────────────────────────────────── */
+
+.std-team-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.std-team-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.92);
+  white-space: nowrap;
+  min-width: 30px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.std-team-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+
+/* ─── Specific cell styles ───────────────────────────────────────────── */
+
+.std-w {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.std-l {
+  color: var(--color-text-secondary);
+}
+
+.std-pct {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.std-leader-dash {
+  color: var(--color-text-tertiary);
+}
+
+/* ─── Team logo inside standings rows ───────────────────────────────── */
+
+.std-team-logo-wrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+/* ─── Section labels (Division Standings / Wild Card Race) ───────────── */
+
+.std-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  padding: 0 2px;
+}
+
+/* ─── Wild card card ─────────────────────────────────────────────────── */
+
+.std-wc-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+/* Override division-header for WC to put title + note on same row */
+.std-wc-header {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.std-wc-note {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* WC rank number */
+.std-wc-rank {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Dashed cutoff line after the last wild card spot */
+.std-tr--wc-cutoff td {
+  border-bottom: 2px dashed rgba(32, 178, 255, 0.35) !important;
+}
+
+/* ─── Hide on small screens ──────────────────────────────────────────── */
+
+.std-hide-sm {
+  /* Hidden below ~900px per media query below */
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────── */
+
+@media (max-width: 1200px) {
+  .std-divisions-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .standings-page {
+    padding: var(--space-4);
+  }
+
+  .std-divisions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .std-hide-sm {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .std-team-name {
+    display: none;
+  }
+
+  .std-th--team {
+    min-width: unset;
+  }
+}

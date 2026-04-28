@@ -1,0 +1,58 @@
+.player-avatar {
+  border-radius: var(--radius-xl);
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid var(--color-border-active);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Photo variant — dark bg in case image is slow to load */
+.player-avatar--photo {
+  background: #0d1821;
+}
+
+/* Fallback / silhouette variant */
+.player-avatar--fallback {
+  background: linear-gradient(135deg, var(--color-accent-dim), rgba(0, 212, 170, 0.08));
+  color: var(--color-accent);
+}
+
+/* The actual headshot image.
+   MLB portraits are ~120×168px. cover fills the square edge-to-edge
+   (no white gaps). 38% from top centres the crop on the face/chin
+   rather than the top of the helmet. */
+.player-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+  display: block;
+}
+
+/* Initials text (live player whose image 404'd) */
+.player-avatar-initials {
+  font-size: calc(var(--size, 72px) * 0.28);
+  font-weight: 800;
+  color: var(--color-accent);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  /* font-size relative to container via custom property set on parent */
+  font-size: 22px;
+}
+
+/* Silhouette SVG */
+.player-avatar-silhouette {
+  width: 78%;
+  height: 78%;
+  color: var(--color-accent);
+}
+
+/* Larger hero variant used on player detail pages */
+.player-avatar--hero {
+  border-width: 3px;
+  border-radius: 16px;
+  box-shadow: 0 0 0 1px rgba(0, 212, 170, 0.15), 0 4px 20px rgba(0, 0, 0, 0.5);
+}

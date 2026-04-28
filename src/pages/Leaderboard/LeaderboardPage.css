@@ -1,0 +1,187 @@
+/* ─── Leaderboard page layout ──────────────────────────────────────── */
+
+.leaderboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ─── Main tab switcher (Hitting / Pitching) ────────────────────────── */
+
+.lb-main-tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 3px;
+}
+
+.lb-main-tab {
+  padding: 7px 18px;
+  border-radius: calc(var(--radius-lg) - 2px);
+  border: none;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.lb-main-tab:hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.lb-main-tab--active {
+  background: var(--color-accent) !important;
+  color: white !important;
+}
+
+/* ─── Filter bar ─────────────────────────────────────────────────────── */
+
+.lb-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 10px 14px;
+}
+
+/* ─── Position / role tabs inside filter bar ────────────────────────── */
+
+.lb-tabs {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+
+.lb-tab {
+  padding: 5px 11px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.lb-tab:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lb-tab--active {
+  background: rgba(0, 212, 170, 0.15) !important;
+  border-color: var(--color-teal) !important;
+  color: var(--color-teal) !important;
+}
+
+/* ─── Dropdowns in filter bar ───────────────────────────────────────── */
+
+.lb-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 5px 28px 5px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237f93a8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 8px center;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+  min-width: 100px;
+}
+
+.lb-select:hover,
+.lb-select:focus {
+  border-color: var(--color-accent);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.lb-select option {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+
+/* ─── Position badge pill ────────────────────────────────────────────── */
+
+.lb-pos-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  background: rgba(0, 212, 170, 0.12);
+  color: var(--color-teal);
+  border: 1px solid rgba(0, 212, 170, 0.25);
+  white-space: nowrap;
+}
+
+.lb-pos-badge--pit {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+/* ─── Shared mono number styling ─────────────────────────────────────── */
+
+.leaderboard-page .mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .leaderboard-page {
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .lb-filter-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lb-main-tabs {
+    width: 100%;
+  }
+
+  .lb-main-tab {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .lb-tabs {
+    gap: 2px;
+  }
+
+  .lb-tab {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .lb-select {
+    width: 100%;
+  }
+}
