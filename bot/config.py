@@ -34,7 +34,7 @@ SEASON  = int(os.getenv("MLB_SEASON", "2026"))
 LOOKBACK_DAYS = int(os.getenv("LOOKBACK_DAYS", "1"))
 
 # ── Website ────────────────────────────────────────────────────────────
-SITE_URL = "https://the-dugout-iota.vercel.app"
+SITE_URL = "https://thedugoutapi.com"
 
 def validate() -> list[str]:
     """Return a list of missing required env var names."""
