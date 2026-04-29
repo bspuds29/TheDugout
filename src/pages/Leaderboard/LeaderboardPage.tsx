@@ -217,7 +217,7 @@ function BattingLeaderboard() {
               render: v => <span className="mono">{avg(Number(v))}</span> },
             { key: 'wrcPlus', label: 'wRC+',  sortable: true,
               render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: colorPlus(Number(v)) }}>{int(Number(v))}</span> },
-            { key: 'kPct',    label: 'K%',    sortable: true,
+            { key: 'kPct',    label: 'K%',    sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono" style={{ color: Number(v) > 28 ? '#ef4444' : Number(v) < 15 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
             { key: 'bbPct',   label: 'BB%',   sortable: true,
               render: v => <span className="mono" style={{ color: Number(v) > 12 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
@@ -293,19 +293,19 @@ function PitchingLeaderboard() {
               render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 2 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
             { key: 'w',       label: 'W',    sortable: true },
             { key: 'sv',      label: 'SV',   sortable: true },
-            { key: 'era',     label: 'ERA',  sortable: true,
+            { key: 'era',     label: 'ERA',  sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono" style={{ color: Number(v) <= 3.0 ? 'var(--color-teal)' : Number(v) >= 5.0 ? '#ef4444' : 'inherit', fontWeight: 600 }}>{dec2(Number(v))}</span> },
-            { key: 'fip',     label: 'FIP',  sortable: true,
+            { key: 'fip',     label: 'FIP',  sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono">{dec2(Number(v))}</span> },
-            { key: 'xfip',    label: 'xFIP', sortable: true,
+            { key: 'xfip',    label: 'xFIP', sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono">{dec2(Number(v))}</span> },
-            { key: 'xera',    label: 'xERA', sortable: true,
+            { key: 'xera',    label: 'xERA', sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono" style={{ color: Number(v) <= 3.0 ? 'var(--color-teal)' : 'inherit' }}>{dec2(Number(v))}</span> },
-            { key: 'whip',    label: 'WHIP', sortable: true,
+            { key: 'whip',    label: 'WHIP', sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono" style={{ color: Number(v) <= 1.0 ? 'var(--color-teal)' : Number(v) >= 1.40 ? '#ef4444' : 'inherit' }}>{dec2(Number(v))}</span> },
             { key: 'kPct',    label: 'K%',   sortable: true,
               render: v => <span className="mono" style={{ color: Number(v) >= 28 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'bbPct',   label: 'BB%',  sortable: true,
+            { key: 'bbPct',   label: 'BB%',  sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono" style={{ color: Number(v) >= 10 ? '#ef4444' : 'inherit' }}>{pct(Number(v))}</span> },
             { key: 'kBBPct',  label: 'K-BB%',sortable: true,
               render: v => <span className="mono">{pct(Number(v))}</span> },
@@ -333,10 +333,10 @@ export default function LeaderboardPage() {
   const [tab, setTab] = useState<Tab>('hitting');
   const [batPos,   setBatPos]   = useState('All');
   const [batTeam,  setBatTeam]  = useState('');
-  const [batMinPA, setBatMinPA] = useState(50);
+  const [batMinPA, setBatMinPA] = useState(150);
   const [pitRole,  setPitRole]  = useState('All');
   const [pitTeam,  setPitTeam]  = useState('');
-  const [pitMinIP, setPitMinIP] = useState(10);
+  const [pitMinIP, setPitMinIP] = useState(30);
 
   // Derive available teams from real data so abbreviations always match FanGraphs exactly
   const { data: batRaw = [] } = useBattingLeaderboard();
@@ -496,7 +496,7 @@ function BattingLeaderboardWithFilters({
             { key: 'woba',     label: 'wOBA',    sortable: true, render: v => <span className="mono">{avg(Number(v))}</span> },
             { key: 'wrcPlus',  label: 'wRC+',    sortable: true,
               render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: colorPlus(Number(v)) }}>{int(Number(v))}</span> },
-            { key: 'kPct',     label: 'K%',      sortable: true,
+            { key: 'kPct',     label: 'K%',      sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono" style={{ color: Number(v) > 28 ? '#ef4444' : Number(v) < 15 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
             { key: 'bbPct',    label: 'BB%',     sortable: true,
               render: v => <span className="mono" style={{ color: Number(v) > 12 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
@@ -579,17 +579,17 @@ function PitchingLeaderboardWithFilters({
               render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 2 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
             { key: 'w',        label: 'W',      sortable: true },
             { key: 'sv',       label: 'SV',     sortable: true },
-            { key: 'era',      label: 'ERA',    sortable: true,
+            { key: 'era',      label: 'ERA',    sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono" style={{ color: Number(v) <= 3.0 ? 'var(--color-teal)' : Number(v) >= 5.0 ? '#ef4444' : 'inherit', fontWeight: 600 }}>{dec2(Number(v))}</span> },
-            { key: 'fip',      label: 'FIP',    sortable: true, render: v => <span className="mono">{dec2(Number(v))}</span> },
-            { key: 'xfip',     label: 'xFIP',   sortable: true, render: v => <span className="mono">{dec2(Number(v))}</span> },
-            { key: 'xera',     label: 'xERA',   sortable: true,
+            { key: 'fip',      label: 'FIP',    sortable: true, firstClickDir: 'asc', render: v => <span className="mono">{dec2(Number(v))}</span> },
+            { key: 'xfip',     label: 'xFIP',   sortable: true, firstClickDir: 'asc', render: v => <span className="mono">{dec2(Number(v))}</span> },
+            { key: 'xera',     label: 'xERA',   sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono" style={{ color: Number(v) <= 3.0 ? 'var(--color-teal)' : 'inherit' }}>{dec2(Number(v))}</span> },
-            { key: 'whip',     label: 'WHIP',   sortable: true,
+            { key: 'whip',     label: 'WHIP',   sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono" style={{ color: Number(v) <= 1.0 ? 'var(--color-teal)' : Number(v) >= 1.40 ? '#ef4444' : 'inherit' }}>{dec2(Number(v))}</span> },
             { key: 'kPct',     label: 'K%',     sortable: true,
               render: v => <span className="mono" style={{ color: Number(v) >= 28 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'bbPct',    label: 'BB%',    sortable: true,
+            { key: 'bbPct',    label: 'BB%',    sortable: true, firstClickDir: 'asc',
               render: v => <span className="mono" style={{ color: Number(v) >= 10 ? '#ef4444' : 'inherit' }}>{pct(Number(v))}</span> },
             { key: 'kBBPct',   label: 'K-BB%',  sortable: true, render: v => <span className="mono">{pct(Number(v))}</span> },
             { key: 'gbPct',    label: 'GB%',    sortable: true, render: v => <span className="mono">{pct(Number(v))}</span> },
