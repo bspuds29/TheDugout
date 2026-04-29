@@ -116,7 +116,7 @@ def validate_tweet(body: str, url: str) -> tuple[bool, str]:
     Returns (is_valid, reason).
     """
     url_chars  = 23   # Twitter's fixed t.co length
-    separator  = 1    # newline between body and URL
+    separator  = 2    # two newlines between body and URL
     total_chars = len(body) + separator + url_chars
 
     if total_chars > 280:
@@ -128,4 +128,4 @@ def validate_tweet(body: str, url: str) -> tuple[bool, str]:
 
 def compose(body: str, url: str) -> str:
     """Combine tweet body and URL into the final string to post."""
-    return f"{body}\n{url}"
+    return f"{body}\n\n{url}"
