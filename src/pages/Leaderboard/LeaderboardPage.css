@@ -172,16 +172,32 @@
 }
 
 @media (max-width: 600px) {
+  .leaderboard-page {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
   .lb-tabs {
     gap: 2px;
+    width: 100%;
   }
 
   .lb-tab {
-    padding: 4px 8px;
+    flex: 1;
+    text-align: center;
+    padding: 6px 6px;
     font-size: 11px;
+    min-height: 34px;
   }
 
   .lb-select {
     width: 100%;
+    min-height: 36px;
+    font-size: 14px; /* prevents iOS auto-zoom */
+  }
+
+  .lb-filter-bar {
+    gap: var(--space-2);
+    padding: 8px 10px;
   }
 }

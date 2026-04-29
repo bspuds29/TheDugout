@@ -821,3 +821,22 @@
   .trade-divider-line { height: 1px; min-height: unset; flex: 1; }
   .trade-breakdown-row { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 600px) {
+  .trade-section-title { font-size: 13px; }
+
+  .trade-search input,
+  .trade-search button {
+    font-size: 14px;   /* prevents iOS auto-zoom on focus */
+    min-height: 44px;  /* minimum touch target */
+  }
+
+  .trade-player-card {
+    padding: var(--space-3);
+  }
+
+  .trade-insight-row {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+}

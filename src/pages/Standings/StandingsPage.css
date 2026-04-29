@@ -347,11 +347,30 @@
 }
 
 @media (max-width: 600px) {
-  .std-team-name {
-    display: none;
+  .standings-page {
+    padding: var(--space-3);
+    gap: var(--space-3);
+  }
+
+  .std-league-tab {
+    padding: 7px 14px;
+    font-size: 13px;
   }
 
   .std-th--team {
     min-width: unset;
+    padding-left: 10px;
+  }
+
+  .std-td--team {
+    padding-left: 10px;
+  }
+
+  .std-team-name {
+    max-width: 90px;
+  }
+
+  .std-wc-note {
+    display: none; /* too cramped on small phones */
   }
 }

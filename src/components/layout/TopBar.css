@@ -9,7 +9,8 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  backdrop-filter: blur(10px);
+  /* backdrop-filter removed — it compounds with the overlay blur on mobile
+     and causes iOS Safari compositing glitches. Solid bg is sufficient. */
 }
 
 .topbar-menu-btn {

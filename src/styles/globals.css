@@ -208,3 +208,17 @@ input, select, textarea {
     --sidebar-width: 0px;
   }
 }
+
+/* Prevent iOS Safari from auto-zooming inputs < 16px */
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
+/* Ensure all interactive elements have an adequate touch target */
+@media (max-width: 768px) {
+  button, [role="button"] {
+    min-height: 36px;
+  }
+}

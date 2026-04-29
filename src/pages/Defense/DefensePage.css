@@ -179,3 +179,21 @@
   .defense-two-col { grid-template-columns: 1fr; }
   .defense-cards-grid { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 600px) {
+  .defense-page { gap: var(--space-4); }
+
+  .def-pos-tabs,
+  .def-metric-tabs {
+    gap: 3px;
+  }
+
+  .def-pos-tab {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .def-card-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

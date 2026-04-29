@@ -129,3 +129,13 @@
     text-align: center;
   }
 }
+
+@media (max-width: 600px) {
+  .ts-main-tab {
+    font-size: 12px;
+    padding: 7px 10px;
+  }
+
+  .ts-team-name { font-size: 12px; }
+  .ts-team-abbr { font-size: 10px; }
+}

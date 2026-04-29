@@ -1,5 +1,6 @@
 .stable-wrap {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
 }
@@ -77,4 +78,17 @@
 .stable--compact .stable-th,
 .stable--compact .stable-td {
   padding: 8px 12px;
+}
+
+@media (max-width: 600px) {
+  .stable-th,
+  .stable-td {
+    padding: 9px 10px;
+    font-size: 12px;
+  }
+
+  .stable--compact .stable-th,
+  .stable--compact .stable-td {
+    padding: 7px 8px;
+  }
 }

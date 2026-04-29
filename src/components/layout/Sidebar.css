@@ -267,8 +267,9 @@
   .sidebar-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.65);
     z-index: 99;
-    backdrop-filter: blur(2px);
+    /* No backdrop-filter — it causes compositing glitches on iOS Safari
+       that leave the page blurry and unresponsive after nav */
   }
 }
