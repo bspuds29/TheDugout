@@ -53,3 +53,16 @@ def mark_used(candidate_id: str, tweet_text: str, tweet_id: str | None,
 
 def used_ids() -> set[str]:
     return set(_load().get("used_ids", []))
+
+
+def last_tweet_type() -> str | None:
+    """Return 'hitting' or 'pitching' based on the most recent tweet, or None."""
+    log = _load().get("tweet_log", [])
+    if not log:
+        return None
+    last_id = log[-1].get("id", "")
+    if any(k in last_id for k in ("_hit_", "weekly_hit", "bat_hr", "bat_wrc", "bat_war")):
+        return "hitting"
+    if any(k in last_id for k in ("_pit_", "pit_era", "pit_kpct", "pit_war")):
+        return "pitching"
+    return None

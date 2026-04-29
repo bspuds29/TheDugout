@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import logging
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
@@ -111,17 +112,16 @@ def _score_hitting(s: dict) -> float:
     sb   = int(s.get("stolenBases", 0))
     ab   = int(s.get("atBats", 0))
 
-    score  = hr  * 6.0
-    score += rbi * 1.5
-    score += max(0, hits - 2) * 2.0
-    score += max(0, tb - 3) * 0.8
-    score += sb  * 2.0
+    score  = hr  * 9.0
+    score += rbi * 2.0
+    score += max(0, hits - 2) * 3.0
+    score += max(0, tb - 3)   * 1.2
+    score += sb  * 3.0
 
-    if hr >= 2:  score += 8.0
-    if hr >= 3:  score += 12.0
-    if hits >= 4: score += 5.0
-    # Perfect average bonus (e.g. 3-for-3, 4-for-4)
-    if ab >= 3 and hits == ab: score += 3.0
+    if hr >= 2:  score += 12.0
+    if hr >= 3:  score += 18.0
+    if hits >= 4: score += 7.0
+    if ab >= 3 and hits == ab: score += 4.0  # perfect game bonus (3-for-3 etc.)
     return score
 
 
@@ -131,14 +131,15 @@ def _score_pitching(s: dict) -> float:
     er = int(s.get("earnedRuns", 0))
     h  = int(s.get("hits", 0))
 
-    score  = k  * 1.8
-    score += ip * 0.6
-    if er == 0 and ip >= 6: score += 10.0
-    if er == 0 and ip >= 8: score += 8.0   # near complete game shutout
-    if ip >= 8:             score += 6.0
-    if h == 0 and ip >= 5:  score += 25.0  # no-hit bid
-    if k >= 10:             score += 6.0
-    if k >= 12:             score += 6.0
+    # Scaled down vs hitting so pitchers don't always dominate
+    score  = k  * 1.2
+    score += ip * 0.4
+    if er == 0 and ip >= 6: score += 7.0
+    if er == 0 and ip >= 8: score += 5.0
+    if ip >= 8:             score += 4.0
+    if h == 0 and ip >= 5:  score += 18.0  # no-hit bid is still very special
+    if k >= 10:             score += 4.0
+    if k >= 12:             score += 4.0
     return score
 
 
@@ -545,16 +546,234 @@ def collect_season_leaders(season: int) -> list[StatCandidate]:
     return candidates
 
 
-def collect_all(season: int, lookback_days: int = 1) -> list[StatCandidate]:
-    """Collect all candidates — recent games first, season leaders as fallback."""
+def _fetch_recent_splits(mlb_id: int, season: int) -> tuple[dict | None, dict | None]:
+    """
+    Fetch both last-7-days and last-14-days hitting splits in one API call.
+    Returns (l7_stat, l14_stat) — either may be None.
+    The MLB API doesn't have a native l3, so we use l7 as "recent" and
+    derive the "last ~3 games" picture from the game log if l7 PA is small.
+    """
+    try:
+        data = _mlb(
+            f"/people/{mlb_id}/stats",
+            stats="statSplits", group="hitting",
+            season=season, sitCodes="l7,l14", sportId=1,
+        )
+        l7 = l14 = None
+        for group in data.get("stats", []):
+            if group.get("type", {}).get("displayName") == "statSplits":
+                for split in group.get("splits", []):
+                    code = split.get("split", {}).get("code")
+                    if code == "l7":
+                        l7 = split.get("stat")
+                    elif code == "l14":
+                        l14 = split.get("stat")
+        return l7, l14
+    except Exception:
+        return None, None
+
+
+def _compute_last_n_games(mlb_id: int, season: int, n: int = 3) -> dict | None:
+    """
+    Compute a hitting stat line for the player's last N games using their game log.
+    Returns a synthetic stat dict with the same keys as a split stat, or None.
+    """
+    try:
+        data = _mlb(
+            f"/people/{mlb_id}/stats",
+            stats="gameLog", group="hitting", season=season, sportId=1,
+        )
+        for group in data.get("stats", []):
+            if group.get("type", {}).get("displayName") == "gameLog":
+                splits = group.get("splits", [])
+                recent = splits[-n:]  # last N entries (most recent games)
+                if not recent:
+                    return None
+                agg: dict[str, int | float] = {}
+                for sp in recent:
+                    s = sp.get("stat", {})
+                    for key in ("atBats", "hits", "homeRuns", "rbi", "baseOnBalls",
+                                "strikeOuts", "stolenBases", "totalBases",
+                                "plateAppearances", "doubles", "triples"):
+                        agg[key] = agg.get(key, 0) + int(s.get(key) or 0)
+                agg["gamesPlayed"] = len(recent)
+                ab = agg.get("atBats", 0)
+                agg["avg"] = round(agg.get("hits", 0) / ab, 3) if ab else 0.0
+                bb  = agg.get("baseOnBalls", 0)
+                h   = agg.get("hits", 0)
+                obp_denom = ab + bb + agg.get("plateAppearances", 0) - ab - bb
+                agg["obp"] = round((h + bb) / max(ab + bb, 1), 3)
+                tb  = agg.get("totalBases", 0)
+                agg["slg"] = round(tb / max(ab, 1), 3)
+                agg["ops"] = round(agg["obp"] + agg["slg"], 3)
+                return agg
+    except Exception:
+        pass
+    return None
+
+
+def _streak_score(stat: dict, min_pa: int = 8) -> float:
+    """Score a hitting stat dict for streak hotness. Returns 0 if not qualifying."""
+    pa    = int(stat.get("plateAppearances") or stat.get("atBats") or 0)
+    ab    = int(stat.get("atBats") or 0)
+    if pa < min_pa or ab < 1:
+        return 0.0
+    avg_f = float(stat.get("avg") or 0)
+    ops_f = float(stat.get("ops") or 0)
+    hr    = int(stat.get("homeRuns") or 0)
+    rbi   = int(stat.get("rbi") or 0)
+    sb    = int(stat.get("stolenBases") or 0)
+    score  = max(0, avg_f - 0.280) * 120
+    score += max(0, ops_f - 0.750) * 30
+    score += hr  * 6.0
+    score += rbi * 1.5
+    score += sb  * 3.0
+    return score
+
+
+def _build_streak_candidate(mlb_id: int, row: dict, stat: dict,
+                             window_label: str, season: int,
+                             iso_week: str, score: float) -> StatCandidate:
+    name = str(row.get("PlayerName") or "")
+    team = str(row.get("TeamNameAbb") or row.get("TeamName") or "")
+    pos  = str(row.get("positionDB") or row.get("Pos") or "")
+    today = _et_date(0)
+
+    g   = int(stat.get("gamesPlayed") or 0)
+    ab  = int(stat.get("atBats") or 0)
+    h   = int(stat.get("hits") or 0)
+    hr  = int(stat.get("homeRuns") or 0)
+    rbi = int(stat.get("rbi") or 0)
+    bb  = int(stat.get("baseOnBalls") or 0)
+    sb  = int(stat.get("stolenBases") or 0)
+    avg_f = float(stat.get("avg") or 0)
+    ops_f = float(stat.get("ops") or 0)
+
+    avg_str = f".{str(int(round(avg_f * 1000))).zfill(3)}"
+    ops_str = f"{ops_f:.3f}"
+    hit_str = f"{h}-for-{ab}" if ab else f"{h} H"
+
+    extras = []
+    if hr >= 2:   extras.append(f"{hr} HRs")
+    elif hr == 1: extras.append("1 HR")
+    if rbi >= 3:  extras.append(f"{rbi} RBI")
+    if sb >= 2:   extras.append(f"{sb} SB")
+
+    extra_str = (", " + ", ".join(extras)) if extras else ""
+    stat_desc = f"{name} is {hit_str} ({avg_str}) over {window_label}{extra_str}"
+    context   = (
+        f"{window_label} ({g} G): {hit_str} ({avg_str} AVG), {hr} HR, {rbi} RBI, "
+        f"{bb} BB, OPS {ops_str}. "
+        f"Season: {int(row.get('HR') or 0)} HR, {float(row.get('AVG') or 0):.3f} AVG."
+    )
+    return StatCandidate(
+        candidate_id=f"weekly_{season}_{iso_week}_hit_{mlb_id}_{window_label.replace(' ', '')}",
+        player_name=name,
+        mlb_id=mlb_id,
+        team=team,
+        team_abbrev=team,
+        position=pos,
+        stat_type="weekly_hitting",
+        stat_description=stat_desc,
+        context=context,
+        page_url=f"{config.SITE_URL}/player?mlbId={mlb_id}&name={name.replace(' ', '+')}",
+        score=score,
+        raw_stats=dict(stat),
+        date=today,
+    )
+
+
+def collect_weekly_hitters(season: int, top_n: int = 30) -> list[StatCandidate]:
+    """
+    For the top PA-leaders, check both their last-7-days splits AND their
+    last-3-game log. Whichever window shows the hotter streak is used.
+    Runs concurrently so the batch completes in a few seconds.
+    """
+    candidates: list[StatCandidate] = []
+
+    try:
+        bat_rows = [r for r in _fg_batting(season) if not _is_multi_team(r)]
+    except Exception as exc:
+        log.warning("FanGraphs batting unavailable for weekly trends: %s", exc)
+        return []
+
+    top_hitters = sorted(bat_rows, key=lambda r: float(r.get("PA") or 0), reverse=True)[:top_n]
+    iso_week = datetime.now(timezone.utc).strftime("%Gw%V")
+
+    def _fetch_row(row: dict):
+        mlb_id = int(row["xMLBAMID"])
+        l7, _  = _fetch_recent_splits(mlb_id, season)
+        l3     = _compute_last_n_games(mlb_id, season, n=3)
+        return mlb_id, l7, l3, row
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        results = list(pool.map(_fetch_row, top_hitters))
+
+    seen: set[int] = set()  # one candidate per player max
+    for mlb_id, l7, l3, row in results:
+        if mlb_id in seen:
+            continue
+
+        # Score each window; pick whichever tells the better story
+        s7 = _streak_score(l7, min_pa=10) if l7 else 0.0
+        s3 = _streak_score(l3, min_pa=8)  if l3 else 0.0
+
+        best_score  = max(s7, s3)
+        best_stat   = l7 if s7 >= s3 else l3
+        best_window = "the last 7 days" if s7 >= s3 else "his last 3 games"
+
+        # s3 gets a small bonus — shorter window = hotter streak
+        if s3 > s7:
+            best_score *= 1.15
+
+        if best_score < 8 or best_stat is None:
+            continue
+
+        seen.add(mlb_id)
+        candidates.append(_build_streak_candidate(
+            mlb_id, row, best_stat, best_window, season, iso_week, best_score
+        ))
+
+    log.info("Collected %d weekly hitter candidates", len(candidates))
+    return candidates
+
+
+def collect_all(season: int, lookback_days: int = 1,
+                last_tweet_type: str | None = None) -> list[StatCandidate]:
+    """Collect all candidates and apply variety weighting so hitters appear more often."""
     game_candidates   = collect_game_standouts(lookback_days)
+    weekly_candidates = collect_weekly_hitters(season)
     season_candidates = collect_season_leaders(season)
 
-    # Boost game candidates — recency matters for social media
+    # Recency boost for single-game candidates
     for c in game_candidates:
-        c.score += 5.0
+        c.score += 4.0
 
-    all_candidates = game_candidates + season_candidates
+    all_candidates = game_candidates + weekly_candidates + season_candidates
+
+    # ── Variety enforcement ───────────────────────────────────────────
+    # Default: hitters get a 1.3× edge (user wants slightly more hitters).
+    # After a pitching tweet: bump hitters harder so we don't chain pitchers.
+    # After a hitting tweet:  mild bump to keep the mix going.
+    hitting_types  = {"game_hitting", "weekly_hitting", "season_batting"}
+    pitching_types = {"game_pitching", "season_pitching"}
+
+    if last_tweet_type == "pitching":
+        hitter_mult  = 1.6
+        pitcher_mult = 0.8
+    elif last_tweet_type == "hitting":
+        hitter_mult  = 1.1
+        pitcher_mult = 1.0
+    else:
+        hitter_mult  = 1.3   # default: slightly prefer hitters
+        pitcher_mult = 1.0
+
+    for c in all_candidates:
+        if c.stat_type in hitting_types:
+            c.score *= hitter_mult
+        elif c.stat_type in pitching_types:
+            c.score *= pitcher_mult
+
     all_candidates.sort(key=lambda c: c.score, reverse=True)
-    log.info("Total candidates: %d", len(all_candidates))
+    log.info("Total candidates: %d (last tweet type: %s)", len(all_candidates), last_tweet_type)
     return all_candidates
