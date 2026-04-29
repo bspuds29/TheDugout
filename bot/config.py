@@ -26,7 +26,8 @@ TWITTER_BEARER_TOKEN   = os.getenv("TWITTER_BEARER_TOKEN", "")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
 # ── Bot behaviour ──────────────────────────────────────────────────────
-DRY_RUN = os.getenv("DRY_RUN", "false").lower() in ("true", "1", "yes")
+DRY_RUN      = os.getenv("DRY_RUN",      "false").lower() in ("true", "1", "yes")
+INCLUDE_IMAGE = os.getenv("INCLUDE_IMAGE", "true").lower()  in ("true", "1", "yes")
 SEASON  = int(os.getenv("MLB_SEASON", "2026"))
 
 # How many days back to look for game data (1 = yesterday only)

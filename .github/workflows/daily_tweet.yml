@@ -58,6 +58,7 @@ jobs:
           DRY_RUN:               ${{ github.event.inputs.dry_run || 'false' }}
           LOOKBACK_DAYS:         ${{ github.event.inputs.lookback_days || '1' }}
           MLB_SEASON:            '2026'
+          INCLUDE_IMAGE:         ${{ vars.INCLUDE_IMAGE || 'true' }}
         run: python bot/main.py
 
       - name: Commit state changes

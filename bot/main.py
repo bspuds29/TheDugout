@@ -131,12 +131,14 @@ def run() -> int:
 
     # ── Fetch player image ──
     image_bytes: bytes | None = None
-    if best.mlb_id:
+    if config.INCLUDE_IMAGE and best.mlb_id:
         log.info("Fetching headshot for mlbId=%d…", best.mlb_id)
         try:
             image_bytes = image_handler.fetch_headshot(best.mlb_id)
         except Exception as exc:
             log.warning("Headshot fetch error: %s — will post without image.", exc)
+    elif not config.INCLUDE_IMAGE:
+        log.info("Image upload disabled (INCLUDE_IMAGE=false)")
 
     # ── Dry-run exit ──
     if config.DRY_RUN:
