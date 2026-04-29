@@ -241,10 +241,6 @@ function TeamBattingTab() {
   const { data: raw = [], isLoading } = useBattingLeaderboard();
 
   const teams = useMemo(() => aggregateBatting(raw), [raw]);
-  const ranked = useMemo(
-    () => [...teams].sort((a, b) => b.war - a.war).map((r, i) => ({ ...r, _rank: i + 1 })),
-    [teams]
-  );
 
   const byHR   = [...teams].sort((a, b) => b.hr      - a.hr)[0];
   const byOPS  = [...teams].sort((a, b) => b.ops      - a.ops)[0];
@@ -281,7 +277,7 @@ function TeamBattingTab() {
       >
         <SortableTable
           columns={[
-            { key: '_rank',    label: '#',       align: 'center', render: v => <RankCell rank={Number(v)} /> },
+            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
             { key: 'team',     label: 'Team',    align: 'left',   sortable: true,
               render: v => <TeamCell team={String(v)} /> },
             { key: 'pa',       label: 'PA',      sortable: true },
@@ -317,7 +313,7 @@ function TeamBattingTab() {
             { key: 'war',      label: 'fWAR',    sortable: true,
               render: v => <span className="mono" style={{ fontWeight: 700, color: colorHigh(Number(v), 10, 3) }}>{d1(Number(v))}</span> },
           ]}
-          data={ranked as any}
+          data={teams as any}
           rowKey="team"
           defaultSort="war"
         />
@@ -342,10 +338,6 @@ function TeamPitchingTab() {
   const { data: raw = [], isLoading } = usePitchingLeaderboard();
 
   const teams = useMemo(() => aggregatePitching(raw), [raw]);
-  const ranked = useMemo(
-    () => [...teams].sort((a, b) => b.war - a.war).map((r, i) => ({ ...r, _rank: i + 1 })),
-    [teams]
-  );
 
   const byERA  = [...teams].filter(t => t.ip >= 50).sort((a, b) => a.era  - b.era)[0];
   const byFIP  = [...teams].filter(t => t.ip >= 50).sort((a, b) => a.fip  - b.fip)[0];
@@ -381,7 +373,7 @@ function TeamPitchingTab() {
       >
         <SortableTable
           columns={[
-            { key: '_rank',    label: '#',       align: 'center', render: v => <RankCell rank={Number(v)} /> },
+            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
             { key: 'team',     label: 'Team',    align: 'left',   sortable: true,
               render: v => <TeamCell team={String(v)} /> },
             { key: 'ip',       label: 'IP',      sortable: true,
@@ -414,7 +406,7 @@ function TeamPitchingTab() {
             { key: 'war',      label: 'fWAR',    sortable: true,
               render: v => <span className="mono" style={{ fontWeight: 700, color: colorHigh(Number(v), 8, 2) }}>{d1(Number(v))}</span> },
           ]}
-          data={ranked as any}
+          data={teams as any}
           rowKey="team"
           defaultSort="war"
         />

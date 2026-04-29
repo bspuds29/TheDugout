@@ -173,11 +173,6 @@ function BattingLeaderboard() {
   const byOPS  = [...rows].filter(r => r.pa >= 50).sort((a, b) => b.ops   - a.ops)[0];
   const byWAR  = [...rows].sort((a, b) => b.war   - a.war)[0];
 
-  // Assign ranks (based on current sort: WAR by default)
-  const ranked = useMemo(() =>
-    [...rows].sort((a, b) => b.war - a.war).map((r, i) => ({ ...r, _rank: i + 1 }))
-  , [rows]);
-
   if (isLoading) return (
     <div className="live-loading-bar">
       <span className="live-loading-dot" />
@@ -197,7 +192,7 @@ function BattingLeaderboard() {
       <Card title={`Batting Leaderboard`} subtitle={`${rows.length} qualified batters · ${new Date().getFullYear()} season · Source: FanGraphs`}>
         <SortableTable
           columns={[
-            { key: '_rank',   label: '#',     align: 'center', render: v => <RankCell rank={Number(v)} /> },
+            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
             { key: 'name',    label: 'Player', align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',     label: 'Pos',   align: 'center',
@@ -233,7 +228,7 @@ function BattingLeaderboard() {
             { key: 'war',     label: 'fWAR',  sortable: true,
               render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 3 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
           ]}
-          data={ranked as any}
+          data={rows as any}
           rowKey="mlbId"
           defaultSort="war"
         />
@@ -266,10 +261,6 @@ function PitchingLeaderboard() {
   const byWAR  = [...rows].sort((a, b) => b.war  - a.war)[0];
   const byXERA = [...rows].filter(r => r.ip >= 20).sort((a, b) => a.xera - b.xera)[0];
 
-  const ranked = useMemo(() =>
-    [...rows].sort((a, b) => b.war - a.war).map((r, i) => ({ ...r, _rank: i + 1 }))
-  , [rows]);
-
   if (isLoading) return (
     <div className="live-loading-bar">
       <span className="live-loading-dot" />
@@ -289,7 +280,7 @@ function PitchingLeaderboard() {
       <Card title="Pitching Leaderboard" subtitle={`${rows.length} qualified pitchers · ${new Date().getFullYear()} season · Source: FanGraphs`}>
         <SortableTable
           columns={[
-            { key: '_rank',   label: '#',    align: 'center', render: v => <RankCell rank={Number(v)} /> },
+            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
             { key: 'name',    label: 'Player', align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',     label: 'Role', align: 'center',
@@ -325,7 +316,7 @@ function PitchingLeaderboard() {
             { key: 'war',     label: 'fWAR', sortable: true,
               render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 2 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
           ]}
-          data={ranked as any}
+          data={rows as any}
           rowKey="mlbId"
           defaultSort="war"
         />
@@ -450,10 +441,6 @@ function BattingLeaderboardWithFilters({
     )
   , [raw, effectiveMinPA, posValues, teamFilter]);
 
-  const ranked = useMemo(() =>
-    [...rows].sort((a, b) => b.war - a.war).map((r, i) => ({ ...r, _rank: i + 1 }))
-  , [rows]);
-
   const byHR   = [...rows].sort((a, b) => b.hr    - a.hr)[0];
   const byAVG  = [...rows].filter(r => r.pa >= 10).sort((a, b) => b.avg   - a.avg)[0];
   const byOPS  = [...rows].filter(r => r.pa >= 10).sort((a, b) => b.ops   - a.ops)[0];
@@ -488,7 +475,7 @@ function BattingLeaderboardWithFilters({
       >
         <SortableTable
           columns={[
-            { key: '_rank',    label: '#',       align: 'center', render: v => <RankCell rank={Number(v)} /> },
+            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
             { key: 'name',     label: 'Player',  align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',      label: 'Pos',     align: 'center',
@@ -518,7 +505,7 @@ function BattingLeaderboardWithFilters({
             { key: 'war',      label: 'fWAR',    sortable: true,
               render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 3 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
           ]}
-          data={ranked as any}
+          data={rows as any}
           rowKey="mlbId"
           defaultSort="war"
           onRowClick={(row: any) => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name)}`)}
@@ -545,10 +532,6 @@ function PitchingLeaderboardWithFilters({
       (!teamFilter || r.team === teamFilter)
     )
   , [raw, effectiveMinIP, roleValues, teamFilter]);
-
-  const ranked = useMemo(() =>
-    [...rows].sort((a, b) => b.war - a.war).map((r, i) => ({ ...r, _rank: i + 1 }))
-  , [rows]);
 
   const byERA  = [...rows].filter(r => r.ip >= 5).sort((a, b) => a.era  - b.era)[0];
   const byK    = [...rows].sort((a, b) => b.kPct - a.kPct)[0];
@@ -584,7 +567,7 @@ function PitchingLeaderboardWithFilters({
       >
         <SortableTable
           columns={[
-            { key: '_rank',    label: '#',      align: 'center', render: v => <RankCell rank={Number(v)} /> },
+            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
             { key: 'name',     label: 'Player', align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',      label: 'Role',   align: 'center',
@@ -614,7 +597,7 @@ function PitchingLeaderboardWithFilters({
             { key: 'war',      label: 'fWAR',   sortable: true,
               render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 2 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
           ]}
-          data={ranked as any}
+          data={rows as any}
           rowKey="mlbId"
           defaultSort="war"
           onRowClick={(row: any) => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name)}`)}

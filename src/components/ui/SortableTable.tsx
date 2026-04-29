@@ -6,7 +6,7 @@ interface Column<T> {
   key: keyof T | string;
   label: string;
   sortable?: boolean;
-  render?: (value: unknown, row: T) => React.ReactNode;
+  render?: (value: unknown, row: T, rowIndex: number) => React.ReactNode;
   align?: 'left' | 'center' | 'right';
   width?: string;
 }
@@ -92,7 +92,7 @@ export default function SortableTable<T extends Record<string, unknown>>({
                   className={`stable-td stable-align--${col.align ?? 'right'}`}
                 >
                   {col.render
-                    ? col.render(row[String(col.key)], row)
+                    ? col.render(row[String(col.key)], row, i)
                     : String(row[String(col.key)] ?? '—')}
                 </td>
               ))}
