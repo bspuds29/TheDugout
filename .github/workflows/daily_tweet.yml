@@ -1,0 +1,80 @@
+name: Daily Baseball Tweet
+
+on:
+  # 12:00 PM Eastern Time
+  # EDT (Mar–Nov): UTC-4 → 16:00 UTC
+  # EST (Nov–Mar): UTC-5 → 17:00 UTC
+  # Baseball season runs Apr–Oct (EDT), so 16:00 UTC is correct for the season.
+  schedule:
+    - cron: '0 16 * * *'
+
+  # Manual trigger — useful for testing or re-running a missed day
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (generate tweet but do not post)'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['true', 'false']
+      lookback_days:
+        description: 'Days back to look for game stats (default 1 = yesterday)'
+        required: false
+        default: '1'
+
+permissions:
+  contents: write   # needed to commit used_stats.json back to the repo
+
+jobs:
+  tweet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history so git push works
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: bot/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r bot/requirements.txt
+
+      - name: Run tweet bot
+        env:
+          TWITTER_API_KEY:       ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET:    ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN:  ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
+          TWITTER_BEARER_TOKEN:  ${{ secrets.TWITTER_BEARER_TOKEN }}
+          ANTHROPIC_API_KEY:     ${{ secrets.ANTHROPIC_API_KEY }}
+          DRY_RUN:               ${{ github.event.inputs.dry_run || 'false' }}
+          LOOKBACK_DAYS:         ${{ github.event.inputs.lookback_days || '1' }}
+          MLB_SEASON:            '2026'
+        run: python bot/main.py
+
+      - name: Commit state changes
+        # Always run so we capture state even if the tweet step exits with a warning
+        if: always()
+        run: |
+          git config user.name  "TheDugout Bot"
+          git config user.email "bot@the-dugout-iota.vercel.app"
+
+          # Stage the state file and logs (if they exist)
+          git add -f bot/state/used_stats.json 2>/dev/null || true
+          git add -f bot/logs/bot.log          2>/dev/null || true
+
+          # Only commit if there are actual changes
+          if git diff --cached --quiet; then
+            echo "No state changes to commit."
+          else
+            git commit -m "bot: update tweet state $(date -u +%Y-%m-%d)"
+            git push
+          fi
