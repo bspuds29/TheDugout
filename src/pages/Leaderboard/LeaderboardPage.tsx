@@ -289,6 +289,8 @@ function PitchingLeaderboard() {
             { key: 'gs',      label: 'GS',   sortable: true },
             { key: 'ip',      label: 'IP',   sortable: true,
               render: v => <span className="mono">{dec1(Number(v))}</span> },
+            { key: 'war',     label: 'fWAR', sortable: true,
+              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 2 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
             { key: 'w',       label: 'W',    sortable: true },
             { key: 'sv',      label: 'SV',   sortable: true },
             { key: 'era',     label: 'ERA',  sortable: true,
@@ -313,8 +315,6 @@ function PitchingLeaderboard() {
               render: v => <span className="mono" style={{ color: Number(v) >= 13 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
             { key: 'oSwingPct',label: 'Chase%',sortable: true,
               render: v => <span className="mono">{pct(Number(v))}</span> },
-            { key: 'war',     label: 'fWAR', sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 2 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
           ]}
           data={rows as any}
           rowKey="mlbId"
@@ -575,6 +575,8 @@ function PitchingLeaderboardWithFilters({
             { key: 'g',        label: 'G',      sortable: true },
             { key: 'gs',       label: 'GS',     sortable: true },
             { key: 'ip',       label: 'IP',     sortable: true, render: v => <span className="mono">{dec1(Number(v))}</span> },
+            { key: 'war',      label: 'fWAR',   sortable: true,
+              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 2 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
             { key: 'w',        label: 'W',      sortable: true },
             { key: 'sv',       label: 'SV',     sortable: true },
             { key: 'era',      label: 'ERA',    sortable: true,
@@ -594,8 +596,6 @@ function PitchingLeaderboardWithFilters({
             { key: 'swStrPct', label: 'SwStr%', sortable: true,
               render: v => <span className="mono" style={{ color: Number(v) >= 13 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
             { key: 'oSwingPct',label: 'Chase%', sortable: true, render: v => <span className="mono">{pct(Number(v))}</span> },
-            { key: 'war',      label: 'fWAR',   sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 2 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
           ]}
           data={rows as any}
           rowKey="mlbId"
