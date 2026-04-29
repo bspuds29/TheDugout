@@ -61,8 +61,33 @@ def last_tweet_type() -> str | None:
     if not log:
         return None
     last_id = log[-1].get("id", "")
-    if any(k in last_id for k in ("_hit_", "weekly_hit", "bat_hr", "bat_wrc", "bat_war")):
+    if any(k in last_id for k in ("_hit_", "weekly_", "bat_hr", "bat_wrc", "bat_war", "team_")):
         return "hitting"
     if any(k in last_id for k in ("_pit_", "pit_era", "pit_kpct", "pit_war")):
         return "pitching"
+    return None
+
+
+def last_stat_type() -> str | None:
+    """
+    Return the granular stat_type of the most recent tweet
+    (e.g. 'weekly_hitting', 'game_hitting', 'game_pitching', 'team_game').
+    Used to prevent the same category from appearing back-to-back.
+    """
+    tweet_log = _load().get("tweet_log", [])
+    if not tweet_log:
+        return None
+    last_id = tweet_log[-1].get("id", "")
+    if "weekly_" in last_id:
+        return "weekly_hitting"
+    if "team_" in last_id or "streak_" in last_id:
+        return "team_game"
+    if "_hit_" in last_id:
+        return "game_hitting"
+    if "_pit_" in last_id:
+        return "game_pitching"
+    if "bat_" in last_id:
+        return "season_batting"
+    if "pit_era" in last_id or "pit_kpct" in last_id or "pit_war" in last_id:
+        return "season_pitching"
     return None

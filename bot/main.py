@@ -66,6 +66,7 @@ def run() -> int:
         candidates = collector.collect_all(
             config.SEASON, config.LOOKBACK_DAYS,
             last_tweet_type=tracker.last_tweet_type(),
+            last_stat_type=tracker.last_stat_type(),
         )
     except Exception as exc:
         log.error("Candidate collection failed: %s", exc, exc_info=True)

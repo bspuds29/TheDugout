@@ -942,8 +942,9 @@ def collect_team_streaks(season: int) -> list[StatCandidate]:
 
 
 def collect_all(season: int, lookback_days: int = 1,
-                last_tweet_type: str | None = None) -> list[StatCandidate]:
-    """Collect all candidates and apply variety weighting so hitters appear more often."""
+                last_tweet_type: str | None = None,
+                last_stat_type: str | None = None) -> list[StatCandidate]:
+    """Collect all candidates and apply variety weighting so no single type dominates."""
     game_candidates   = collect_game_standouts(lookback_days)
     weekly_candidates = collect_weekly_hitters(season)
     season_candidates = collect_season_leaders(season)
@@ -955,29 +956,33 @@ def collect_all(season: int, lookback_days: int = 1,
 
     all_candidates = game_candidates + weekly_candidates + season_candidates + team_candidates
 
-    # ── Variety enforcement ───────────────────────────────────────────
-    # Default: hitters get a 1.3× edge (user wants slightly more hitters).
-    # After a pitching tweet: bump hitters harder so we don't chain pitchers.
-    # After a hitting tweet:  mild bump to keep the mix going.
-    hitting_types  = {"game_hitting", "weekly_hitting", "season_batting", "team_game"}
-    pitching_types = {"game_pitching", "season_pitching"}
+    # ── Per-type multipliers ──────────────────────────────────────────
+    # Start with defaults (slight hitter preference overall)
+    mults: dict[str, float] = {
+        "game_hitting":    1.3,
+        "weekly_hitting":  1.3,
+        "team_game":       1.3,
+        "season_batting":  1.1,
+        "game_pitching":   1.0,
+        "season_pitching": 1.0,
+    }
 
+    # After a pitching tweet → strongly prefer any hitting type
     if last_tweet_type == "pitching":
-        hitter_mult  = 1.6
-        pitcher_mult = 0.8
-    elif last_tweet_type == "hitting":
-        hitter_mult  = 1.1
-        pitcher_mult = 1.0
-    else:
-        hitter_mult  = 1.3   # default: slightly prefer hitters
-        pitcher_mult = 1.0
+        mults["game_hitting"]   = 1.7
+        mults["weekly_hitting"] = 1.5
+        mults["team_game"]      = 1.4
+        mults["game_pitching"]  = 0.7
+        mults["season_pitching"]= 0.7
+
+    # Penalise the exact same category that just ran so it can't chain
+    if last_stat_type:
+        mults[last_stat_type] = mults.get(last_stat_type, 1.0) * 0.4
 
     for c in all_candidates:
-        if c.stat_type in hitting_types:
-            c.score *= hitter_mult
-        elif c.stat_type in pitching_types:
-            c.score *= pitcher_mult
+        c.score *= mults.get(c.stat_type, 1.0)
 
     all_candidates.sort(key=lambda c: c.score, reverse=True)
-    log.info("Total candidates: %d (last tweet type: %s)", len(all_candidates), last_tweet_type)
+    log.info("Total candidates: %d (last_tweet=%s, last_stat=%s)",
+             len(all_candidates), last_tweet_type, last_stat_type)
     return all_candidates
