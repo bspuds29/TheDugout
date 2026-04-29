@@ -58,3 +58,52 @@ One hit allowed. Good luck.
 https://the-dugout-iota.vercel.app/player?mlbId=624133&name=Ranger+Suarez
 2026-04-29 01:30:59,009  INFO      __main__ — Image available: True
 2026-04-29 01:30:59,010  INFO      tracker — Marked as used: game_822825_pit_624133
+2026-04-29 01:32:11,471  INFO      __main__ — ============================================================
+2026-04-29 01:32:11,471  INFO      __main__ — TheDugout tweet bot starting — 2026-04-29T01:32:11.471634+00:00
+2026-04-29 01:32:11,471  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-04-29 01:32:11,471  INFO      __main__ — Collecting stat candidates…
+2026-04-29 01:32:11,472  INFO      collector — Fetching schedule for 2026-04-27
+2026-04-29 01:32:11,844  INFO      collector — Collected 34 game candidates
+2026-04-29 01:32:12,229  INFO      collector — FanGraphs batting leaderboard: 182 rows
+2026-04-29 01:32:12,342  INFO      collector — FanGraphs pitching leaderboard: 82 rows
+2026-04-29 01:32:12,343  INFO      collector — Collected 30 season leader candidates
+2026-04-29 01:32:12,344  INFO      collector — Total candidates: 64
+2026-04-29 01:32:12,344  INFO      __main__ — 63 fresh candidates after dedup (of 64 total)
+2026-04-29 01:32:12,344  INFO      __main__ — Selected candidate: 'Max Fried' — Max Fried tossed 6.0 scoreless innings with 5 Ks (score=27.6, type=game_pitching)
+2026-04-29 01:32:12,344  INFO      __main__ — Generating tweet via Claude…
+2026-04-29 01:32:14,585  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-04-29 01:32:14,606  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 01:32:14,606  INFO      __main__ — TWEET PREVIEW:
+Max Fried: 6.0 IP, 4 H, 5 K, 2 BB, 0 ER.
+
+Zeroes across the board.
+
+www.yankees.com
+https://the-dugout-iota.vercel.app/player?mlbId=608331&name=Max+Fried
+2026-04-29 01:32:14,606  INFO      __main__ — Length: 83 chars (body) + 23 (t.co URL) = 107 total
+2026-04-29 01:32:14,607  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 01:32:14,607  INFO      __main__ — Fetching headshot for mlbId=608331…
+2026-04-29 01:32:14,705  INFO      image_handler — Headshot fetched for mlbId=608331 (45034 bytes)
+2026-04-29 01:32:14,706  INFO      __main__ — Posting tweet…
+2026-04-29 01:32:15,277  INFO      poster — Image uploaded — media_id: 2049300697221591040
+2026-04-29 01:32:15,409  ERROR     poster — Failed to post tweet: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+2026-04-29 01:32:15,409  ERROR     __main__ — Tweet posting failed: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+Traceback (most recent call last):
+  File "/home/runner/work/TheDugout/TheDugout/bot/main.py", line 155, in run
+    tweet_id = poster.post_tweet(full_tweet, image_bytes)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/TheDugout/TheDugout/bot/poster.py", line 95, in post_tweet
+    response = client.create_tweet(
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 845, in create_tweet
+    return self._make_request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 129, in _make_request
+    response = self.request(method, route, params=request_params,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 119, in request
+    raise HTTPException(response)
+tweepy.errors.HTTPException: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
