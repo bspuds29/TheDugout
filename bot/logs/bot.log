@@ -26,3 +26,35 @@ Ranger Suarez was absolutely dealing — 8 IP, 1 hit, 10 Ks, 1 walk, zero runs. 
 https://the-dugout-iota.vercel.app/player?mlbId=624133&name=Ranger+Suarez
 2026-04-29 01:15:29,441  INFO      __main__ — Image available: True
 2026-04-29 01:15:29,441  INFO      tracker — Marked as used: game_822825_pit_624133
+2026-04-29 01:30:56,674  INFO      __main__ — ============================================================
+2026-04-29 01:30:56,674  INFO      __main__ — TheDugout tweet bot starting — 2026-04-29T01:30:56.674975+00:00
+2026-04-29 01:30:56,675  INFO      __main__ — Season: 2026  |  Dry-run: True
+2026-04-29 01:30:56,675  INFO      __main__ — Collecting stat candidates…
+2026-04-29 01:30:56,675  INFO      collector — Fetching schedule for 2026-04-27
+2026-04-29 01:30:56,891  INFO      collector — Collected 34 game candidates
+2026-04-29 01:30:57,274  INFO      collector — FanGraphs batting leaderboard: 182 rows
+2026-04-29 01:30:57,399  INFO      collector — FanGraphs pitching leaderboard: 82 rows
+2026-04-29 01:30:57,400  INFO      collector — Collected 30 season leader candidates
+2026-04-29 01:30:57,401  INFO      collector — Total candidates: 64
+2026-04-29 01:30:57,401  INFO      __main__ — 64 fresh candidates after dedup (of 64 total)
+2026-04-29 01:30:57,401  INFO      __main__ — Selected candidate: 'Ranger Suarez' — Ranger Suarez tossed 8.0 scoreless innings with 10 Ks (score=57.8, type=game_pitching)
+2026-04-29 01:30:57,401  INFO      __main__ — Generating tweet via Claude…
+2026-04-29 01:30:58,792  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-04-29 01:30:58,811  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 01:30:58,811  INFO      __main__ — TWEET PREVIEW:
+Ranger Suárez: 8.0 IP, 1 H, 10 K, 1 BB, 0 ER.
+
+One hit allowed. Good luck.
+https://the-dugout-iota.vercel.app/player?mlbId=624133&name=Ranger+Suarez
+2026-04-29 01:30:58,811  INFO      __main__ — Length: 74 chars (body) + 23 (t.co URL) = 98 total
+2026-04-29 01:30:58,811  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 01:30:58,811  INFO      __main__ — Fetching headshot for mlbId=624133…
+2026-04-29 01:30:59,008  INFO      image_handler — Headshot fetched for mlbId=624133 (49908 bytes)
+2026-04-29 01:30:59,009  INFO      __main__ — DRY RUN — tweet not posted.
+2026-04-29 01:30:59,009  INFO      __main__ — Would post:
+Ranger Suárez: 8.0 IP, 1 H, 10 K, 1 BB, 0 ER.
+
+One hit allowed. Good luck.
+https://the-dugout-iota.vercel.app/player?mlbId=624133&name=Ranger+Suarez
+2026-04-29 01:30:59,009  INFO      __main__ — Image available: True
+2026-04-29 01:30:59,010  INFO      tracker — Marked as used: game_822825_pit_624133
