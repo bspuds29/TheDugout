@@ -252,6 +252,9 @@
 /* Mobile */
 @media (max-width: 768px) {
   .sidebar {
+    /* Override the 0px CSS variable — sidebar needs a real width as an overlay */
+    width: 280px;
+    min-width: 280px;
     transform: translateX(-100%);
     box-shadow: var(--shadow-lg);
   }
