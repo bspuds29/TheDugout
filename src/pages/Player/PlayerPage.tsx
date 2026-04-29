@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import ShareButton from '../../components/ui/ShareButton';
 import {
   AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -798,8 +800,34 @@ export default function PlayerPage() {
 
   const YEAR = new Date().getFullYear();
 
+  // OG/Twitter meta for sharing
+  const actionShotUrl = mlbId
+    ? `https://img.mlbstatic.com/mlb-photos/image/upload/w_600,d_people:generic:action:hero:current.png,q_auto:best,f_auto/v1/people/${mlbId}/action/hero/current`
+    : 'https://thedugout.app/og-image.png';
+  const pageTitle    = resolvedName ? `${resolvedName} · The Dugout` : 'The Dugout · MLB Analytics';
+  const pageDesc     = resolvedName && person
+    ? `${resolvedName} ${YEAR} stats — ${person.position ?? ''} · ${person.teamName ?? ''} | The Dugout MLB Analytics`
+    : 'Advanced MLB analytics, player stats, and more.';
+
   return (
     <div className="pitching-page">
+
+      {/* Dynamic meta tags for OG/Twitter sharing */}
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDesc} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDesc} />
+        <meta property="og:image" content={actionShotUrl} />
+        <meta property="og:image:width" content="600" />
+        <meta property="og:image:height" content="400" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="profile" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDesc} />
+        <meta name="twitter:image" content={actionShotUrl} />
+      </Helmet>
 
       {/* Empty state */}
       {!mlbId && (
@@ -870,6 +898,11 @@ export default function PlayerPage() {
                 })()}
               </span>
               <span className="player-hero-war-label">fWAR · {YEAR}</span>
+              <ShareButton
+                title={pageTitle}
+                text={pageDesc}
+                className="player-hero-share"
+              />
             </div>
           </div>
 

@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import TeamLogo from '../../components/ui/TeamLogo';
 import Badge from '../../components/ui/Badge';
 import Card from '../../components/ui/Card';
+import ShareButton from '../../components/ui/ShareButton';
 import {
   useTeamStandings,
   useTeamSchedule,
@@ -162,6 +164,11 @@ function TeamHero({ teamId, teamRecord, teamName, abbr, color, divName }: HeroPr
               </span>
             )}
           </div>
+          <ShareButton
+            title={`${teamName} · The Dugout`}
+            text={`${teamName} ${w}–${l} (${pct}) | The Dugout MLB Analytics`}
+            className="tp-hero-share"
+          />
         </div>
       </div>
     </div>
@@ -375,7 +382,7 @@ function RosterSection({ teamId }: { teamId: number }) {
                         <tr
                           key={id}
                           className="tp-tr tp-tr--clickable"
-                          onClick={() => navigate(`/player?id=${id}`)}
+                          onClick={() => navigate(`/player?mlbId=${id}&name=${encodeURIComponent(name)}`)}
                           title={`View ${name}`}
                         >
                           <td className="tp-td tp-td--num tp-jersey">{p.jerseyNumber ?? '—'}</td>
@@ -442,8 +449,30 @@ export default function TeamPage() {
     );
   }
 
+  const w   = teamRecord?.wins   ?? 0;
+  const l   = teamRecord?.losses ?? 0;
+  const pct = w + l > 0 ? (w / (w + l)).toFixed(3).replace(/^0/, '') : '.000';
+  const pageTitle = teamName ? `${teamName} · The Dugout` : 'The Dugout · MLB Analytics';
+  const pageDesc  = teamName ? `${teamName} ${w}–${l} (${pct}) ${SEASON} season stats and roster | The Dugout MLB Analytics` : 'MLB team stats and analytics.';
+  // Use team logo as OG image (transparent PNG on white bg from MLB CDN)
+  const teamOgImg = `https://www.mlbstatic.com/team-logos/${teamId}.svg`;
+
   return (
     <div className="tp-page">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDesc} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDesc} />
+        <meta property="og:image" content={teamOgImg} />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDesc} />
+        <meta name="twitter:image" content={teamOgImg} />
+      </Helmet>
+
       {/* Breadcrumb */}
       <nav className="tp-breadcrumb">
         <Link to="/standings" className="tp-breadcrumb-link">Standings</Link>

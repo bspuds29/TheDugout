@@ -127,6 +127,10 @@
   margin-top: 4px;
 }
 
+.player-hero-share {
+  margin-top: 10px;
+}
+
 /* Two-way player role toggle */
 .twoway-toggle {
   display: flex;

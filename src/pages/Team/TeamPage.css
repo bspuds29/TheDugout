@@ -127,6 +127,11 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-bottom: 14px;
+}
+
+.tp-hero-share {
+  /* ShareButton positioned below the tags */
 }
 
 .tp-tag {
