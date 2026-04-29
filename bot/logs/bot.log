@@ -136,3 +136,34 @@ https://the-dugout-iota.vercel.app/player?mlbId=608331&name=Max+Fried
 2026-04-29 01:33:55,013  INFO      poster — Tweet posted with image — id: 2049301115531825473
 2026-04-29 01:33:55,014  INFO      tracker — Marked as used: game_822906_pit_608331
 2026-04-29 01:33:55,015  INFO      __main__ — Done. Tweet ID: 2049301115531825473
+2026-04-29 04:04:17,417  INFO      __main__ — ============================================================
+2026-04-29 04:04:17,417  INFO      __main__ — TheDugout tweet bot starting — 2026-04-29T04:04:17.417377+00:00
+2026-04-29 04:04:17,417  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-04-29 04:04:17,417  INFO      __main__ — Collecting stat candidates…
+2026-04-29 04:04:17,417  INFO      collector — Fetching schedule for 2026-04-28
+2026-04-29 04:04:17,802  INFO      collector — Collected 43 game candidates
+2026-04-29 04:04:18,814  INFO      collector — Collected 17 weekly hitter candidates
+2026-04-29 04:04:19,060  INFO      collector — FanGraphs batting leaderboard: 182 rows
+2026-04-29 04:04:19,296  INFO      collector — FanGraphs pitching leaderboard: 82 rows
+2026-04-29 04:04:19,297  INFO      collector — Collected 30 season leader candidates
+2026-04-29 04:04:19,321  INFO      collector — Collected 7 team game candidates
+2026-04-29 04:04:19,374  INFO      collector — Collected 2 team streak candidates
+2026-04-29 04:04:19,375  INFO      collector — Total candidates: 99 (last tweet type: pitching)
+2026-04-29 04:04:19,375  INFO      __main__ — 99 fresh candidates after dedup (of 99 total)
+2026-04-29 04:04:19,375  INFO      __main__ — Selected candidate: 'Aaron Judge' — Aaron Judge is 6-for-11 (.545) over his last 3 games, 3 HRs, 3 RBI (score=173.9, type=weekly_hitting)
+2026-04-29 04:04:19,375  INFO      __main__ — Generating tweet via Claude…
+2026-04-29 04:04:20,918  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-04-29 04:04:20,936  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 04:04:20,936  INFO      __main__ — TWEET PREVIEW:
+Aaron Judge: 6-for-11, 3 HRs, 3 RBI over his last 3 games. OPS 2.090.
+
+Bowlers, thoughts?
+
+https://the-dugout-iota.vercel.app/player?mlbId=592450&name=Aaron+Judge
+2026-04-29 04:04:20,936  INFO      __main__ — Length: 89 chars (body) + 23 (t.co URL) = 113 total
+2026-04-29 04:04:20,936  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 04:04:20,936  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-04-29 04:04:20,937  INFO      __main__ — Posting tweet…
+2026-04-29 04:04:21,189  INFO      poster — Tweet posted (text only) — id: 2049338974632624374
+2026-04-29 04:04:21,211  INFO      tracker — Marked as used: weekly_2026_2026w18_hit_592450_hislast3games
+2026-04-29 04:04:21,211  INFO      __main__ — Done. Tweet ID: 2049338974632624374

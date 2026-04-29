@@ -1,7 +1,8 @@
 {
   "used_ids": [
     "game_822825_pit_624133",
-    "game_822906_pit_608331"
+    "game_822906_pit_608331",
+    "weekly_2026_2026w18_hit_592450_hislast3games"
   ],
   "tweet_log": [
     {
@@ -19,7 +20,15 @@
       "player": "Max Fried",
       "stat": "Max Fried tossed 6.0 scoreless innings with 5 Ks",
       "timestamp": "2026-04-29T01:33:55.014736+00:00"
+    },
+    {
+      "id": "weekly_2026_2026w18_hit_592450_hislast3games",
+      "tweet_text": "Aaron Judge: 6-for-11, 3 HRs, 3 RBI over his last 3 games. OPS 2.090.\n\nBowlers, thoughts?\n\nhttps://the-dugout-iota.vercel.app/player?mlbId=592450&name=Aaron+Judge",
+      "tweet_id": "2049338974632624374",
+      "player": "Aaron Judge",
+      "stat": "Aaron Judge is 6-for-11 (.545) over his last 3 games, 3 HRs, 3 RBI",
+      "timestamp": "2026-04-29T04:04:21.191230+00:00"
     }
   ],
-  "last_run": "2026-04-29T01:33:55.014749+00:00"
+  "last_run": "2026-04-29T04:04:21.191245+00:00"
 }
