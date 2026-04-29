@@ -107,3 +107,32 @@ Traceback (most recent call last):
     raise HTTPException(response)
 tweepy.errors.HTTPException: 402 Payment Required
 Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+2026-04-29 01:33:51,677  INFO      __main__ — ============================================================
+2026-04-29 01:33:51,677  INFO      __main__ — TheDugout tweet bot starting — 2026-04-29T01:33:51.677204+00:00
+2026-04-29 01:33:51,677  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-04-29 01:33:51,677  INFO      __main__ — Collecting stat candidates…
+2026-04-29 01:33:51,677  INFO      collector — Fetching schedule for 2026-04-27
+2026-04-29 01:33:51,916  INFO      collector — Collected 34 game candidates
+2026-04-29 01:33:52,289  INFO      collector — FanGraphs batting leaderboard: 182 rows
+2026-04-29 01:33:52,381  INFO      collector — FanGraphs pitching leaderboard: 82 rows
+2026-04-29 01:33:52,382  INFO      collector — Collected 30 season leader candidates
+2026-04-29 01:33:52,383  INFO      collector — Total candidates: 64
+2026-04-29 01:33:52,383  INFO      __main__ — 63 fresh candidates after dedup (of 64 total)
+2026-04-29 01:33:52,383  INFO      __main__ — Selected candidate: 'Max Fried' — Max Fried tossed 6.0 scoreless innings with 5 Ks (score=27.6, type=game_pitching)
+2026-04-29 01:33:52,383  INFO      __main__ — Generating tweet via Claude…
+2026-04-29 01:33:53,830  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-04-29 01:33:53,849  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 01:33:53,850  INFO      __main__ — TWEET PREVIEW:
+Max Fried: 6.0 IP, 4 H, 5 K, 2 BB, 0 ER.
+
+Locked in.
+https://the-dugout-iota.vercel.app/player?mlbId=608331&name=Max+Fried
+2026-04-29 01:33:53,850  INFO      __main__ — Length: 52 chars (body) + 23 (t.co URL) = 76 total
+2026-04-29 01:33:53,850  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 01:33:53,850  INFO      __main__ — Fetching headshot for mlbId=608331…
+2026-04-29 01:33:54,073  INFO      image_handler — Headshot fetched for mlbId=608331 (45034 bytes)
+2026-04-29 01:33:54,074  INFO      __main__ — Posting tweet…
+2026-04-29 01:33:54,642  INFO      poster — Image uploaded — media_id: 2049301113950916608
+2026-04-29 01:33:55,013  INFO      poster — Tweet posted with image — id: 2049301115531825473
+2026-04-29 01:33:55,014  INFO      tracker — Marked as used: game_822906_pit_608331
+2026-04-29 01:33:55,015  INFO      __main__ — Done. Tweet ID: 2049301115531825473
