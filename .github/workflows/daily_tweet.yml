@@ -76,5 +76,7 @@ jobs:
             echo "No state changes to commit."
           else
             git commit -m "bot: update tweet state $(date -u +%Y-%m-%d)"
+            # Pull any commits that landed since checkout (rebase keeps our state on top)
+            git pull --rebase origin main
             git push
           fi
