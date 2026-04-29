@@ -26,21 +26,29 @@ def _get_client() -> anthropic.Anthropic:
 
 
 _SYSTEM = """\
-You write daily baseball tweets for "The Dugout" — a free MLB analytics website \
-(the-dugout-iota.vercel.app) that tracks advanced stats, player breakdowns, \
-standings, clutch performance, defense metrics, and more.
+You write baseball tweets in the style of accounts like @BaseballWRLD_, @TalkinBaseball_, \
+@FoolishBB, and @JustBB_Media — raw, punchy, fan-first baseball Twitter.
 
-Rules you must follow every time:
-1. Sound like a knowledgeable baseball fan, NOT a press release or a stat bot.
-2. Explain WHY the stat matters — give the listener real context, not just numbers.
-3. Keep the tweet body under 220 characters. The URL will be appended separately.
-4. 1-2 hashtags max, woven in naturally (e.g. #MLB, #Dodgers). Never force them.
-5. Never invent or exaggerate statistics. Only use what is explicitly provided.
-6. Do not mention the website name in the body — only the link at the end conveys it.
-7. Occasional mild enthusiasm is fine (e.g. "That's filthy." / "Good luck hitters.") \
-   but do NOT use excessive exclamation marks, all-caps words, or emoji spam.
-8. Write for Twitter/X: punchy, direct, one clear idea per tweet.
-9. Output ONLY the tweet body — no quotes, no explanations, no preamble.\
+The style:
+- Lead with the bare stat or player name. Let the number hit first.
+- Use line breaks to let stats breathe. Short lines. Not walls of text.
+- One reaction sentence max — make it feel like a fan texting their group chat.
+- Reaction words that work: "Nasty." / "Wild." / "Filthy." / "He is locked in." / \
+  "Good luck." / "Do not miss." / "That's a problem." / "Quietly elite."
+- NEVER say: "check out", "breakdown", "analytics", "underrated", "one of the best in", \
+  "make sure to", "don't forget", or anything that sounds like marketing copy.
+- Zero hashtags OR one max — only if it flows naturally. Never #MLB #Baseball #Stats spam.
+- No exclamation marks. No emoji unless it's a single ⚾ or 🔥 that genuinely fits.
+- The URL goes at the end on its own line. Do not introduce it with any words.
+- Keep the body under 220 characters. The URL is added separately.
+- Never invent stats. Only use what is provided.
+- Output ONLY the tweet body. No quotes, no explanation, no preamble.
+
+Good examples of the tone:
+  "Ranger Suárez: 8 IP, 10 K, 0 ER.\n\nHe suffocated that lineup from the first pitch. Quietly one of the scariest lefties in the NL."
+  "Aaron Judge has homered in 4 straight games.\n\nBowlers, thoughts?"
+  "Paul Skenes is 24 years old and posting a 1.89 ERA.\n\nThe league has no answer for him right now."
+  "Freddie Freeman is slashing .380/.460/.640 over his last 15 games.\n\nHe does not have an off switch."\
 """
 
 
@@ -52,16 +60,14 @@ def generate_tweet(player_name: str, team: str, position: str,
     Returns the tweet text, stripped of surrounding whitespace.
     """
     user_msg = f"""\
-Write a tweet about this baseball stat:
+Write a tweet about this stat:
 
 Player: {player_name} ({team}, {position})
 Stat: {stat_description}
-Context / why it's impressive: {context}
-Stat type: {stat_type}
-Link to full breakdown: {page_url}
+Context: {context}
 
-The tweet should make a baseball fan want to check out the full stat page. \
-Put the link on a new line at the end."""
+Drop the stat cleanly, then one short reaction. Fan voice, not analyst voice. \
+URL goes on its own line at the end — no intro words before it."""
 
     log.debug("Calling Claude for tweet generation — player: %s", player_name)
     response = _get_client().messages.create(
