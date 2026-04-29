@@ -167,3 +167,34 @@ https://the-dugout-iota.vercel.app/player?mlbId=592450&name=Aaron+Judge
 2026-04-29 04:04:21,189  INFO      poster — Tweet posted (text only) — id: 2049338974632624374
 2026-04-29 04:04:21,211  INFO      tracker — Marked as used: weekly_2026_2026w18_hit_592450_hislast3games
 2026-04-29 04:04:21,211  INFO      __main__ — Done. Tweet ID: 2049338974632624374
+2026-04-29 06:16:45,915  INFO      __main__ — ============================================================
+2026-04-29 06:16:45,915  INFO      __main__ — TheDugout tweet bot starting — 2026-04-29T06:16:45.915157+00:00
+2026-04-29 06:16:45,915  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-04-29 06:16:45,915  INFO      __main__ — Collecting stat candidates…
+2026-04-29 06:16:45,915  INFO      collector — Fetching schedule for 2026-04-28
+2026-04-29 06:16:46,341  INFO      collector — Collected 56 game candidates
+2026-04-29 06:16:47,083  INFO      collector — Collected 17 weekly hitter candidates
+2026-04-29 06:16:47,261  INFO      collector — FanGraphs batting leaderboard: 182 rows
+2026-04-29 06:16:47,458  INFO      collector — FanGraphs pitching leaderboard: 82 rows
+2026-04-29 06:16:47,459  INFO      collector — Collected 30 season leader candidates
+2026-04-29 06:16:47,473  INFO      collector — Collected 7 team game candidates
+2026-04-29 06:16:47,519  INFO      collector — Collected 2 team streak candidates
+2026-04-29 06:16:47,520  INFO      collector — Total candidates: 112 (last tweet type: hitting)
+2026-04-29 06:16:47,520  INFO      __main__ — 111 fresh candidates after dedup (of 112 total)
+2026-04-29 06:16:47,520  INFO      __main__ — Selected candidate: 'Shohei Ohtani' — Shohei Ohtani is 7-for-11 (.636) over his last 3 games, 1 HR, 2 SB (score=113.1, type=weekly_hitting)
+2026-04-29 06:16:47,520  INFO      __main__ — Generating tweet via Claude…
+2026-04-29 06:16:48,916  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-04-29 06:16:48,934  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 06:16:48,934  INFO      __main__ — TWEET PREVIEW:
+Shohei Ohtani: 7-for-11, 1 HR, 2 SB, 1.805 OPS over his last 3 games.
+
+how do you pitch to this guy
+
+https://the-dugout-iota.vercel.app/player?mlbId=660271&name=Shohei+Ohtani
+2026-04-29 06:16:48,934  INFO      __main__ — Length: 99 chars (body) + 23 (t.co URL) = 123 total
+2026-04-29 06:16:48,934  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 06:16:48,935  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-04-29 06:16:48,935  INFO      __main__ — Posting tweet…
+2026-04-29 06:16:49,145  INFO      poster — Tweet posted (text only) — id: 2049372310797213810
+2026-04-29 06:16:49,147  INFO      tracker — Marked as used: weekly_2026_2026w18_hit_660271_hislast3games
+2026-04-29 06:16:49,147  INFO      __main__ — Done. Tweet ID: 2049372310797213810
