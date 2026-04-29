@@ -63,13 +63,16 @@ STRUCTURE:
 - Never invent stats. Use only what is provided.
 - Output ONLY the tweet. No quotes, no preamble.
 
-EXAMPLES — notice the variety of tones:
+EXAMPLES — notice the variety of tones and subjects:
   "Ranger Suárez: 8 IP, 1 H, 10 K, 0 ER.\n\nyeah that'll do"
   "Aaron Judge has 4 HRs in his last 5 games.\n\nBowlers, thoughts?"
   "Freddie Freeman: .380 over his last 15 games.\n\nnot bad i suppose"
   "Paul Skenes: 1.89 ERA through 8 starts.\n\nhe's 24. the league has no answer"
   "CJ Abrams: 7-for-12 over his last 3 games, 2 HRs.\n\nok then"
-  "Corbin Carroll stole 3 bags last night.\n\nfast AND good at baseball. wild concept"\
+  "the Nationals put up 15 runs last night.\n\nyeah that'll do"
+  "the Dodgers have won 9 straight.\n\nit's getting old for everyone else"
+  "Cardinals shut out the Cubs 8-0.\n\nnot a great night to be Chicago"
+  "the Yankees and Red Sox combined for 22 runs last night.\n\nneither bullpen is ok"\
 """
 
 

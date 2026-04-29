@@ -738,24 +738,228 @@ def collect_weekly_hitters(season: int, top_n: int = 30) -> list[StatCandidate]:
     return candidates
 
 
+def collect_team_game_standouts(lookback_days: int = 1) -> list[StatCandidate]:
+    """
+    Scan completed games for notable team-level performances:
+    high run totals, blowouts, shutouts, and slugfests.
+    Uses the linescore already hydrated in the schedule response — no extra API calls.
+    """
+    candidates: list[StatCandidate] = []
+
+    for day in range(1, lookback_days + 1):
+        date_str = _et_date(day)
+        try:
+            games = _fetch_schedule(date_str)
+        except Exception as exc:
+            log.warning("Team standouts: schedule fetch failed for %s: %s", date_str, exc)
+            continue
+
+        for game in games:
+            status = game.get("status", {}).get("detailedState", "")
+            if "Final" not in status:
+                continue
+
+            game_pk   = game.get("gamePk", 0)
+            linescore = game.get("linescore", {})
+            ls_teams  = linescore.get("teams", {})
+
+            home_info  = game.get("teams", {}).get("home", {}).get("team", {})
+            away_info  = game.get("teams", {}).get("away", {}).get("team", {})
+            home_name  = home_info.get("name", "Home")
+            away_name  = away_info.get("name", "Away")
+            home_abbr  = home_info.get("abbreviation", "")
+            away_abbr  = away_info.get("abbreviation", "")
+            home_id    = home_info.get("id", 0)
+            away_id    = away_info.get("id", 0)
+
+            home_r = int(ls_teams.get("home", {}).get("runs") or 0)
+            away_r = int(ls_teams.get("away", {}).get("runs") or 0)
+            home_h = int(ls_teams.get("home", {}).get("hits") or 0)
+            away_h = int(ls_teams.get("away", {}).get("hits") or 0)
+
+            total_runs = home_r + away_r
+            margin     = abs(home_r - away_r)
+
+            def _add(team_name, team_abbr, team_id, runs, hits, opp_name, opp_r,
+                     cand_type, score, stat_desc, context):
+                candidates.append(StatCandidate(
+                    candidate_id=f"team_{game_pk}_{team_id}_{cand_type}",
+                    player_name=team_name,   # reuse player_name field for team name
+                    mlb_id=0,                # no single player
+                    team=team_name,
+                    team_abbrev=team_abbr,
+                    position="TEAM",
+                    stat_type="team_game",
+                    stat_description=stat_desc,
+                    context=context,
+                    page_url=f"{config.SITE_URL}/team-stats",
+                    score=score,
+                    raw_stats={"runs": runs, "hits": hits, "opp_runs": opp_r},
+                    date=date_str,
+                ))
+
+            # ── High-scoring offense ──────────────────────────────────
+            for team_name, team_abbr, team_id, runs, hits, opp_name, opp_r in [
+                (home_name, home_abbr, home_id, home_r, home_h, away_name, away_r),
+                (away_name, away_abbr, away_id, away_r, away_h, home_name, home_r),
+            ]:
+                if runs >= 10:
+                    score = (runs - 9) * 4.0   # 10R=4, 12R=12, 15R=24
+                    if runs >= 15: score += 10
+                    stat_desc = (
+                        f"The {team_name} dropped {runs} runs on {hits} hits last night"
+                        f", beating the {opp_name} {runs}-{opp_r}"
+                    )
+                    context = (
+                        f"{team_name} scored {runs} runs on {hits} hits. "
+                        f"Final score: {team_name} {runs}, {opp_name} {opp_r}. "
+                        f"Total combined runs in the game: {total_runs}."
+                    )
+                    _add(team_name, team_abbr, team_id, runs, hits, opp_name, opp_r,
+                         "offense", score, stat_desc, context)
+
+            # ── Shutout ───────────────────────────────────────────────
+            if home_r == 0 or away_r == 0:
+                if home_r == 0:
+                    win_name, win_abbr, win_id  = away_name, away_abbr, away_id
+                    loss_name = home_name
+                    win_r, loss_r, win_h = away_r, home_r, away_h
+                else:
+                    win_name, win_abbr, win_id  = home_name, home_abbr, home_id
+                    loss_name = away_name
+                    win_r, loss_r, win_h = home_r, away_r, home_h
+
+                score = 14.0 + (win_r * 0.5)   # bigger shutout win scores higher
+                stat_desc = (
+                    f"The {win_name} shut out the {loss_name} {win_r}-0 last night"
+                )
+                context = (
+                    f"{win_name} shutout: {win_r}-0 final, {win_h} hits on offense. "
+                    f"{loss_name} held to 0 runs."
+                )
+                _add(win_name, win_abbr, win_id, win_r, win_h, loss_name, 0,
+                     "shutout", score, stat_desc, context)
+
+            # ── High-scoring combined slugfest ────────────────────────
+            if total_runs >= 18:
+                score = (total_runs - 17) * 3.0
+                win_name  = home_name if home_r > away_r else away_name
+                loss_name = away_name if home_r > away_r else home_name
+                stat_desc = (
+                    f"The {home_name} and {away_name} combined for {total_runs} runs last night"
+                    f" — {home_r}-{away_r} final"
+                )
+                context = (
+                    f"Slugfest: {home_name} {home_r}, {away_name} {away_r}. "
+                    f"{total_runs} total runs, {home_h + away_h} combined hits."
+                )
+                _add(win_name, home_abbr if home_r > away_r else away_abbr,
+                     home_id if home_r > away_r else away_id,
+                     max(home_r, away_r), home_h + away_h, loss_name,
+                     min(home_r, away_r), "slugfest", score, stat_desc, context)
+
+    log.info("Collected %d team game candidates", len(candidates))
+    return candidates
+
+
+def collect_team_streaks(season: int) -> list[StatCandidate]:
+    """
+    Check current standings for notable win/loss streaks.
+    Uses the MLB standings endpoint — no per-game calls needed.
+    """
+    candidates: list[StatCandidate] = []
+    today = _et_date(0)
+
+    try:
+        data = _mlb("/standings",
+                    leagueId="103,104", season=season,
+                    standingsType="regularSeason",
+                    hydrate="team,streak,records")
+    except Exception as exc:
+        log.warning("Standings fetch failed: %s", exc)
+        return []
+
+    for division in data.get("records", []):
+        for rec in division.get("teamRecords", []):
+            streak_raw = rec.get("streak", {}).get("streakCode", "")  # e.g. "W8" or "L5"
+            if not streak_raw or len(streak_raw) < 2:
+                continue
+
+            kind   = streak_raw[0]   # "W" or "L"
+            try:
+                length = int(streak_raw[1:])
+            except ValueError:
+                continue
+
+            if length < 5:   # only notable streaks (5+)
+                continue
+
+            team      = rec.get("team", {})
+            team_name = team.get("name", "")
+            team_abbr = team.get("abbreviation", "")
+            team_id   = team.get("id", 0)
+            wins      = rec.get("wins", 0)
+            losses    = rec.get("losses", 0)
+            pct       = rec.get("pct", ".000")
+
+            score = (length - 4) * 5.0   # 5-game streak=5, 8-game=20, 10-game=30
+            if length >= 8:  score += 10
+            if length >= 10: score += 10
+
+            if kind == "W":
+                stat_desc = f"The {team_name} have won {length} in a row"
+                context   = (
+                    f"{team_name} are on a {length}-game win streak. "
+                    f"Current record: {wins}-{losses} ({pct}). "
+                    f"They are rolling right now."
+                )
+            else:
+                stat_desc = f"The {team_name} have lost {length} straight"
+                context   = (
+                    f"{team_name} are on a {length}-game losing streak. "
+                    f"Current record: {wins}-{losses} ({pct}). "
+                    f"Things are not going well."
+                )
+
+            candidates.append(StatCandidate(
+                candidate_id=f"streak_{season}_{team_id}_{kind}{length}",
+                player_name=team_name,
+                mlb_id=0,
+                team=team_name,
+                team_abbrev=team_abbr,
+                position="TEAM",
+                stat_type="team_game",
+                stat_description=stat_desc,
+                context=context,
+                page_url=f"{config.SITE_URL}/standings",
+                score=score,
+                raw_stats={"streak": streak_raw, "wins": wins, "losses": losses},
+                date=today,
+            ))
+
+    log.info("Collected %d team streak candidates", len(candidates))
+    return candidates
+
+
 def collect_all(season: int, lookback_days: int = 1,
                 last_tweet_type: str | None = None) -> list[StatCandidate]:
     """Collect all candidates and apply variety weighting so hitters appear more often."""
     game_candidates   = collect_game_standouts(lookback_days)
     weekly_candidates = collect_weekly_hitters(season)
     season_candidates = collect_season_leaders(season)
+    team_candidates   = collect_team_game_standouts(lookback_days) + collect_team_streaks(season)
 
     # Recency boost for single-game candidates
     for c in game_candidates:
         c.score += 4.0
 
-    all_candidates = game_candidates + weekly_candidates + season_candidates
+    all_candidates = game_candidates + weekly_candidates + season_candidates + team_candidates
 
     # ── Variety enforcement ───────────────────────────────────────────
     # Default: hitters get a 1.3× edge (user wants slightly more hitters).
     # After a pitching tweet: bump hitters harder so we don't chain pitchers.
     # After a hitting tweet:  mild bump to keep the mix going.
-    hitting_types  = {"game_hitting", "weekly_hitting", "season_batting"}
+    hitting_types  = {"game_hitting", "weekly_hitting", "season_batting", "team_game"}
     pitching_types = {"game_pitching", "season_pitching"}
 
     if last_tweet_type == "pitching":
