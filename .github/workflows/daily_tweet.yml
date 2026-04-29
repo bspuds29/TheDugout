@@ -61,22 +61,29 @@ jobs:
         run: python bot/main.py
 
       - name: Commit state changes
-        # Always run so we capture state even if the tweet step exits with a warning
         if: always()
         run: |
           git config user.name  "TheDugout Bot"
           git config user.email "bot@the-dugout-iota.vercel.app"
 
-          # Stage the state file and logs (if they exist)
-          git add -f bot/state/used_stats.json 2>/dev/null || true
-          git add -f bot/logs/bot.log          2>/dev/null || true
+          # 1. Save bot outputs before touching git history
+          cp bot/state/used_stats.json /tmp/used_stats.json 2>/dev/null || true
+          cp bot/logs/bot.log          /tmp/bot.log         2>/dev/null || true
 
-          # Only commit if there are actual changes
+          # 2. Hard-reset to whatever is on remote right now (picks up any new commits
+          #    that landed while the bot was running, e.g. a manual push)
+          git fetch origin main
+          git reset --hard origin/main
+
+          # 3. Restore our bot outputs on top of the fresh remote state
+          cp /tmp/used_stats.json bot/state/used_stats.json 2>/dev/null || true
+          cp /tmp/bot.log         bot/logs/bot.log          2>/dev/null || true
+
+          # 4. Commit and push — guaranteed fast-forward now
+          git add -f bot/state/used_stats.json bot/logs/bot.log
           if git diff --cached --quiet; then
             echo "No state changes to commit."
           else
             git commit -m "bot: update tweet state $(date -u +%Y-%m-%d)"
-            # Pull any commits that landed since checkout (rebase keeps our state on top)
-            git pull --rebase origin main
-            git push
+            git push origin main
           fi
