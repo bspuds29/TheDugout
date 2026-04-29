@@ -277,7 +277,7 @@ function TeamBattingTab() {
       >
         <SortableTable
           columns={[
-            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.sortDir === 'asc' ? m.total - i : i + 1} /> },
+            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
             { key: 'team',     label: 'Team',    align: 'left',   sortable: true,
               render: v => <TeamCell team={String(v)} /> },
             { key: 'pa',       label: 'PA',      sortable: true },
@@ -373,7 +373,7 @@ function TeamPitchingTab() {
       >
         <SortableTable
           columns={[
-            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.sortDir === 'asc' ? m.total - i : i + 1} /> },
+            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
             { key: 'team',     label: 'Team',    align: 'left',   sortable: true,
               render: v => <TeamCell team={String(v)} /> },
             { key: 'ip',       label: 'IP',      sortable: true,
