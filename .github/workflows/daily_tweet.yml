@@ -1,12 +1,11 @@
 name: Daily Baseball Tweet
 
 on:
-  # 12:00 PM Eastern Time
-  # EDT (Mar–Nov): UTC-4 → 16:00 UTC
-  # EST (Nov–Mar): UTC-5 → 17:00 UTC
-  # Baseball season runs Apr–Oct (EDT), so 16:00 UTC is correct for the season.
+  # 12:00 AM and 12:00 PM Eastern Time
+  # EDT (Mar–Nov): UTC-4 → 04:00 and 16:00 UTC
   schedule:
-    - cron: '0 16 * * *'
+    - cron: '0 4  * * *'   # 12:00 AM ET
+    - cron: '0 16 * * *'   # 12:00 PM ET
 
   # Manual trigger — useful for testing or re-running a missed day
   workflow_dispatch:
