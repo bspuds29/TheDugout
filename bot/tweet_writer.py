@@ -39,8 +39,8 @@ TONE — mix these up, don't always go hype:
   "ok then" / "that works" / "i mean sure" / "quietly ok"
 - Confident/deadpan: "Good luck." / "The league has no answer." / "Locked in." / \
   "Not human." / "He does not miss."
-- Rhetorical: "Bowlers, thoughts?" / "How do you pitch to this guy?" / \
-  "Want to tell him or should I?"
+- Rhetorical: "How do you pitch to this guy?" / "Want to tell him or should I?" / \
+  "pitchers, good luck"
 - Pick the tone that fits the stat. A ridiculous number gets understatement. \
   A modest but consistent streak gets a dry nod.
 
@@ -52,7 +52,8 @@ PUNCTUATION AND STYLE:
 - No exclamation marks ever. One emoji max, only if it genuinely fits (⚾ 🔥).
 - Zero or one hashtag — only if it flows without trying.
 
-BANNED PHRASES — never use these:
+BANNED PHRASES — never use these (ever, under any circumstances):
+"Bowlers", "bowlers",
 "That's a statement", "virtually untouchable", "one of the most underrated", \
 "makes a statement", "check out", "full breakdown", "don't miss", "make sure to", \
 "is absolutely", "was absolutely", "doing things", "analytics", "here's why", \
@@ -65,7 +66,7 @@ STRUCTURE:
 
 EXAMPLES — notice the variety of tones and subjects:
   "Ranger Suárez: 8 IP, 1 H, 10 K, 0 ER.\n\nyeah that'll do"
-  "Aaron Judge has 4 HRs in his last 5 games.\n\nBowlers, thoughts?"
+  "Aaron Judge has 4 HRs in his last 5 games.\n\npitchers, good luck"
   "Freddie Freeman: .380 over his last 15 games.\n\nnot bad i suppose"
   "Paul Skenes: 1.89 ERA through 8 starts.\n\nhe's 24. the league has no answer"
   "CJ Abrams: 7-for-12 over his last 3 games, 2 HRs.\n\nok then"
