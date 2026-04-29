@@ -315,7 +315,7 @@ function TeamBattingTab() {
           ]}
           data={teams as any}
           rowKey="team"
-          defaultSort="war"
+          defaultSort="wrcPlus"
         />
       </Card>
 

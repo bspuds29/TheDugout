@@ -65,23 +65,26 @@ export default function SortableTable<T extends Record<string, unknown>>({
       <table className={`stable ${compact ? 'stable--compact' : ''}`}>
         <thead>
           <tr>
-            {columns.map(col => (
-              <th
-                key={String(col.key)}
-                className={`stable-th ${col.sortable ? 'stable-th--sortable' : ''} stable-align--${col.align ?? 'right'}`}
-                style={{ width: col.width }}
-                onClick={col.sortable ? () => handleSort(String(col.key)) : undefined}
-              >
-                {col.label}
-                {col.sortable && (
-                  <span className="stable-sort-icon">
-                    {sortKey === String(col.key)
-                      ? sortDir === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />
-                      : <ChevronDown size={12} className="stable-sort-dim" />}
-                  </span>
-                )}
-              </th>
-            ))}
+            {columns.map(col => {
+              const isActive = col.sortable && sortKey === String(col.key);
+              return (
+                <th
+                  key={String(col.key)}
+                  className={`stable-th ${col.sortable ? 'stable-th--sortable' : ''} ${isActive ? 'stable-th--active' : ''} stable-align--${col.align ?? 'right'}`}
+                  style={{ width: col.width }}
+                  onClick={col.sortable ? () => handleSort(String(col.key)) : undefined}
+                >
+                  {col.label}
+                  {col.sortable && (
+                    <span className="stable-sort-icon">
+                      {isActive
+                        ? sortDir === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />
+                        : <ChevronDown size={12} className="stable-sort-dim" />}
+                    </span>
+                  )}
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
@@ -91,16 +94,19 @@ export default function SortableTable<T extends Record<string, unknown>>({
               className={`stable-row ${onRowClick ? 'stable-row--clickable' : ''} ${i === 0 ? 'stable-row--top' : ''}`}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
             >
-              {columns.map(col => (
-                <td
-                  key={String(col.key)}
-                  className={`stable-td stable-align--${col.align ?? 'right'}`}
-                >
-                  {col.render
-                    ? col.render(row[String(col.key)], row, i, { sortDir, total: sorted.length })
-                    : String(row[String(col.key)] ?? '—')}
-                </td>
-              ))}
+              {columns.map(col => {
+                const isActive = col.sortable && sortKey === String(col.key);
+                return (
+                  <td
+                    key={String(col.key)}
+                    className={`stable-td ${isActive ? 'stable-td--active' : ''} stable-align--${col.align ?? 'right'}`}
+                  >
+                    {col.render
+                      ? col.render(row[String(col.key)], row, i, { sortDir, total: sorted.length })
+                      : String(row[String(col.key)] ?? '—')}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

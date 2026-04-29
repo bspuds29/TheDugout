@@ -26,11 +26,21 @@
 
 .stable-th--sortable {
   cursor: pointer;
-  transition: color var(--transition-fast);
+  transition: color var(--transition-fast), background var(--transition-fast);
 }
 
 .stable-th--sortable:hover {
   color: var(--color-text-primary);
+}
+
+/* Active sort column */
+.stable-th--active {
+  color: var(--color-accent) !important;
+  background: rgba(32, 178, 255, 0.08) !important;
+}
+
+.stable-td--active {
+  background: rgba(32, 178, 255, 0.04);
 }
 
 .stable-sort-icon {

@@ -199,6 +199,8 @@ function BattingLeaderboard() {
               render: v => <span className="lb-pos-badge">{String(v).split('/')[0]}</span> },
             { key: 'g',       label: 'G',     sortable: true },
             { key: 'pa',      label: 'PA',    sortable: true },
+            { key: 'war',     label: 'fWAR',  sortable: true,
+              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 3 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
             { key: 'hr',      label: 'HR',    sortable: true,
               render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 10 ? '#ef4444' : 'inherit' }}>{int(Number(v))}</span> },
             { key: 'rbi',     label: 'RBI',   sortable: true },
@@ -225,8 +227,6 @@ function BattingLeaderboard() {
               render: v => <span className="mono" style={{ color: Number(v) > 10 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
             { key: 'xwoba',   label: 'xwOBA', sortable: true,
               render: v => <span className="mono">{avg(Number(v))}</span> },
-            { key: 'war',     label: 'fWAR',  sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 3 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
           ]}
           data={rows as any}
           rowKey="mlbId"
@@ -482,6 +482,8 @@ function BattingLeaderboardWithFilters({
               render: v => <span className="lb-pos-badge">{String(v).split('/')[0]}</span> },
             { key: 'g',        label: 'G',       sortable: true },
             { key: 'pa',       label: 'PA',      sortable: true },
+            { key: 'war',      label: 'fWAR',    sortable: true,
+              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 3 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
             { key: 'hr',       label: 'HR',      sortable: true,
               render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 10 ? '#ef4444' : 'inherit' }}>{int(Number(v))}</span> },
             { key: 'rbi',      label: 'RBI',     sortable: true },
@@ -502,8 +504,6 @@ function BattingLeaderboardWithFilters({
             { key: 'barrelPct',label: 'Barrel%', sortable: true,
               render: v => <span className="mono" style={{ color: Number(v) > 10 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
             { key: 'xwoba',    label: 'xwOBA',   sortable: true, render: v => <span className="mono">{avg(Number(v))}</span> },
-            { key: 'war',      label: 'fWAR',    sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 3 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
           ]}
           data={rows as any}
           rowKey="mlbId"
