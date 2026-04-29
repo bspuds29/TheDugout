@@ -36,13 +36,7 @@ export default function Layout({ children }: LayoutProps) {
       />
       <div className="layout-main">
         <TopBar onMenuToggle={() => setMobileOpen(true)} />
-        {/*
-          key={location.key} forces a full unmount + remount of the page content
-          on every navigation. Without this, React 18 concurrent mode keeps the
-          old (potentially long) page visible while the new one loads, leaving
-          the user scrolled below the new page's content with nothing visible.
-        */}
-        <main className="layout-content" key={location.key}>
+        <main className="layout-content">
           {children}
         </main>
       </div>

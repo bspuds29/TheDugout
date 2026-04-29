@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import ScrollToTop from './components/ui/ScrollToTop';
@@ -44,32 +44,47 @@ function PageLoader() {
   );
 }
 
+// ─── Routes rendered inside BrowserRouter so useLocation() is valid ──
+function AppRoutes() {
+  // Keying <Routes> on pathname forces React Router to treat each navigation
+  // as a fresh mount rather than an update. This defeats React 19 concurrent
+  // rendering's "keep-previous-tree-while-suspending" optimization, which was
+  // causing ToolsPage (and other heavy pages) to stay frozen on screen after
+  // clicking a sidebar link. Suspense's stale-tree behaviour only applies to
+  // updates — a fresh mount always shows the fallback spinner instead.
+  const location = useLocation();
+
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/"              element={<HomePage />} />
+        <Route path="/player"        element={<PlayerPage />} />
+        {/* Legacy routes — redirect to unified player page */}
+        <Route path="/pitching"      element={<Navigate to="/player" replace />} />
+        <Route path="/hitting"       element={<Navigate to="/player" replace />} />
+        <Route path="/clutch"        element={<ClutchPage />} />
+        <Route path="/defense"       element={<DefensePage />} />
+        <Route path="/leaderboard"   element={<LeaderboardPage />} />
+        <Route path="/standings"     element={<StandingsPage />} />
+        <Route path="/team-stats"    element={<TeamStatsPage />} />
+        <Route path="/trade"         element={<TradeAnalyzerPage />} />
+        <Route path="/tools"         element={<ToolsPage />} />
+        <Route path="/tools/compare" element={<PlayerComparePage />} />
+        <Route path="/stats"         element={<StatsHubPage />} />
+        <Route path="/team/:teamId"  element={<TeamPage />} />
+        <Route path="*"              element={<NotFound />} />
+      </Routes>
+    </Suspense>
+  );
+}
+
 export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
         <ScrollToTop />
         <Layout>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/"              element={<HomePage />} />
-              <Route path="/player"        element={<PlayerPage />} />
-              {/* Legacy routes — redirect to unified player page */}
-              <Route path="/pitching"      element={<Navigate to="/player" replace />} />
-              <Route path="/hitting"       element={<Navigate to="/player" replace />} />
-              <Route path="/clutch"        element={<ClutchPage />} />
-              <Route path="/defense"       element={<DefensePage />} />
-              <Route path="/leaderboard"   element={<LeaderboardPage />} />
-              <Route path="/standings"     element={<StandingsPage />} />
-              <Route path="/team-stats"    element={<TeamStatsPage />} />
-              <Route path="/trade"         element={<TradeAnalyzerPage />} />
-              <Route path="/tools"         element={<ToolsPage />} />
-              <Route path="/tools/compare" element={<PlayerComparePage />} />
-              <Route path="/stats"         element={<StatsHubPage />} />
-              <Route path="/team/:teamId"  element={<TeamPage />} />
-              <Route path="*"              element={<NotFound />} />
-            </Routes>
-          </Suspense>
+          <AppRoutes />
         </Layout>
       </BrowserRouter>
     </ErrorBoundary>
