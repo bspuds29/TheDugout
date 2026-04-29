@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import './SortableTable.css';
 
+export interface SortMeta {
+  sortDir: 'asc' | 'desc';
+  total: number;
+}
+
 interface Column<T> {
   key: keyof T | string;
   label: string;
   sortable?: boolean;
-  render?: (value: unknown, row: T, rowIndex: number) => React.ReactNode;
+  render?: (value: unknown, row: T, rowIndex: number, meta: SortMeta) => React.ReactNode;
   align?: 'left' | 'center' | 'right';
   width?: string;
 }
@@ -92,7 +97,7 @@ export default function SortableTable<T extends Record<string, unknown>>({
                   className={`stable-td stable-align--${col.align ?? 'right'}`}
                 >
                   {col.render
-                    ? col.render(row[String(col.key)], row, i)
+                    ? col.render(row[String(col.key)], row, i, { sortDir, total: sorted.length })
                     : String(row[String(col.key)] ?? '—')}
                 </td>
               ))}

@@ -192,7 +192,7 @@ function BattingLeaderboard() {
       <Card title={`Batting Leaderboard`} subtitle={`${rows.length} qualified batters · ${new Date().getFullYear()} season · Source: FanGraphs`}>
         <SortableTable
           columns={[
-            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
+            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.sortDir === 'asc' ? m.total - i : i + 1} /> },
             { key: 'name',    label: 'Player', align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',     label: 'Pos',   align: 'center',
@@ -280,7 +280,7 @@ function PitchingLeaderboard() {
       <Card title="Pitching Leaderboard" subtitle={`${rows.length} qualified pitchers · ${new Date().getFullYear()} season · Source: FanGraphs`}>
         <SortableTable
           columns={[
-            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
+            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.sortDir === 'asc' ? m.total - i : i + 1} /> },
             { key: 'name',    label: 'Player', align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',     label: 'Role', align: 'center',
@@ -475,7 +475,7 @@ function BattingLeaderboardWithFilters({
       >
         <SortableTable
           columns={[
-            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
+            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.sortDir === 'asc' ? m.total - i : i + 1} /> },
             { key: 'name',     label: 'Player',  align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',      label: 'Pos',     align: 'center',
@@ -567,7 +567,7 @@ function PitchingLeaderboardWithFilters({
       >
         <SortableTable
           columns={[
-            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
+            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.sortDir === 'asc' ? m.total - i : i + 1} /> },
             { key: 'name',     label: 'Player', align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',      label: 'Role',   align: 'center',
