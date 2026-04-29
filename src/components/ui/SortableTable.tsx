@@ -11,6 +11,9 @@ interface Column<T> {
   key: keyof T | string;
   label: string;
   sortable?: boolean;
+  /** Direction to use the first time this column is clicked. Defaults to 'desc'.
+   *  Set to 'asc' for stats where lower is better (ERA, WHIP, K% for batters, etc.) */
+  firstClickDir?: 'asc' | 'desc';
   render?: (value: unknown, row: T, rowIndex: number, meta: SortMeta) => React.ReactNode;
   align?: 'left' | 'center' | 'right';
   width?: string;
@@ -42,8 +45,9 @@ export default function SortableTable<T extends Record<string, unknown>>({
     if (sortKey === key) {
       setSortDir(d => d === 'asc' ? 'desc' : 'asc');
     } else {
+      const col = columns.find(c => String(c.key) === key);
       setSortKey(key);
-      setSortDir('desc');
+      setSortDir(col?.firstClickDir ?? 'desc');
     }
   };
 
