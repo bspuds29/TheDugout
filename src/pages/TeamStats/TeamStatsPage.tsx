@@ -378,6 +378,8 @@ function TeamPitchingTab() {
               render: v => <TeamCell team={String(v)} /> },
             { key: 'ip',       label: 'IP',      sortable: true,
               render: v => <span className="mono">{d1(Number(v))}</span> },
+            { key: 'war',      label: 'fWAR',    sortable: true,
+              render: v => <span className="mono" style={{ fontWeight: 700, color: colorHigh(Number(v), 8, 2) }}>{d1(Number(v))}</span> },
             { key: 'w',        label: 'W',       sortable: true },
             { key: 'l',        label: 'L',       sortable: true },
             { key: 'sv',       label: 'SV',      sortable: true },
@@ -403,12 +405,11 @@ function TeamPitchingTab() {
               render: v => <span className="mono" style={{ color: colorHigh(Number(v), 12, 9) }}>{pct(Number(v))}</span> },
             { key: 'oSwingPct',label: 'Chase%',  sortable: true,
               render: v => <span className="mono">{pct(Number(v))}</span> },
-            { key: 'war',      label: 'fWAR',    sortable: true,
-              render: v => <span className="mono" style={{ fontWeight: 700, color: colorHigh(Number(v), 8, 2) }}>{d1(Number(v))}</span> },
           ]}
           data={teams as any}
           rowKey="team"
-          defaultSort="war"
+          defaultSort="era"
+          defaultDir="asc"
         />
       </Card>
     </>
