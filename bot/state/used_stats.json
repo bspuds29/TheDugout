@@ -1,5 +1,16 @@
 {
-  "used_ids": [],
-  "tweet_log": [],
-  "last_run": null
+  "used_ids": [
+    "game_822825_pit_624133"
+  ],
+  "tweet_log": [
+    {
+      "id": "game_822825_pit_624133",
+      "tweet_text": "Ranger Suarez was absolutely dealing \u2014 8 IP, 1 hit, 10 Ks, 1 walk, zero runs. One hit. That's not a good start, that's a statement. #MLB\nhttps://the-dugout-iota.vercel.app/player?mlbId=624133&name=Ranger+Suarez",
+      "tweet_id": "dry-run",
+      "player": "Ranger Suarez",
+      "stat": "Ranger Suarez tossed 8.0 scoreless innings with 10 Ks",
+      "timestamp": "2026-04-29T01:15:29.441615+00:00"
+    }
+  ],
+  "last_run": "2026-04-29T01:15:29.441631+00:00"
 }

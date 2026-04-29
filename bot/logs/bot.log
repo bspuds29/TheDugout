@@ -1,0 +1,28 @@
+2026-04-29 01:15:23,736  INFO      __main__ — ============================================================
+2026-04-29 01:15:23,737  INFO      __main__ — TheDugout tweet bot starting — 2026-04-29T01:15:23.737032+00:00
+2026-04-29 01:15:23,737  INFO      __main__ — Season: 2026  |  Dry-run: True
+2026-04-29 01:15:23,737  INFO      __main__ — Collecting stat candidates…
+2026-04-29 01:15:23,737  INFO      collector — Fetching schedule for 2026-04-27
+2026-04-29 01:15:24,210  INFO      collector — Collected 34 game candidates
+2026-04-29 01:15:25,704  INFO      collector — FanGraphs batting leaderboard: 182 rows
+2026-04-29 01:15:25,962  INFO      collector — FanGraphs pitching leaderboard: 82 rows
+2026-04-29 01:15:25,963  INFO      collector — Collected 30 season leader candidates
+2026-04-29 01:15:25,964  INFO      collector — Total candidates: 64
+2026-04-29 01:15:25,965  INFO      __main__ — 64 fresh candidates after dedup (of 64 total)
+2026-04-29 01:15:25,965  INFO      __main__ — Selected candidate: 'Ranger Suarez' — Ranger Suarez tossed 8.0 scoreless innings with 10 Ks (score=57.8, type=game_pitching)
+2026-04-29 01:15:25,965  INFO      __main__ — Generating tweet via Claude…
+2026-04-29 01:15:28,662  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-04-29 01:15:28,684  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 01:15:28,684  INFO      __main__ — TWEET PREVIEW:
+Ranger Suarez was absolutely dealing — 8 IP, 1 hit, 10 Ks, 1 walk, zero runs. One hit. That's not a good start, that's a statement. #MLB
+https://the-dugout-iota.vercel.app/player?mlbId=624133&name=Ranger+Suarez
+2026-04-29 01:15:28,684  INFO      __main__ — Length: 136 chars (body) + 23 (t.co URL) = 160 total
+2026-04-29 01:15:28,685  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-29 01:15:28,685  INFO      __main__ — Fetching headshot for mlbId=624133…
+2026-04-29 01:15:29,440  INFO      image_handler — Headshot fetched for mlbId=624133 (49908 bytes)
+2026-04-29 01:15:29,441  INFO      __main__ — DRY RUN — tweet not posted.
+2026-04-29 01:15:29,441  INFO      __main__ — Would post:
+Ranger Suarez was absolutely dealing — 8 IP, 1 hit, 10 Ks, 1 walk, zero runs. One hit. That's not a good start, that's a statement. #MLB
+https://the-dugout-iota.vercel.app/player?mlbId=624133&name=Ranger+Suarez
+2026-04-29 01:15:29,441  INFO      __main__ — Image available: True
+2026-04-29 01:15:29,441  INFO      tracker — Marked as used: game_822825_pit_624133
