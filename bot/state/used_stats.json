@@ -4,7 +4,8 @@
     "game_822906_pit_608331",
     "weekly_2026_2026w18_hit_592450_hislast3games",
     "weekly_2026_2026w18_hit_660271_hislast3games",
-    "weekly_2026_2026w18_hit_682829_hislast3games"
+    "weekly_2026_2026w18_hit_682829_hislast3games",
+    "game_824525_hit_696100"
   ],
   "tweet_log": [
     {
@@ -46,7 +47,15 @@
       "player": "Elly De La Cruz",
       "stat": "Elly De La Cruz is 5-for-11 (.455) over his last 3 games, 2 HRs, 6 RBI, 2 SB",
       "timestamp": "2026-04-29T17:16:07.958273+00:00"
+    },
+    {
+      "id": "game_824525_hit_696100",
+      "tweet_text": "Hunter Goodman: 3-for-4, 2 HRs, 3 RBI, 9 total bases.\n\nquietly ok for a Tuesday\n\nhttps://thedugoutapi.com/player?mlbId=696100&name=Hunter+Goodman",
+      "tweet_id": "2049736082724364307",
+      "player": "Hunter Goodman",
+      "stat": "Hunter Goodman went 3/4 with 2 HRs, 3-for-4, 3 RBI, 9 total bases",
+      "timestamp": "2026-04-30T06:22:19.131626+00:00"
     }
   ],
-  "last_run": "2026-04-29T17:16:07.958287+00:00"
+  "last_run": "2026-04-30T06:22:19.131638+00:00"
 }

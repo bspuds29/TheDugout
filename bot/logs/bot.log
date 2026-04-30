@@ -229,3 +229,34 @@ https://thedugoutapi.com/player?mlbId=682829&name=Elly+De+La+Cruz
 2026-04-29 17:16:07,957  INFO      poster — Tweet posted (text only) — id: 2049538232300278073
 2026-04-29 17:16:07,958  INFO      tracker — Marked as used: weekly_2026_2026w18_hit_682829_hislast3games
 2026-04-29 17:16:07,958  INFO      __main__ — Done. Tweet ID: 2049538232300278073
+2026-04-30 06:22:15,362  INFO      __main__ — ============================================================
+2026-04-30 06:22:15,362  INFO      __main__ — TheDugout tweet bot starting — 2026-04-30T06:22:15.362596+00:00
+2026-04-30 06:22:15,362  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-04-30 06:22:15,362  INFO      __main__ — Collecting stat candidates…
+2026-04-30 06:22:15,363  INFO      collector — Fetching schedule for 2026-04-29
+2026-04-30 06:22:15,884  INFO      collector — Collected 47 game candidates
+2026-04-30 06:22:16,712  INFO      collector — Collected 21 weekly hitter candidates
+2026-04-30 06:22:16,900  INFO      collector — FanGraphs batting leaderboard: 179 rows
+2026-04-30 06:22:17,094  INFO      collector — FanGraphs pitching leaderboard: 85 rows
+2026-04-30 06:22:17,095  INFO      collector — Collected 30 season leader candidates
+2026-04-30 06:22:17,114  INFO      collector — Collected 3 team game candidates
+2026-04-30 06:22:17,166  INFO      collector — Collected 1 team streak candidates
+2026-04-30 06:22:17,166  INFO      collector — Total candidates: 102 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-04-30 06:22:17,166  INFO      __main__ — 99 fresh candidates after dedup (of 102 total)
+2026-04-30 06:22:17,167  INFO      __main__ — Selected candidate: 'Hunter Goodman' — Hunter Goodman went 3/4 with 2 HRs, 3-for-4, 3 RBI, 9 total bases (score=65.3, type=game_hitting)
+2026-04-30 06:22:17,167  INFO      __main__ — Generating tweet via Claude…
+2026-04-30 06:22:18,900  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-04-30 06:22:18,921  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-30 06:22:18,922  INFO      __main__ — TWEET PREVIEW:
+Hunter Goodman: 3-for-4, 2 HRs, 3 RBI, 9 total bases.
+
+quietly ok for a Tuesday
+
+https://thedugoutapi.com/player?mlbId=696100&name=Hunter+Goodman
+2026-04-30 06:22:18,922  INFO      __main__ — Length: 79 chars (body) + 23 (t.co URL) = 103 total
+2026-04-30 06:22:18,922  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-30 06:22:18,922  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-04-30 06:22:18,922  INFO      __main__ — Posting tweet…
+2026-04-30 06:22:19,130  INFO      poster — Tweet posted (text only) — id: 2049736082724364307
+2026-04-30 06:22:19,131  INFO      tracker — Marked as used: game_824525_hit_696100
+2026-04-30 06:22:19,131  INFO      __main__ — Done. Tweet ID: 2049736082724364307
