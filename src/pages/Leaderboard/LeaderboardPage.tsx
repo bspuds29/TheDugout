@@ -94,6 +94,7 @@ function FilterBar({
   teamFilter, onTeamChange,
   minPA, onMinPAChange,
   qualifiedThreshold,
+  qualifiedLabel,
   label = 'PA',
   teams = [],
 }: {
@@ -105,6 +106,7 @@ function FilterBar({
   minPA: number;
   onMinPAChange: (n: number) => void;
   qualifiedThreshold?: number;
+  qualifiedLabel?: string;
   label?: string;
   teams?: string[];
 }) {
@@ -140,7 +142,7 @@ function FilterBar({
         onChange={e => onMinPAChange(Number(e.target.value))}
       >
         {qualifiedThreshold != null && (
-          <option value={-1}>Qualified (≥{qualifiedThreshold} {label})</option>
+          <option value={-1}>{qualifiedLabel ?? 'Qualified'}</option>
         )}
         <option value={0}>All {label}</option>
         <option value={30}>≥30 {label}</option>
@@ -198,7 +200,7 @@ function BattingLeaderboard() {
       <Card title={`Batting Leaderboard`} subtitle={`${rows.length} qualified batters · ${new Date().getFullYear()} season · Source: FanGraphs`}>
         <SortableTable
           columns={[
-            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
+            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.reversed ? m.total - i : i + 1} /> },
             { key: 'name',    label: 'Player', align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',     label: 'Pos',   align: 'center',
@@ -286,7 +288,7 @@ function PitchingLeaderboard() {
       <Card title="Pitching Leaderboard" subtitle={`${rows.length} qualified pitchers · ${new Date().getFullYear()} season · Source: FanGraphs`}>
         <SortableTable
           columns={[
-            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
+            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.reversed ? m.total - i : i + 1} /> },
             { key: 'name',    label: 'Player', align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',     label: 'Role', align: 'center',
@@ -407,6 +409,7 @@ export default function LeaderboardPage() {
           minPA={batMinPA}
           onMinPAChange={setBatMinPA}
           qualifiedThreshold={qualifiedPA}
+          qualifiedLabel="Qualified Hitters"
           label="PA"
           teams={batTeams}
         />
@@ -420,6 +423,7 @@ export default function LeaderboardPage() {
           minPA={pitMinIP}
           onMinPAChange={setPitMinIP}
           qualifiedThreshold={qualifiedIP}
+          qualifiedLabel="Qualified Pitchers"
           label="IP"
           teams={pitTeams}
         />
@@ -494,7 +498,7 @@ function BattingLeaderboardWithFilters({
       >
         <SortableTable
           columns={[
-            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
+            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.reversed ? m.total - i : i + 1} /> },
             { key: 'name',     label: 'Player',  align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',      label: 'Pos',     align: 'center',
@@ -587,7 +591,7 @@ function PitchingLeaderboardWithFilters({
       >
         <SortableTable
           columns={[
-            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i) => <RankCell rank={i + 1} /> },
+            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.reversed ? m.total - i : i + 1} /> },
             { key: 'name',     label: 'Player', align: 'left', sortable: true,
               render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
             { key: 'pos',      label: 'Role',   align: 'center',

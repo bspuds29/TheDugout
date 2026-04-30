@@ -5,6 +5,8 @@ import './SortableTable.css';
 export interface SortMeta {
   sortDir: 'asc' | 'desc';
   total: number;
+  /** true when the table is currently sorted worst-first (opposite of the column's natural best direction) */
+  reversed: boolean;
 }
 
 interface Column<T> {
@@ -64,6 +66,12 @@ export default function SortableTable<T extends Record<string, unknown>>({
     return sortDir === 'asc' ? cmp : -cmp;
   });
 
+  // Determine if current sort is "worst-first" (opposite of the column's natural best direction)
+  const activeCol = sortKey ? columns.find(c => String(c.key) === sortKey) : undefined;
+  const naturalDir = activeCol?.firstClickDir ?? 'desc';
+  const reversed = !!sortKey && sortDir !== naturalDir;
+  const meta: SortMeta = { sortDir, total: sorted.length, reversed };
+
   return (
     <div className="stable-wrap">
       <table className={`stable ${compact ? 'stable--compact' : ''}`}>
@@ -106,7 +114,7 @@ export default function SortableTable<T extends Record<string, unknown>>({
                     className={`stable-td ${isActive ? 'stable-td--active' : ''} stable-align--${col.align ?? 'right'}`}
                   >
                     {col.render
-                      ? col.render(row[String(col.key)], row, i, { sortDir, total: sorted.length })
+                      ? col.render(row[String(col.key)], row, i, meta)
                       : String(row[String(col.key)] ?? '—')}
                   </td>
                 );
