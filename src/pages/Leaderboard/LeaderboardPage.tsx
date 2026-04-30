@@ -93,6 +93,7 @@ function FilterBar({
   groups, active, onSelect,
   teamFilter, onTeamChange,
   minPA, onMinPAChange,
+  qualifiedThreshold,
   label = 'PA',
   teams = [],
 }: {
@@ -103,6 +104,7 @@ function FilterBar({
   onTeamChange: (s: string) => void;
   minPA: number;
   onMinPAChange: (n: number) => void;
+  qualifiedThreshold?: number;
   label?: string;
   teams?: string[];
 }) {
@@ -131,18 +133,22 @@ function FilterBar({
         {teams.map(t => <option key={t} value={t}>{t}</option>)}
       </select>
 
-      {/* Min PA/IP */}
+      {/* Min PA/IP — -1 = qualified (dynamic threshold) */}
       <select
         className="lb-select"
         value={minPA}
         onChange={e => onMinPAChange(Number(e.target.value))}
       >
+        {qualifiedThreshold != null && (
+          <option value={-1}>Qualified (≥{qualifiedThreshold} {label})</option>
+        )}
         <option value={0}>All {label}</option>
         <option value={30}>≥30 {label}</option>
         <option value={50}>≥50 {label}</option>
         <option value={100}>≥100 {label}</option>
         <option value={150}>≥150 {label}</option>
         <option value={300}>≥300 {label}</option>
+        <option value={502}>≥502 {label}</option>
       </select>
     </div>
   );
@@ -333,10 +339,10 @@ export default function LeaderboardPage() {
   const [tab, setTab] = useState<Tab>('hitting');
   const [batPos,   setBatPos]   = useState('All');
   const [batTeam,  setBatTeam]  = useState('');
-  const [batMinPA, setBatMinPA] = useState(150);
+  const [batMinPA, setBatMinPA] = useState(-1); // -1 = qualified
   const [pitRole,  setPitRole]  = useState('All');
   const [pitTeam,  setPitTeam]  = useState('');
-  const [pitMinIP, setPitMinIP] = useState(30);
+  const [pitMinIP, setPitMinIP] = useState(-1); // -1 = qualified
 
   // Derive available teams from real data so abbreviations always match FanGraphs exactly
   const { data: batRaw = [] } = useBattingLeaderboard();
@@ -349,6 +355,16 @@ export default function LeaderboardPage() {
   const pitTeams = useMemo(() =>
     [...new Set(pitRaw.map(r => r.team).filter(t => t && !/^\d/.test(t)))].sort()
   , [pitRaw]);
+
+  // Dynamic qualified thresholds: 3.1 PA/game for batters, 1.0 IP/game for pitchers
+  const batTeamGames = useMemo(() =>
+    batRaw.length > 0 ? Math.max(...batRaw.map(r => r.g)) : 162
+  , [batRaw]);
+  const pitTeamGames = useMemo(() =>
+    pitRaw.length > 0 ? Math.max(...pitRaw.map(r => r.g)) : 162
+  , [pitRaw]);
+  const qualifiedPA = Math.floor(3.1 * batTeamGames);
+  const qualifiedIP = Math.floor(1.0 * pitTeamGames);
 
   return (
     <div className="leaderboard-page">
@@ -390,6 +406,7 @@ export default function LeaderboardPage() {
           onTeamChange={setBatTeam}
           minPA={batMinPA}
           onMinPAChange={setBatMinPA}
+          qualifiedThreshold={qualifiedPA}
           label="PA"
           teams={batTeams}
         />
@@ -402,6 +419,7 @@ export default function LeaderboardPage() {
           onTeamChange={setPitTeam}
           minPA={pitMinIP}
           onMinPAChange={setPitMinIP}
+          qualifiedThreshold={qualifiedIP}
           label="IP"
           teams={pitTeams}
         />
@@ -410,11 +428,11 @@ export default function LeaderboardPage() {
       {/* Content */}
       {tab === 'hitting' ? (
         <BattingLeaderboardWithFilters
-          posGroup={batPos} teamFilter={batTeam} minPA={batMinPA}
+          posGroup={batPos} teamFilter={batTeam} minPA={batMinPA} qualifiedPA={qualifiedPA}
         />
       ) : (
         <PitchingLeaderboardWithFilters
-          roleGroup={pitRole} teamFilter={pitTeam} minIP={pitMinIP}
+          roleGroup={pitRole} teamFilter={pitTeam} minIP={pitMinIP} qualifiedIP={qualifiedIP}
         />
       )}
     </div>
@@ -424,14 +442,15 @@ export default function LeaderboardPage() {
 // ─── Filter-aware wrappers ────────────────────────────────────────────
 
 function BattingLeaderboardWithFilters({
-  posGroup, teamFilter, minPA,
-}: { posGroup: string; teamFilter: string; minPA: number }) {
+  posGroup, teamFilter, minPA, qualifiedPA,
+}: { posGroup: string; teamFilter: string; minPA: number; qualifiedPA: number }) {
   const navigate = useNavigate();
   const { data: raw = [], isLoading } = useBattingLeaderboard();
   const posValues = BAT_POS_GROUPS.find(g => g.label === posGroup)?.values ?? [];
 
-  // When a specific team is selected, drop the PA threshold so all rostered players appear
-  const effectiveMinPA = teamFilter ? 1 : minPA;
+  // -1 = use dynamic qualified threshold; team filter drops threshold entirely
+  const thresholdPA = minPA === -1 ? qualifiedPA : minPA;
+  const effectiveMinPA = teamFilter ? 1 : thresholdPA;
 
   const rows = useMemo(() =>
     raw.filter(r =>
@@ -516,14 +535,15 @@ function BattingLeaderboardWithFilters({
 }
 
 function PitchingLeaderboardWithFilters({
-  roleGroup, teamFilter, minIP,
-}: { roleGroup: string; teamFilter: string; minIP: number }) {
+  roleGroup, teamFilter, minIP, qualifiedIP,
+}: { roleGroup: string; teamFilter: string; minIP: number; qualifiedIP: number }) {
   const navigate = useNavigate();
   const { data: raw = [], isLoading } = usePitchingLeaderboard();
   const roleValues = PIT_ROLE_GROUPS.find(g => g.label === roleGroup)?.values ?? [];
 
-  // Relax IP threshold when a specific team is selected
-  const effectiveMinIP = teamFilter ? 0.1 : minIP;
+  // -1 = use dynamic qualified threshold; team filter relaxes threshold
+  const thresholdIP = minIP === -1 ? qualifiedIP : minIP;
+  const effectiveMinIP = teamFilter ? 0.1 : thresholdIP;
 
   const rows = useMemo(() =>
     raw.filter(r =>
