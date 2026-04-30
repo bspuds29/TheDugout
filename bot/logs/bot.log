@@ -260,3 +260,34 @@ https://thedugoutapi.com/player?mlbId=696100&name=Hunter+Goodman
 2026-04-30 06:22:19,130  INFO      poster — Tweet posted (text only) — id: 2049736082724364307
 2026-04-30 06:22:19,131  INFO      tracker — Marked as used: game_824525_hit_696100
 2026-04-30 06:22:19,131  INFO      __main__ — Done. Tweet ID: 2049736082724364307
+2026-04-30 17:08:27,040  INFO      __main__ — ============================================================
+2026-04-30 17:08:27,041  INFO      __main__ — TheDugout tweet bot starting — 2026-04-30T17:08:27.041012+00:00
+2026-04-30 17:08:27,041  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-04-30 17:08:27,041  INFO      __main__ — Collecting stat candidates…
+2026-04-30 17:08:27,041  INFO      collector — Fetching schedule for 2026-04-29
+2026-04-30 17:08:27,648  INFO      collector — Collected 47 game candidates
+2026-04-30 17:08:28,900  INFO      collector — Collected 17 weekly hitter candidates
+2026-04-30 17:08:29,111  INFO      collector — FanGraphs batting leaderboard: 180 rows
+2026-04-30 17:08:29,389  INFO      collector — FanGraphs pitching leaderboard: 81 rows
+2026-04-30 17:08:29,389  INFO      collector — Collected 30 season leader candidates
+2026-04-30 17:08:29,411  INFO      collector — Collected 3 team game candidates
+2026-04-30 17:08:29,485  INFO      collector — Collected 1 team streak candidates
+2026-04-30 17:08:29,486  INFO      collector — Total candidates: 98 (last_tweet=hitting, last_stat=game_hitting)
+2026-04-30 17:08:29,486  INFO      __main__ — 94 fresh candidates after dedup (of 98 total)
+2026-04-30 17:08:29,486  INFO      __main__ — Selected candidate: 'JJ Wetherholt' — JJ Wetherholt is 4-for-9 (.444) over his last 3 games, 1 HR (score=81.5, type=weekly_hitting)
+2026-04-30 17:08:29,486  INFO      __main__ — Generating tweet via Claude…
+2026-04-30 17:08:31,274  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-04-30 17:08:31,295  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-30 17:08:31,296  INFO      __main__ — TWEET PREVIEW:
+JJ Wetherholt: 4-for-9, 1 HR, 1.611 OPS over his last 3 games.
+
+quietly locked in
+
+https://thedugoutapi.com/player?mlbId=802139&name=JJ+Wetherholt
+2026-04-30 17:08:31,296  INFO      __main__ — Length: 81 chars (body) + 23 (t.co URL) = 105 total
+2026-04-30 17:08:31,296  INFO      __main__ — ──────────────────────────────────────────────────
+2026-04-30 17:08:31,296  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-04-30 17:08:31,296  INFO      __main__ — Posting tweet…
+2026-04-30 17:08:31,538  INFO      poster — Tweet posted (text only) — id: 2049898705952587794
+2026-04-30 17:08:31,539  INFO      tracker — Marked as used: weekly_2026_2026w18_hit_802139_hislast3games
+2026-04-30 17:08:31,540  INFO      __main__ — Done. Tweet ID: 2049898705952587794

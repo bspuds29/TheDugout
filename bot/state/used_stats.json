@@ -5,7 +5,8 @@
     "weekly_2026_2026w18_hit_592450_hislast3games",
     "weekly_2026_2026w18_hit_660271_hislast3games",
     "weekly_2026_2026w18_hit_682829_hislast3games",
-    "game_824525_hit_696100"
+    "game_824525_hit_696100",
+    "weekly_2026_2026w18_hit_802139_hislast3games"
   ],
   "tweet_log": [
     {
@@ -55,7 +56,15 @@
       "player": "Hunter Goodman",
       "stat": "Hunter Goodman went 3/4 with 2 HRs, 3-for-4, 3 RBI, 9 total bases",
       "timestamp": "2026-04-30T06:22:19.131626+00:00"
+    },
+    {
+      "id": "weekly_2026_2026w18_hit_802139_hislast3games",
+      "tweet_text": "JJ Wetherholt: 4-for-9, 1 HR, 1.611 OPS over his last 3 games.\n\nquietly locked in\n\nhttps://thedugoutapi.com/player?mlbId=802139&name=JJ+Wetherholt",
+      "tweet_id": "2049898705952587794",
+      "player": "JJ Wetherholt",
+      "stat": "JJ Wetherholt is 4-for-9 (.444) over his last 3 games, 1 HR",
+      "timestamp": "2026-04-30T17:08:31.539672+00:00"
     }
   ],
-  "last_run": "2026-04-30T06:22:19.131638+00:00"
+  "last_run": "2026-04-30T17:08:31.539682+00:00"
 }
