@@ -959,13 +959,13 @@ export default function PlayerPage() {
           {/* ─── Splits tab ───────────────────────────────────────── */}
           {tab === 'splits' && (
             <>
-              ({showPitchingNow && (
+              {showPitchingNow && (
                 <>
                   <SectionDivider title="Pitching Splits" color="var(--color-accent)" />
                   <SplitsPitching splits={pitchingSplits ?? null} />
                 </>
               )}
-              ({showHittingNow && (
+              {showHittingNow && (
                 <>
                   <SectionDivider title="Hitting Splits" color="var(--color-green)" />
                   <SplitsHitting splits={hittingSplits ?? null} />
@@ -987,13 +987,6 @@ export default function PlayerPage() {
 
           {/* ─── Overview tab ─────────────────────────────────────── */}
           {tab === 'overview' && <>
-
-          {/* No stats yet (e.g. player on IL or hasn't appeared this season) */}
-          {!pitching && !hitting && (
-            <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '2rem 0' }}>
-              No {new Date().getFullYear()} stats available yet.
-            </p>
-          )}
 
           {/* ═══ PITCHING SECTION ═══ */}
           {showPitchingNow && pitching && pitching.games > 0 && (
