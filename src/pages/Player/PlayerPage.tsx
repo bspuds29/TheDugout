@@ -870,7 +870,10 @@ export default function PlayerPage() {
                 <Badge variant={PITCHER_POS.includes(position) ? 'accent' : 'green'}>
                   {position || '—'}
                 </Badge>
-                {person?.teamName && <span className="player-hero-team">{person.teamName}</span>}
+                {person?.isFreeAgent
+                  ? <span className="player-hero-team" style={{ color: 'var(--color-text-secondary)' }}>Free Agent</span>
+                  : person?.teamName && <span className="player-hero-team">{person.teamName}</span>
+                }
                 {person && person.jersey > 0 && <span>#{person.jersey}</span>}
                 {person && person.age    > 0 && <span>Age {person.age}</span>}
                 {(person?.bats || person?.throws) && (
@@ -1388,6 +1391,13 @@ export default function PlayerPage() {
           {/* ─── All Stats tab ────────────────────────────────────── */}
           {tab === 'stats' && (
             <div className="allstats-tab">
+
+              {/* Empty state */}
+              {!hitting && !pitching && (
+                <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '3rem 0' }}>
+                  No {new Date().getFullYear()} stats available yet.
+                </p>
+              )}
 
               {/* ── HITTING ── */}
               {hasHitting && hitting && (<>

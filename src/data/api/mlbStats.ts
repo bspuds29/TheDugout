@@ -39,6 +39,10 @@ export interface RawMLBPerson {
   primaryPosition: { abbreviation: string; name: string };
   currentTeam?: { id: number; name: string; abbreviation: string };
   mlbDebutDate?: string;
+  rosterEntries?: Array<{
+    isActive: boolean;
+    status: { code: string; description: string };
+  }>;
 }
 
 export interface RawMLBPitchingStat {
@@ -283,7 +287,7 @@ export async function searchMLBPlayers(query: string): Promise<RawMLBSearchResul
 
 export async function fetchMLBPerson(mlbId: number): Promise<RawMLBPerson> {
   const data = await get<{ people: RawMLBPerson[] }>(
-    `/people/${mlbId}?hydrate=currentTeam`
+    `/people/${mlbId}?hydrate=currentTeam,rosterEntries`
   );
   if (!data.people?.length) throw new Error(`Player ${mlbId} not found`);
   return data.people[0];

@@ -27,6 +27,7 @@ export interface Player {
   teamId: string;
   teamName?: string;
   teamAbbr?: string;
+  isFreeAgent?: boolean;
   position: Position;
   bats: HandType;
   throws: HandType;

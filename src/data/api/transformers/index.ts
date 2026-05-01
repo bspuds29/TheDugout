@@ -67,6 +67,12 @@ export function transformPerson(raw: RawMLBPerson): Player {
   // All pitchers (SP, RP, CL, TWP) are displayed as "P" in the profile badge
   const normalizedPos = (['SP', 'RP', 'CL', 'TWP', 'P'].includes(pos) ? 'P' : pos) as Player['position'];
 
+  // Detect free agents: most recent roster entry has status code 'FA' and is inactive
+  const latestEntry = raw.rosterEntries?.[0];
+  const isFreeAgent = latestEntry
+    ? latestEntry.status?.code === 'FA' && !latestEntry.isActive
+    : false;
+
   return {
     id: String(raw.id),
     name: raw.fullName,
@@ -75,6 +81,7 @@ export function transformPerson(raw: RawMLBPerson): Player {
     teamId: String(raw.currentTeam?.id ?? ''),
     teamName: raw.currentTeam?.name,
     teamAbbr: raw.currentTeam?.abbreviation,
+    isFreeAgent,
     position: normalizedPos,
     bats: (raw.batSide?.code ?? 'R') as Player['bats'],
     throws: (raw.pitchHand?.code ?? 'R') as Player['throws'],
