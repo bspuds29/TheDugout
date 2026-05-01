@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, createContext, useContext, ReactNode } from 'react';
+import { useState, useEffect, useRef, createContext, useContext } from 'react';
+import type { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import './NavProgressBar.css';
 
