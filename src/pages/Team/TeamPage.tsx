@@ -406,7 +406,8 @@ function RosterSection({ teamId }: { teamId: number }) {
                     {group.players.map(p => {
                       const id   = p.person.id;
                       const name = p.person.fullName;
-                      const pos  = p.position.abbreviation;
+                      // depthChart returns 'P' for all non-closer relievers; display as 'RP'
+                      const pos  = p.position.abbreviation === 'P' ? 'RP' : p.position.abbreviation;
                       const bat  = p.person.batSide?.code ?? '—';
                       const thr  = p.person.pitchHand?.code ?? '—';
                       const age  = p.person.currentAge ?? '—';
