@@ -858,8 +858,8 @@ export default function PlayerPage() {
         </>
       )}
 
-      {/* Player loaded */}
-      {mlbId && !isLoading && (pitching || hitting) && (
+      {/* Player loaded — show as soon as person resolves, even if stats are empty */}
+      {mlbId && !isLoading && (pitching || hitting || person) && (
         <>
           {/* Player hero */}
           <div className="player-hero">
@@ -984,6 +984,13 @@ export default function PlayerPage() {
 
           {/* ─── Overview tab ─────────────────────────────────────── */}
           {tab === 'overview' && <>
+
+          {/* No stats yet (e.g. player on IL or hasn't appeared this season) */}
+          {!pitching && !hitting && (
+            <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '2rem 0' }}>
+              No {new Date().getFullYear()} stats available yet.
+            </p>
+          )}
 
           {/* ═══ PITCHING SECTION ═══ */}
           {showPitchingNow && pitching && pitching.games > 0 && (
