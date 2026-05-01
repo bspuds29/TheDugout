@@ -740,8 +740,15 @@ export default function PlayerPage() {
     return () => { document.title = 'The Dugout · MLB Analytics'; };
   }, [resolvedName]);
 
-  const position = person?.position ?? '';
-  const { showPitching, showHitting } = resolveRoles(position);
+  const rawPosition = person?.position ?? '';
+  // The MLB person API returns 'P' for all pitchers regardless of role.
+  // Derive the accurate SP / RP label from games started once stats load.
+  const position: string = (() => {
+    if (rawPosition !== 'P') return rawPosition;                   // non-pitcher, keep as-is
+    if (pitching === null || pitching === undefined) return 'P';   // stats not loaded yet
+    return pitching.gamesStarted > 0 ? 'SP' : 'RP';
+  })();
+  const { showPitching, showHitting } = resolveRoles(rawPosition);
 
   // Once person loads, decide which sections to show based on actual data presence too
   const hasPitching = showPitching || (pitching !== null && pitching !== undefined && pitching.games > 0);
