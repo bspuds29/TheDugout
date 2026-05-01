@@ -293,6 +293,56 @@ export async function fetchMLBPerson(mlbId: number): Promise<RawMLBPerson> {
   return data.people[0];
 }
 
+// ─── Draft info ───────────────────────────────────────────────────────
+// MLB Stats API: /people/{id}?hydrate=currentTeam,draft
+// Draft info lives in person.drafts[0] (Rule 4 / June Amateur Draft)
+
+export interface RawDraftInfo {
+  draftYear?:       number;
+  round?:           string;   // "1", "2", ...
+  pickNumber?:      number;   // overall pick (e.g. 6)
+  roundPickNumber?: number;   // pick within round
+  isDrafted?:       boolean;
+  school?: {
+    name?:  string;
+    state?: string;
+    country?: string;
+  };
+  draftTeam?: {
+    id?:   number;
+    name?: string;
+  };
+}
+
+export async function fetchDraftInfo(mlbId: number): Promise<RawDraftInfo | null> {
+  try {
+    const data = await get<{ people: Array<Record<string, unknown>> }>(
+      `/people/${mlbId}?hydrate=currentTeam,draft`
+    );
+    if (!data.people?.length) return null;
+    const p = data.people[0] as Record<string, unknown>;
+    const draftYear = p.draftYear as number | undefined;
+    if (!draftYear) return null;
+
+    // MLB returns an array of draft picks; take the first (earliest / only)
+    const drafts = p.drafts as Array<Record<string, unknown>> | undefined;
+    const pick   = drafts?.[0];
+    if (!pick) return { draftYear };
+
+    return {
+      draftYear,
+      round:           pick.pickRound       as string  | undefined,
+      pickNumber:      pick.pickNumber      as number  | undefined,
+      roundPickNumber: pick.roundPickNumber as number  | undefined,
+      isDrafted:       pick.isDrafted       as boolean | undefined,
+      school:          pick.school          as RawDraftInfo['school']    | undefined,
+      draftTeam:       pick.team            as RawDraftInfo['draftTeam'] | undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
 // ─── Pitching stats ───────────────────────────────────────────────────
 
 export async function fetchPitchingStats(

@@ -32,6 +32,7 @@ import {
   useStatcastZoneData,
   useHittingPercentileRanks,
   usePitchingPercentileRanks,
+  useDraftInfo,
   type HittingPercentileRanks,
   type PitchingPercentileRanks,
   type HittingSplitEntry,
@@ -752,6 +753,7 @@ export default function PlayerPage() {
   const { data: zoneData }      = useStatcastZoneData(mlbId);
   const { data: hitRanks }      = useHittingPercentileRanks(mlbId);
   const { data: pitchRanks }    = usePitchingPercentileRanks(mlbId);
+  const { draftInfo }           = useDraftInfo(mlbId);
 
   // Update document title — person is now initialized above
   const resolvedName = person?.name ?? playerName;
@@ -904,6 +906,22 @@ export default function PlayerPage() {
                   <span>Bats/Throws: {person.bats ?? '—'}/{person.throws ?? '—'}</span>
                 )}
                 {person?.height && <span>{person.height}</span>}
+                {draftInfo?.draftYear && (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    🎓
+                    {draftInfo.draftYear} Draft
+                    {draftInfo.round && ` · Rd ${draftInfo.round}`}
+                    {draftInfo.pickNumber != null && `, Pick ${draftInfo.pickNumber}`}
+                    {draftInfo.draftTeam?.name && (
+                      <span> · {draftInfo.draftTeam.name}</span>
+                    )}
+                    {draftInfo.school?.name && (
+                      <span style={{ color: 'var(--color-text-tertiary)' }}>
+                        {' '}({draftInfo.school.name})
+                      </span>
+                    )}
+                  </span>
+                )}
               </div>
             </div>
             {/* Two-way player toggle */}

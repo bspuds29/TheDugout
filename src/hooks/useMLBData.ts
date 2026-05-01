@@ -26,6 +26,8 @@ import {
   fetchPitchingSplits,
   fetchTeamRecentSchedule,
   fetchTeamSeasonStats,
+  fetchDraftInfo,
+  type RawDraftInfo,
   type RawMLBPitchArsenalEntry,
   type PitcherGameLogEntry,
   type RawMLBRosterPlayerHydrated,
@@ -146,6 +148,22 @@ export function usePlayer(mlbId: number | null): {
     isLoading,
     error: error as Error | null,
   };
+}
+
+// ─── Draft info ────────────────────────────────────────────────────────
+
+export function useDraftInfo(mlbId: number | null): {
+  draftInfo: RawDraftInfo | null;
+  isLoading: boolean;
+} {
+  const { data, isLoading } = useQuery({
+    queryKey: ['draftInfo', mlbId],
+    queryFn:  () => fetchDraftInfo(mlbId!),
+    enabled:  mlbId !== null && mlbId > 0,
+    staleTime: 24 * 60 * 60 * 1000, // 24 h — draft info never changes
+    retry: false,
+  });
+  return { draftInfo: data ?? null, isLoading };
 }
 
 // ─── Pitching stats (MLB Stats API + Savant overlay) ──────────────────
