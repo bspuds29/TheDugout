@@ -82,7 +82,11 @@ function AppRoutes() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <BrowserRouter>
+      {/* unstable_useTransitions={false} disables React Router v7's default
+          startTransition wrapping for all navigations. Without it, React 19
+          keeps the old page visible while the new one loads concurrently,
+          causing the "URL changes but view stays frozen" bug on heavy pages. */}
+      <BrowserRouter unstable_useTransitions={false}>
         <ScrollToTop />
         <Layout>
           <AppRoutes />
