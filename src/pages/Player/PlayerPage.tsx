@@ -337,8 +337,8 @@ const SPLIT_HIT_SLASH  = [
 const SPLIT_HIT_SUB = [
   { label: 'HR',  gloss: null },
   { label: 'RBI', gloss: null },
-  { label: 'BB',  gloss: 'BB%' },
-  { label: 'K',   gloss: 'K%' },
+  { label: 'BB%', gloss: 'BB%' },
+  { label: 'K%',  gloss: 'K%' },
   { label: 'SB',  gloss: null },
   { label: 'OPS', gloss: 'OPS' },
 ] as const;
@@ -353,8 +353,8 @@ const SPLIT_PIT_SUB = [
   { label: 'ERA',  gloss: 'ERA' },
   { label: 'BB/9', gloss: 'BB/9' },
   { label: 'HR',   gloss: null },
-  { label: 'K',    gloss: 'K%' },
-  { label: 'BB',   gloss: 'BB%' },
+  { label: 'K%',   gloss: 'K%' },
+  { label: 'BB%',  gloss: 'BB%' },
   { label: 'IP',   gloss: 'IP' },
 ] as const;
 
@@ -374,8 +374,12 @@ function SplitStatCard({ entry, color }: { entry: HittingSplitEntry; color: stri
     entry.slg.replace('0.', '.'),
   ];
   const subValues = [
-    String(entry.hr), String(entry.rbi), String(entry.bb),
-    String(entry.k), String(entry.sb), entry.ops.replace('0.', '.'),
+    String(entry.hr),
+    String(entry.rbi),
+    entry.pa > 0 ? (entry.bb / entry.pa * 100).toFixed(1) + '%' : '—',
+    entry.pa > 0 ? (entry.k  / entry.pa * 100).toFixed(1) + '%' : '—',
+    String(entry.sb),
+    entry.ops.replace('0.', '.'),
   ];
 
   return (
@@ -411,8 +415,12 @@ function PitchSplitCard({ entry, color }: { entry: PitchingSplitEntry; color: st
     entry.k9.toFixed(1),
   ];
   const subValues = [
-    entry.era.toFixed(2), entry.bb9.toFixed(1),
-    String(entry.hr), String(entry.k), String(entry.bb), entry.ip.toFixed(1),
+    entry.era.toFixed(2),
+    entry.bb9.toFixed(1),
+    String(entry.hr),
+    entry.bf > 0 ? (entry.k  / entry.bf * 100).toFixed(1) + '%' : '—',
+    entry.bf > 0 ? (entry.bb / entry.bf * 100).toFixed(1) + '%' : '—',
+    entry.ip.toFixed(1),
   ];
 
   return (
