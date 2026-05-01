@@ -291,3 +291,37 @@ https://thedugoutapi.com/player?mlbId=802139&name=JJ+Wetherholt
 2026-04-30 17:08:31,538  INFO      poster — Tweet posted (text only) — id: 2049898705952587794
 2026-04-30 17:08:31,539  INFO      tracker — Marked as used: weekly_2026_2026w18_hit_802139_hislast3games
 2026-04-30 17:08:31,540  INFO      __main__ — Done. Tweet ID: 2049898705952587794
+2026-05-01 06:31:18,030  INFO      __main__ — ============================================================
+2026-05-01 06:31:18,030  INFO      __main__ — TheDugout tweet bot starting — 2026-05-01T06:31:18.030541+00:00
+2026-05-01 06:31:18,030  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-01 06:31:18,030  INFO      __main__ — Collecting stat candidates…
+2026-05-01 06:31:18,031  INFO      collector — Fetching schedule for 2026-04-30
+2026-05-01 06:31:18,235  INFO      collector — Collected 43 game candidates
+2026-05-01 06:31:18,901  INFO      collector — Collected 16 weekly hitter candidates
+2026-05-01 06:31:19,085  INFO      collector — FanGraphs batting leaderboard: 180 rows
+2026-05-01 06:31:19,271  INFO      collector — FanGraphs pitching leaderboard: 81 rows
+2026-05-01 06:31:19,271  INFO      collector — Collected 30 season leader candidates
+2026-05-01 06:31:19,278  INFO      collector — Collected 4 team game candidates
+2026-05-01 06:31:19,308  INFO      collector — Collected 2 team streak candidates
+2026-05-01 06:31:19,309  INFO      collector — Built 3 combined hitting candidates
+2026-05-01 06:31:19,309  INFO      collector — Total candidates: 98 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-01 06:31:19,309  INFO      __main__ — 94 fresh candidates after dedup (of 98 total)
+2026-05-01 06:31:19,309  INFO      __main__ — Selected candidate: 'JJ Wetherholt' — JJ Wetherholt last night: 2-for-4, 1 HR, 1 RBI
+Last 3 games: 5-for-12, 1 HR, 2 RBI, 1.417 OPS (score=70.2, type=combined_hitting)
+2026-05-01 06:31:19,309  INFO      __main__ — Generating tweet via Claude…
+2026-05-01 06:31:20,784  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-01 06:31:20,805  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-01 06:31:20,805  INFO      __main__ — TWEET PREVIEW:
+JJ Wetherholt last night: 2-for-4, 1 HR, 1 RBI
+Last 3 games: 5-for-12, 1 HR, 1.417 OPS
+
+nobody's talking about him but they should be
+
+https://thedugoutapi.com/player?mlbId=802139&name=JJ+Wetherholt
+2026-05-01 06:31:20,805  INFO      __main__ — Length: 133 chars (body) + 23 (t.co URL) = 157 total
+2026-05-01 06:31:20,806  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-01 06:31:20,806  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-01 06:31:20,806  INFO      __main__ — Posting tweet…
+2026-05-01 06:31:21,042  INFO      poster — Tweet posted (text only) — id: 2050100743479198206
+2026-05-01 06:31:21,043  INFO      tracker — Marked as used: combined_802139_2026-04-30
+2026-05-01 06:31:21,043  INFO      __main__ — Done. Tweet ID: 2050100743479198206

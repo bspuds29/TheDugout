@@ -6,7 +6,8 @@
     "weekly_2026_2026w18_hit_660271_hislast3games",
     "weekly_2026_2026w18_hit_682829_hislast3games",
     "game_824525_hit_696100",
-    "weekly_2026_2026w18_hit_802139_hislast3games"
+    "weekly_2026_2026w18_hit_802139_hislast3games",
+    "combined_802139_2026-04-30"
   ],
   "tweet_log": [
     {
@@ -64,7 +65,15 @@
       "player": "JJ Wetherholt",
       "stat": "JJ Wetherholt is 4-for-9 (.444) over his last 3 games, 1 HR",
       "timestamp": "2026-04-30T17:08:31.539672+00:00"
+    },
+    {
+      "id": "combined_802139_2026-04-30",
+      "tweet_text": "JJ Wetherholt last night: 2-for-4, 1 HR, 1 RBI\nLast 3 games: 5-for-12, 1 HR, 1.417 OPS\n\nnobody's talking about him but they should be\n\nhttps://thedugoutapi.com/player?mlbId=802139&name=JJ+Wetherholt",
+      "tweet_id": "2050100743479198206",
+      "player": "JJ Wetherholt",
+      "stat": "JJ Wetherholt last night: 2-for-4, 1 HR, 1 RBI\nLast 3 games: 5-for-12, 1 HR, 2 RBI, 1.417 OPS",
+      "timestamp": "2026-05-01T06:31:21.043334+00:00"
     }
   ],
-  "last_run": "2026-04-30T17:08:31.539682+00:00"
+  "last_run": "2026-05-01T06:31:21.043344+00:00"
 }
