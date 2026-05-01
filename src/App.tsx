@@ -47,17 +47,16 @@ function PageLoader() {
 
 // ─── Routes rendered inside BrowserRouter so useLocation() is valid ──
 function AppRoutes() {
-  // Keying <Routes> on pathname forces React Router to treat each navigation
-  // as a fresh mount rather than an update. This defeats React 19 concurrent
-  // rendering's "keep-previous-tree-while-suspending" optimization, which was
-  // causing ToolsPage (and other heavy pages) to stay frozen on screen after
-  // clicking a sidebar link. Suspense's stale-tree behaviour only applies to
-  // updates — a fresh mount always shows the fallback spinner instead.
+  // Keying <Suspense> on pathname (not <Routes>) is the correct fix for React 19
+  // + React Router v7's startTransition-wrapped navigation. React 19 won't replace
+  // an already-visible Suspense subtree with a fallback during a transition UNLESS
+  // the Suspense boundary itself has a new key — at which point it has no previous
+  // content and always renders the fallback while the lazy chunk loads.
   const location = useLocation();
 
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes location={location} key={location.pathname}>
+    <Suspense key={location.pathname} fallback={<PageLoader />}>
+      <Routes location={location}>
         <Route path="/"              element={<HomePage />} />
         <Route path="/player"        element={<PlayerPage />} />
         {/* Legacy routes — redirect to unified player page */}
