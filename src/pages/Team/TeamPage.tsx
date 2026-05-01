@@ -46,6 +46,18 @@ const DIV_NAMES: Record<number, string> = {
 
 // ─── Position grouping ────────────────────────────────────────────────
 
+// Lower number = higher priority when deduplicating depth-chart entries.
+// depthChart returns players in every slot they fill (e.g. Roman Anthony
+// appears as LF, RF, AND DH). We keep only the most descriptive position.
+const POS_PRIORITY: Record<string, number> = {
+  SP: 0, RP: 1, CP: 1, CL: 1,
+  C: 2,
+  '1B': 3, '2B': 3, '3B': 3, SS: 3,
+  LF: 4, CF: 4, RF: 4, OF: 4,
+  P:  8,   // generic pitcher — above DH
+  DH: 9,   // DH last: only kept when it's the player's sole listing
+};
+
 function posGroup(abbr: string): string {
   const a = abbr.toUpperCase();
   if (a === 'C')  return 'Catchers';
@@ -321,8 +333,27 @@ function RosterSection({ teamId }: { teamId: number }) {
   const navigate = useNavigate();
 
   const grouped = useMemo(() => {
-    const map = new Map<string, RawMLBRosterPlayerHydrated[]>();
+    // depthChart lists players in every slot they fill — deduplicate by player id,
+    // keeping whichever entry has the highest-priority (most specific) position.
+    const bestByPlayer = new Map<number, RawMLBRosterPlayerHydrated>();
     for (const player of roster) {
+      const id  = player.person.id;
+      const pos = player.position.abbreviation.toUpperCase();
+      const existing = bestByPlayer.get(id);
+      if (!existing) {
+        bestByPlayer.set(id, player);
+      } else {
+        const cur = existing.position.abbreviation.toUpperCase();
+        const priority = (p: string) => POS_PRIORITY[p] ?? 6;
+        if (priority(pos) < priority(cur)) {
+          bestByPlayer.set(id, player);
+        }
+      }
+    }
+    const deduped = Array.from(bestByPlayer.values());
+
+    const map = new Map<string, RawMLBRosterPlayerHydrated[]>();
+    for (const player of deduped) {
       const grp = posGroup(player.position.abbreviation);
       if (!map.has(grp)) map.set(grp, []);
       map.get(grp)!.push(player);
@@ -341,8 +372,14 @@ function RosterSection({ teamId }: { teamId: number }) {
       .filter(g => g.players.length > 0);
   }, [roster]);
 
+  const rosterCount = useMemo(() => {
+    const seen = new Set<number>();
+    for (const p of roster) seen.add(p.person.id);
+    return seen.size;
+  }, [roster]);
+
   return (
-    <Card title="Active Roster" subtitle={`${roster.length} players`} className="tp-card">
+    <Card title="Active Roster" subtitle={`${rosterCount} players`} className="tp-card">
       {isLoading ? (
         <table className="tp-table"><tbody>
           {[...Array(10)].map((_, i) => <SkeletonRow key={i} cols={4} />)}
