@@ -261,17 +261,6 @@ export async function fetchFanGraphsFieldingById(
       Number(row['MLBAMID'])  === mlbId
     );
     if (!r) {
-      if (year > 2021) {
-        const prev = await getFieldingLeaderboard(year - 1);
-        const rp = prev.find(row =>
-          Number(row['xMLBAMID']) === mlbId ||
-          Number(row['MLBAMID'])  === mlbId
-        );
-        if (rp) {
-          console.info(`[FanGraphs] Fielding ${mlbId} loaded from ${year - 1}`);
-          return buildFieldingStats(mlbId, year - 1, rp);
-        }
-      }
       return null;
     }
     console.info(`[FanGraphs] Fielding ${mlbId} loaded from ${year}`);
