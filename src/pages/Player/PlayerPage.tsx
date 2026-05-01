@@ -1342,12 +1342,14 @@ export default function PlayerPage() {
                   sub="Defensive Runs Saved"
                   color={defense.drs !== null && defense.drs > 0 ? 'green' : 'default'}
                 />
-                <StatCard
-                  label="UZR/150"
-                  value={defense.uzr150 !== null ? (defense.uzr150 > 0 ? `+${defense.uzr150.toFixed(1)}` : defense.uzr150.toFixed(1)) : '—'}
-                  sub={defense.uzr150 === null ? 'Updated mid-season by FanGraphs' : 'UZR per 150 Games'}
-                  color="accent"
-                />
+                {defense.uzr150 !== null && (
+                  <StatCard
+                    label="UZR/150"
+                    value={defense.uzr150 > 0 ? `+${defense.uzr150.toFixed(1)}` : defense.uzr150.toFixed(1)}
+                    sub="UZR per 150 Games"
+                    color="accent"
+                  />
+                )}
                 <StatCard
                   label="Defense"
                   value={defense.defense !== null ? (defense.defense > 0 ? `+${defense.defense.toFixed(1)}` : defense.defense.toFixed(1)) : '—'}
@@ -1583,8 +1585,8 @@ export default function PlayerPage() {
                       { l: 'PO',      v: String(defense.putouts) },
                       { l: 'OAA',     v: defense.oaa != null ? (defense.oaa >= 0 ? '+' : '') + defense.oaa.toFixed(0) : '—', c: (defense.oaa ?? 0) > 0 ? 'var(--color-teal)' : (defense.oaa ?? 0) < 0 ? '#ef4444' : undefined },
                       { l: 'DRS',     v: defense.drs != null ? (defense.drs >= 0 ? '+' : '') + defense.drs.toFixed(0) : '—', c: (defense.drs ?? 0) > 0 ? 'var(--color-teal)' : (defense.drs ?? 0) < 0 ? '#ef4444' : undefined },
-                      { l: 'UZR',     v: defense.uzr != null ? (defense.uzr >= 0 ? '+' : '') + defense.uzr.toFixed(1) : '—', c: (defense.uzr ?? 0) > 0 ? 'var(--color-teal)' : (defense.uzr ?? 0) < 0 ? '#ef4444' : undefined, note: defense.uzr == null ? 'updated mid-season' : undefined },
-                      { l: 'UZR/150', v: defense.uzr150 != null ? (defense.uzr150 >= 0 ? '+' : '') + defense.uzr150.toFixed(1) : '—', c: (defense.uzr150 ?? 0) > 0 ? 'var(--color-teal)' : (defense.uzr150 ?? 0) < 0 ? '#ef4444' : undefined, note: defense.uzr150 == null ? 'updated mid-season' : undefined },
+                      ...(defense.uzr != null ? [{ l: 'UZR', v: (defense.uzr >= 0 ? '+' : '') + defense.uzr.toFixed(1), c: defense.uzr > 0 ? 'var(--color-teal)' : defense.uzr < 0 ? '#ef4444' : undefined }] : []),
+                      ...(defense.uzr150 != null ? [{ l: 'UZR/150', v: (defense.uzr150 >= 0 ? '+' : '') + defense.uzr150.toFixed(1), c: defense.uzr150 > 0 ? 'var(--color-teal)' : defense.uzr150 < 0 ? '#ef4444' : undefined }] : []),
                       ...(['LF','CF','RF','OF'].includes(String(defense.pos)) ? [
                         { l: 'ARM', v: defense.armR != null ? (defense.armR >= 0 ? '+' : '') + defense.armR.toFixed(1) : '—', c: (defense.armR ?? 0) > 0 ? 'var(--color-teal)' : (defense.armR ?? 0) < 0 ? '#ef4444' : undefined, note: defense.armR == null ? 'updated mid-season' : undefined },
                       ] : []),

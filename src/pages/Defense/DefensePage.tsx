@@ -192,12 +192,14 @@ export default function DefensePage() {
             sub={topDRS ? `${topDRS.name} · ${topDRS.pos}` : 'No data'}
             color="green"
           />
-          <StatCard
-            label="Best UZR/150"
-            value={topUZR ? fmt(topUZR.uzr150, 1, true) : '—'}
-            sub={topUZR ? `${topUZR.name} · ${topUZR.pos}` : 'No data'}
-            color="accent"
-          />
+          {topUZR && (
+            <StatCard
+              label="Best UZR/150"
+              value={fmt(topUZR.uzr150, 1, true)}
+              sub={`${topUZR.name} · ${topUZR.pos}`}
+              color="accent"
+            />
+          )}
           <StatCard
             label="Best Defense"
             value={topDef ? fmt(topDef.defense, 1, true) : '—'}
@@ -296,14 +298,15 @@ export default function DefensePage() {
                     );
                   },
                 },
-                {
+                // UZR/150 column only shown when at least one player has a value
+                ...(filtered.some(r => r.uzr150 !== null) ? [{
                   key: 'uzr150', label: 'UZR/150', sortable: true,
-                  render: v => {
+                  render: (v: unknown) => {
                     const n = v as number | null;
                     if (n === null) return <span style={{ color: 'var(--color-text-tertiary)' }}>—</span>;
                     return <span className="mono" style={{ color: colorVal(n) }}>{fmt(n, 1, true)}</span>;
                   },
-                },
+                }] : []),
                 {
                   key: 'defense', label: 'DEF', sortable: true,
                   render: v => {

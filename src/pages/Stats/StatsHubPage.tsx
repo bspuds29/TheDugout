@@ -675,8 +675,8 @@ export default function StatsHubPage() {
                   <S label="PO"      value={String(defense.putouts)} />
                   <S label="OAA"     value={defense.oaa != null ? signed(defense.oaa, 0) : '—'} color={(defense.oaa ?? 0) > 0 ? 'var(--color-teal)' : (defense.oaa ?? 0) < 0 ? '#ef4444' : undefined} sub="outs above avg" />
                   <S label="DRS"     value={defense.drs != null ? signed(defense.drs, 0) : '—'} color={(defense.drs ?? 0) > 0 ? 'var(--color-teal)' : (defense.drs ?? 0) < 0 ? '#ef4444' : undefined} sub="def runs saved" />
-                  <S label="UZR"     value={defense.uzr != null ? signed(defense.uzr, 1) : '—'} color={(defense.uzr ?? 0) > 0 ? 'var(--color-teal)' : (defense.uzr ?? 0) < 0 ? '#ef4444' : undefined} />
-                  <S label="UZR/150" value={defense.uzr150 != null ? signed(defense.uzr150, 1) : '—'} color={(defense.uzr150 ?? 0) > 0 ? 'var(--color-teal)' : (defense.uzr150 ?? 0) < 0 ? '#ef4444' : undefined} sub="per 150 games" />
+                  {defense.uzr != null && <S label="UZR" value={signed(defense.uzr, 1)} color={(defense.uzr) > 0 ? 'var(--color-teal)' : (defense.uzr) < 0 ? '#ef4444' : undefined} />}
+                  {defense.uzr150 != null && <S label="UZR/150" value={signed(defense.uzr150, 1)} color={(defense.uzr150) > 0 ? 'var(--color-teal)' : (defense.uzr150) < 0 ? '#ef4444' : undefined} sub="per 150 games" />}
                   <S label="Rng"     value={defense.rngR != null ? signed(defense.rngR, 1) : '—'} color={(defense.rngR ?? 0) > 0 ? 'var(--color-teal)' : (defense.rngR ?? 0) < 0 ? '#ef4444' : undefined} sub="range runs" />
                   <S label="Err"     value={defense.errR != null ? signed(defense.errR, 1) : '—'} color={(defense.errR ?? 0) > 0 ? 'var(--color-teal)' : (defense.errR ?? 0) < 0 ? '#ef4444' : undefined} sub="error runs" />
                   <S label="ARM"     value={defense.armR != null ? signed(defense.armR, 1) : '—'} color={(defense.armR ?? 0) > 0 ? 'var(--color-teal)' : undefined} sub="arm runs" />
