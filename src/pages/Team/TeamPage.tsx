@@ -53,7 +53,7 @@ function posGroup(abbr: string): string {
   if (['LF', 'CF', 'RF', 'OF'].includes(a)) return 'Outfielders';
   if (a === 'DH') return 'Designated Hitter';
   if (a === 'SP') return 'Starting Pitchers';
-  if (['RP', 'CL', 'MR', 'RL', 'P'].includes(a)) return 'Relief Pitchers';
+  if (['RP', 'CL', 'CP', 'MR', 'RL', 'P'].includes(a)) return 'Relief Pitchers';
   return 'Other';
 }
 
@@ -317,19 +317,13 @@ function StatRow({ label, value, color }: { label: string; value: string; color?
 // ─── Active roster ────────────────────────────────────────────────────
 
 function RosterSection({ teamId }: { teamId: number }) {
-  const { data: roster = [], isLoading } = useTeamRoster(teamId, 'active');
+  const { data: roster = [], isLoading } = useTeamRoster(teamId, 'depthChart');
   const navigate = useNavigate();
 
   const grouped = useMemo(() => {
     const map = new Map<string, RawMLBRosterPlayerHydrated[]>();
     for (const player of roster) {
-      // The active roster API returns 'P' for all pitchers.
-      // primaryPosition from the hydrated person has the accurate SP / RP designation.
-      const rawAbbr = player.position.abbreviation;
-      const posAbbr = rawAbbr === 'P' && player.person.primaryPosition?.abbreviation
-        ? player.person.primaryPosition.abbreviation
-        : rawAbbr;
-      const grp = posGroup(posAbbr);
+      const grp = posGroup(player.position.abbreviation);
       if (!map.has(grp)) map.set(grp, []);
       map.get(grp)!.push(player);
     }
@@ -375,9 +369,7 @@ function RosterSection({ teamId }: { teamId: number }) {
                     {group.players.map(p => {
                       const id   = p.person.id;
                       const name = p.person.fullName;
-                      const pos  = (p.position.abbreviation === 'P' && p.person.primaryPosition?.abbreviation)
-                        ? p.person.primaryPosition.abbreviation
-                        : p.position.abbreviation;
+                      const pos  = p.position.abbreviation;
                       const bat  = p.person.batSide?.code ?? '—';
                       const thr  = p.person.pitchHand?.code ?? '—';
                       const age  = p.person.currentAge ?? '—';
