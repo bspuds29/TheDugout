@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import Layout from './components/layout/Layout';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 import ScrollToTop from './components/ui/ScrollToTop';
+import { NavProgressProvider, useSignalSuspending } from './components/ui/NavProgressBar';
 
 // ── Lazy-loaded pages (each becomes its own chunk) ──────────────────
 const HomePage           = lazy(() => import('./pages/Home/HomePage'));
@@ -20,7 +21,9 @@ const TeamPage           = lazy(() => import('./pages/Team/TeamPage'));
 const GlossaryPage       = lazy(() => import('./pages/Glossary/GlossaryPage'));
 
 // ── Minimal inline spinner shown while a page chunk loads ───────────
+// Also signals the NavProgressBar to hold while suspending.
 function PageLoader() {
+  useSignalSuspending();
   return (
     <div style={{
       display: 'flex',
@@ -87,10 +90,12 @@ export default function App() {
           keeps the old page visible while the new one loads concurrently,
           causing the "URL changes but view stays frozen" bug on heavy pages. */}
       <BrowserRouter unstable_useTransitions={false}>
-        <ScrollToTop />
-        <Layout>
-          <AppRoutes />
-        </Layout>
+        <NavProgressProvider>
+          <ScrollToTop />
+          <Layout>
+            <AppRoutes />
+          </Layout>
+        </NavProgressProvider>
       </BrowserRouter>
     </ErrorBoundary>
   );

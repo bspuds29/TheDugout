@@ -1,0 +1,261 @@
+/* ─── Backdrop ───────────────────────────────────────────────────────────── */
+
+.cmdk-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 9000;
+  animation: cmdk-fade 0.15s ease;
+}
+
+@keyframes cmdk-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ─── Shell ──────────────────────────────────────────────────────────────── */
+
+.cmdk-shell {
+  position: fixed;
+  top: 12vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9001;
+
+  width: min(92vw, 580px);
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-hover);
+  border-radius: 14px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55), 0 8px 24px rgba(0, 0, 0, 0.35);
+
+  overflow: hidden;
+  animation: cmdk-pop 0.18s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes cmdk-pop {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+@media (max-width: 600px) {
+  .cmdk-shell {
+    top: 6vh;
+    width: 96vw;
+    max-height: 80vh;
+  }
+}
+
+/* ─── Input row ──────────────────────────────────────────────────────────── */
+
+.cmdk-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.cmdk-input-icon {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.cmdk-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.cmdk-input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.cmdk-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--color-border-hover);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: cmdk-spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes cmdk-spin {
+  to { transform: rotate(360deg); }
+}
+
+.cmdk-close {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  transition: color 0.12s, background 0.12s;
+}
+
+.cmdk-close:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-card-hover);
+}
+
+/* ─── Body ───────────────────────────────────────────────────────────────── */
+
+.cmdk-body {
+  overflow-y: auto;
+  flex: 1;
+  padding: 6px 0 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-hover) transparent;
+}
+
+.cmdk-body::-webkit-scrollbar { width: 5px; }
+.cmdk-body::-webkit-scrollbar-thumb {
+  background: var(--color-border-hover);
+  border-radius: 3px;
+}
+
+.cmdk-empty {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-align: center;
+  padding: 28px 0;
+  margin: 0;
+}
+
+/* ─── Section ────────────────────────────────────────────────────────────── */
+
+.cmdk-section {
+  margin-top: 6px;
+}
+
+.cmdk-section-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  padding: 8px 14px 4px;
+}
+
+.cmdk-section-items {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Item ───────────────────────────────────────────────────────────────── */
+
+.cmdk-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 7px 12px;
+  margin: 0 6px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 13.5px;
+  text-align: left;
+  width: calc(100% - 12px);
+  transition: none; /* keyboard-driven; instant feedback feels better */
+}
+
+.cmdk-item--selected {
+  background: var(--color-accent-dim);
+  color: var(--color-text-primary);
+}
+
+.cmdk-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+}
+
+.cmdk-item--selected .cmdk-item-icon {
+  color: var(--color-accent);
+}
+
+.cmdk-item-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.cmdk-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.cmdk-item-pos,
+.cmdk-item-team {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--color-bg-elevated);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+}
+
+.cmdk-item--selected .cmdk-item-pos,
+.cmdk-item--selected .cmdk-item-team {
+  background: rgba(32, 178, 255, 0.18);
+  color: var(--color-accent);
+}
+
+/* ─── Footer hints ───────────────────────────────────────────────────────── */
+
+.cmdk-footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 14px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
+}
+
+.cmdk-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+}
+
+.cmdk-hint kbd {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}

@@ -80,6 +80,32 @@
   line-height: 1;
 }
 
+.topbar-search-kbd {
+  position: absolute;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.topbar-search-kbd kbd {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+}
+
+@media (max-width: 600px) {
+  .topbar-search-kbd { display: none; }
+}
+
 /* Dropdown */
 .topbar-search-dropdown {
   position: absolute;

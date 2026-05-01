@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import ShareButton from '../../components/ui/ShareButton';
+import FavoriteButton from '../../components/ui/FavoriteButton';
+import { useRecentPlayers } from '../../hooks/usePlayerLists';
 import {
   AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -722,6 +724,20 @@ export default function PlayerPage() {
   React.useEffect(() => { setTab('overview'); setTwoWayRole('hitting'); }, [mlbId]);
 
   const { player: person }                              = usePlayer(mlbId);
+  const { addRecent }                                   = useRecentPlayers();
+
+  // Track this player as recently viewed once their bio loads
+  React.useEffect(() => {
+    if (mlbId && playerName && person) {
+      addRecent({
+        id: mlbId,
+        name: playerName,
+        teamAbbr: person.teamAbbr,
+        position: person.position,
+      });
+    }
+  }, [mlbId, playerName, person, addRecent]);
+
   const { stats: pitching, isLoading: pitchLoading }    = usePitchingStats(mlbId);
   const { stats: hitting,  isLoading: hitLoading }      = useHittingStats(mlbId);
   const { data: gameLog = [] }                          = useGameLog(mlbId);
@@ -918,11 +934,21 @@ export default function PlayerPage() {
                 })()}
               </span>
               <span className="player-hero-war-label">fWAR · {YEAR}</span>
-              <ShareButton
-                title={pageTitle}
-                text={pageDesc}
-                className="player-hero-share"
-              />
+              <div className="player-hero-actions">
+                {mlbId && (
+                  <FavoriteButton
+                    mlbId={mlbId}
+                    name={playerName}
+                    teamAbbr={person?.teamAbbr}
+                    position={person?.position}
+                  />
+                )}
+                <ShareButton
+                  title={pageTitle}
+                  text={pageDesc}
+                  className="player-hero-share"
+                />
+              </div>
             </div>
           </div>
 

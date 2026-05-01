@@ -76,6 +76,11 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
         {query && !isFetching && (
           <button className="topbar-search-clear" onClick={() => { setQuery(''); setFocused(false); }}>×</button>
         )}
+        {!query && !isFetching && (
+          <span className="topbar-search-kbd" title="Open command palette" aria-hidden>
+            <kbd>⌘</kbd><kbd>K</kbd>
+          </span>
+        )}
 
         {focused && results.length > 0 && (
           <div className="topbar-search-dropdown">

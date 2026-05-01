@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
+import CommandPalette from '../ui/CommandPalette';
+import NavProgressBar from '../ui/NavProgressBar';
 import './Layout.css';
 
 interface LayoutProps {
@@ -30,6 +32,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="layout">
+      <NavProgressBar />
       <Sidebar
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
@@ -40,6 +43,7 @@ export default function Layout({ children }: LayoutProps) {
           {children}
         </main>
       </div>
+      <CommandPalette />
     </div>
   );
 }
