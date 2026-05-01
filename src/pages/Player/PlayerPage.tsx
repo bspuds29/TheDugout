@@ -742,11 +742,13 @@ export default function PlayerPage() {
 
   const rawPosition = person?.position ?? '';
   // The MLB person API returns 'P' for all pitchers regardless of role.
-  // Derive the accurate SP / RP label from games started once stats load.
+  // Derive SP vs RP from the ratio of starts to total appearances:
+  // >= 50% starts = SP (true rotation starter), otherwise RP.
+  // This correctly handles openers who start 1-2 games but are relievers by role.
   const position: string = (() => {
-    if (rawPosition !== 'P') return rawPosition;                   // non-pitcher, keep as-is
-    if (pitching === null || pitching === undefined) return 'P';   // stats not loaded yet
-    return pitching.gamesStarted > 0 ? 'SP' : 'RP';
+    if (rawPosition !== 'P') return rawPosition;
+    if (!pitching || pitching.games === 0) return 'P';
+    return pitching.gamesStarted / pitching.games >= 0.5 ? 'SP' : 'RP';
   })();
   const { showPitching, showHitting } = resolveRoles(rawPosition);
 
