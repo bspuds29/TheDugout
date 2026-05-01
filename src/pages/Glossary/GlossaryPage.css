@@ -1,0 +1,244 @@
+/* ─── Page shell ─────────────────────────────────────────────────────────── */
+
+.gloss-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+
+.gloss-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+
+.gloss-page-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.gloss-page-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--color-accent-dim);
+  border: 1px solid rgba(32, 178, 255, 0.2);
+  border-radius: var(--radius-lg);
+  color: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.gloss-page-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin: 0 0 3px;
+  letter-spacing: -0.02em;
+}
+
+.gloss-page-sub {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Search */
+.gloss-page-search-wrap {
+  position: relative;
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.gloss-page-search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-tertiary);
+  pointer-events: none;
+}
+
+.gloss-page-search {
+  width: 100%;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-primary);
+  font-size: 13px;
+  outline: none;
+  padding: 9px 34px 9px 34px;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.gloss-page-search::placeholder { color: var(--color-text-tertiary); }
+.gloss-page-search:focus { border-color: var(--color-border-active); }
+
+.gloss-page-search-clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  transition: color 0.12s;
+}
+.gloss-page-search-clear:hover { color: var(--color-text-primary); }
+
+@media (max-width: 768px) {
+  .gloss-page-header {
+    flex-direction: column;
+  }
+  .gloss-page-search-wrap {
+    width: 100%;
+  }
+}
+
+/* ─── Category tabs ──────────────────────────────────────────────────────── */
+
+.gloss-tabs-wrap {
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: calc(-1 * var(--space-2)) 0;
+  padding: var(--space-2) 0;
+}
+.gloss-tabs-wrap::-webkit-scrollbar { display: none; }
+
+.gloss-tabs {
+  display: flex;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.gloss-tab {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 6px 14px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+
+.gloss-tab:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
+  background: var(--color-bg-elevated);
+}
+
+.gloss-tab--active {
+  background: var(--color-accent-dim);
+  border-color: rgba(32, 178, 255, 0.35);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* ─── Sections ───────────────────────────────────────────────────────────── */
+
+.gloss-page-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.gloss-page-section {}
+
+.gloss-page-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+  margin: 0 0 var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gloss-page-empty {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  padding: var(--space-10) 0;
+  text-align: center;
+}
+
+/* ─── Stat cards grid ────────────────────────────────────────────────────── */
+
+.gloss-page-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-3);
+}
+
+/* ─── Individual stat card ───────────────────────────────────────────────── */
+
+.gloss-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.gloss-card:hover {
+  border-color: var(--color-border-hover);
+  background: var(--color-bg-card-hover);
+}
+
+.gloss-card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.gloss-card-abbr {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-accent);
+  letter-spacing: 0.01em;
+  flex-shrink: 0;
+}
+
+.gloss-card-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.gloss-card-desc {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.gloss-card-context {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  line-height: 1.4;
+  margin-top: 2px;
+  width: fit-content;
+}

@@ -214,6 +214,32 @@
   gap: var(--space-3);
 }
 
+.sidebar-footer-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: var(--space-1) 0;
+}
+
+.sidebar-glossary-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.sidebar-glossary-link:hover {
+  color: var(--color-text-secondary);
+}
+
+.sidebar-glossary-link--active {
+  color: var(--color-accent);
+}
+
 .sidebar-x-link {
   display: flex;
   align-items: center;

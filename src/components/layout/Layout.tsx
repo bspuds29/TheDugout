@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
-import StatsGlossaryButton from '../ui/StatsGlossaryButton';
 import './Layout.css';
 
 interface LayoutProps {
@@ -41,7 +40,6 @@ export default function Layout({ children }: LayoutProps) {
           {children}
         </main>
       </div>
-      <StatsGlossaryButton />
     </div>
   );
 }

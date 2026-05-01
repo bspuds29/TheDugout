@@ -17,6 +17,7 @@ const ToolsPage          = lazy(() => import('./pages/Tools/ToolsPage'));
 const PlayerComparePage  = lazy(() => import('./pages/Tools/PlayerComparePage'));
 const StatsHubPage       = lazy(() => import('./pages/Stats/StatsHubPage'));
 const TeamPage           = lazy(() => import('./pages/Team/TeamPage'));
+const GlossaryPage       = lazy(() => import('./pages/Glossary/GlossaryPage'));
 
 // ── Minimal inline spinner shown while a page chunk loads ───────────
 function PageLoader() {
@@ -72,6 +73,7 @@ function AppRoutes() {
         <Route path="/tools/compare" element={<PlayerComparePage />} />
         <Route path="/stats"         element={<StatsHubPage />} />
         <Route path="/team/:teamId"  element={<TeamPage />} />
+        <Route path="/glossary"      element={<GlossaryPage />} />
         <Route path="*"              element={<NotFound />} />
       </Routes>
     </Suspense>

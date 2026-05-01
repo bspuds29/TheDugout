@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, TrendingUp, Shield, ArrowLeftRight,
   Wrench, ChevronRight, Zap, Users, Menu, X, BarChart2,
-  Trophy, Building2,
+  Trophy, Building2, BookOpen,
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -115,6 +115,19 @@ export default function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
         {/* Footer */}
         <div className="sidebar-footer">
+          <NavLink
+            to="/glossary"
+            className={({ isActive }) =>
+              `sidebar-glossary-link ${isActive ? 'sidebar-glossary-link--active' : ''}`
+            }
+            onClick={onMobileClose}
+          >
+            <BookOpen size={13} />
+            Stats Glossary
+          </NavLink>
+
+          <div className="sidebar-footer-divider" />
+
           <div className="sidebar-season">
             <span className="sidebar-season-dot" />
             <span>{new Date().getFullYear()} Season • Live</span>
