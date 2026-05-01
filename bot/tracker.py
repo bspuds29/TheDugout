@@ -61,7 +61,7 @@ def last_tweet_type() -> str | None:
     if not log:
         return None
     last_id = log[-1].get("id", "")
-    if any(k in last_id for k in ("_hit_", "weekly_", "bat_hr", "bat_wrc", "bat_war", "team_")):
+    if any(k in last_id for k in ("_hit_", "weekly_", "bat_hr", "bat_wrc", "bat_war", "team_", "combined_")):
         return "hitting"
     if any(k in last_id for k in ("_pit_", "pit_era", "pit_kpct", "pit_war")):
         return "pitching"
@@ -78,6 +78,8 @@ def last_stat_type() -> str | None:
     if not tweet_log:
         return None
     last_id = tweet_log[-1].get("id", "")
+    if "combined_" in last_id:
+        return "combined_hitting"
     if "weekly_" in last_id:
         return "weekly_hitting"
     if "team_" in last_id or "streak_" in last_id:

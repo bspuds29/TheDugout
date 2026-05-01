@@ -21,6 +21,19 @@ log = logging.getLogger(__name__)
 MLB_API = "https://statsapi.mlb.com/api/v1"
 FG_API  = "https://www.fangraphs.com/api/leaders/major-league/data"
 
+# Players that are genuine household names — anyone NOT in this set
+# and playing well can be flagged as "underrated / flying under the radar".
+_HOUSEHOLD_NAMES: frozenset[str] = frozenset({
+    "aaron judge", "shohei ohtani", "mike trout", "freddie freeman",
+    "mookie betts", "fernando tatis jr.", "juan soto", "vladimir guerrero jr.",
+    "bryce harper", "ronald acuna jr.", "paul skenes", "spencer strider",
+    "francisco lindor", "pete alonso", "jose ramirez", "yordan alvarez",
+    "corey seager", "trea turner", "gunnar henderson", "julio rodriguez",
+    "nolan arenado", "corbin carroll", "elly de la cruz", "bobby witt jr.",
+    "adley rutschman", "max fried", "zack wheeler", "gerrit cole",
+    "clayton kershaw", "dylan cease",
+})
+
 _SESSION = requests.Session()
 _SESSION.headers.update({
     "User-Agent": "TheDugoutBot/1.0 (baseball analytics fan site)",
@@ -73,6 +86,21 @@ def _et_date(days_back: int = 1) -> str:
     et_offset = timedelta(hours=-4)  # EDT; close enough year-round for this use case
     dt = datetime.now(timezone.utc) + et_offset - timedelta(days=days_back)
     return dt.strftime("%Y-%m-%d")
+
+
+def _day_name(date_str: str) -> str:
+    """Return the day-of-week name from a YYYY-MM-DD string, e.g. 'Wednesday'."""
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").strftime("%A")
+    except ValueError:
+        return ""
+
+
+def _recognition(player_name: str) -> str:
+    """Return a player-recognition hint for Claude based on name fame."""
+    if player_name.lower() in _HOUSEHOLD_NAMES:
+        return "star / widely known"
+    return "lesser-known / potentially underrated"
 
 
 # ── MLB Stats API helpers ─────────────────────────────────────────────
@@ -251,10 +279,13 @@ def collect_game_standouts(lookback_days: int = 1) -> list[StatCandidate]:
 
                 # Keep top 2 hitters and top 1 pitcher per team per game
                 # Use mlb_id as tiebreaker so sort is always stable
+                game_day = _day_name(date_str)
+
                 for score, person, meta in sorted(hit_candidates, key=lambda x: (x[0], x[1]["id"]), reverse=True)[:2]:
                     mlb_id = person["id"]
                     name   = person["fullName"]
                     desc, ctx = _build_hitting_description(name, meta["stats"])
+                    ctx = f"Game date: {game_day} ({date_str}). Player recognition: {_recognition(name)}. {ctx}"
                     candidates.append(StatCandidate(
                         candidate_id=f"game_{game_pk}_hit_{mlb_id}",
                         player_name=name,
@@ -275,6 +306,7 @@ def collect_game_standouts(lookback_days: int = 1) -> list[StatCandidate]:
                     mlb_id = person["id"]
                     name   = person["fullName"]
                     desc, ctx = _build_pitching_description(name, meta["stats"])
+                    ctx = f"Game date: {game_day} ({date_str}). Player recognition: {_recognition(name)}. {ctx}"
                     candidates.append(StatCandidate(
                         candidate_id=f"game_{game_pk}_pit_{mlb_id}",
                         player_name=name,
@@ -664,7 +696,8 @@ def _build_streak_candidate(mlb_id: int, row: dict, stat: dict,
     context   = (
         f"{window_label} ({g} G): {hit_str} ({avg_str} AVG), {hr} HR, {rbi} RBI, "
         f"{bb} BB, OPS {ops_str}. "
-        f"Season: {int(row.get('HR') or 0)} HR, {float(row.get('AVG') or 0):.3f} AVG."
+        f"Season: {int(row.get('HR') or 0)} HR, {float(row.get('AVG') or 0):.3f} AVG. "
+        f"Player recognition: {_recognition(name)}."
     )
     return StatCandidate(
         candidate_id=f"weekly_{season}_{iso_week}_hit_{mlb_id}_{window_label.replace(' ', '')}",
@@ -678,7 +711,7 @@ def _build_streak_candidate(mlb_id: int, row: dict, stat: dict,
         context=context,
         page_url=f"{config.SITE_URL}/player?mlbId={mlb_id}&name={name.replace(' ', '+')}",
         score=score,
-        raw_stats=dict(stat),
+        raw_stats={**dict(stat), "window_label": window_label},
         date=today,
     )
 
@@ -941,6 +974,83 @@ def collect_team_streaks(season: int) -> list[StatCandidate]:
     return candidates
 
 
+def _build_combined_candidate(game_cand: StatCandidate,
+                              weekly_cand: StatCandidate) -> StatCandidate:
+    """
+    Merge a single-game highlight with a hot-streak window into one candidate.
+    Gives Claude both stat lines so it can write the "last night + last N games" format.
+    """
+    name      = game_cand.player_name
+    game_date = game_cand.date
+
+    # ── Game line ──────────────────────────────────────────────────────
+    gs   = game_cand.raw_stats
+    g_h  = int(gs.get("hits", 0))
+    g_ab = int(gs.get("atBats", 0))
+    g_hr = int(gs.get("homeRuns", 0))
+    g_rbi = int(gs.get("rbi", 0))
+    g_sb  = int(gs.get("stolenBases", 0))
+    g_tb  = int(gs.get("totalBases", 0))
+
+    game_parts = [f"{g_h}-for-{g_ab}"]
+    if g_hr >= 1: game_parts.append(f"{g_hr} HR{'s' if g_hr > 1 else ''}")
+    if g_rbi >= 1: game_parts.append(f"{g_rbi} RBI")
+    if g_sb >= 1: game_parts.append(f"{g_sb} SB")
+
+    # ── Streak line ────────────────────────────────────────────────────
+    ws           = weekly_cand.raw_stats
+    window_label = str(ws.get("window_label", "his last 3 games"))
+    w_h   = int(ws.get("hits", 0))
+    w_ab  = int(ws.get("atBats", 0))
+    w_hr  = int(ws.get("homeRuns", 0))
+    w_rbi = int(ws.get("rbi", 0))
+    w_sb  = int(ws.get("stolenBases", 0))
+    w_ops = float(ws.get("ops", 0))
+
+    streak_parts = [f"{w_h}-for-{w_ab}"]
+    if w_hr >= 1: streak_parts.append(f"{w_hr} HR{'s' if w_hr > 1 else ''}")
+    if w_rbi >= 1: streak_parts.append(f"{w_rbi} RBI")
+    if w_sb >= 1: streak_parts.append(f"{w_sb} SB")
+    if w_ops > 0: streak_parts.append(f"{w_ops:.3f} OPS")
+
+    # Use a short display label for the streak window
+    if "7" in window_label:
+        window_display = "Last 7 days"
+    else:
+        window_display = "Last 3 games"
+
+    stat_desc = (
+        f"{name} last night: {', '.join(game_parts)}\n"
+        f"{window_display}: {', '.join(streak_parts)}"
+    )
+
+    context = (
+        f"Game date: {_day_name(game_date)} ({game_date}). "
+        f"Last night: {g_h}/{g_ab}, {g_hr} HR, {g_rbi} RBI, {g_tb} TB, {g_sb} SB. "
+        f"{window_display}: {w_h}/{w_ab}, {w_hr} HR, {w_rbi} RBI, OPS {w_ops:.3f}. "
+        f"Player recognition: {_recognition(name)}."
+    )
+
+    # Score is the sum of both signals with a combo bonus
+    combined_score = (game_cand.score + weekly_cand.score) * 0.6 + 5.0
+
+    return StatCandidate(
+        candidate_id=f"combined_{game_cand.mlb_id}_{game_date}",
+        player_name=name,
+        mlb_id=game_cand.mlb_id,
+        team=game_cand.team,
+        team_abbrev=game_cand.team_abbrev,
+        position=game_cand.position,
+        stat_type="combined_hitting",
+        stat_description=stat_desc,
+        context=context,
+        page_url=game_cand.page_url,
+        score=combined_score,
+        raw_stats={**gs, "window_label": window_label, "weekly": dict(ws)},
+        date=game_date,
+    )
+
+
 def collect_all(season: int, lookback_days: int = 1,
                 last_tweet_type: str | None = None,
                 last_stat_type: str | None = None) -> list[StatCandidate]:
@@ -954,26 +1064,45 @@ def collect_all(season: int, lookback_days: int = 1,
     for c in game_candidates:
         c.score += 4.0
 
-    all_candidates = game_candidates + weekly_candidates + season_candidates + team_candidates
+    # ── Build combined "last night + hot streak" candidates ───────────
+    # Find players who appear in both game_hitting and weekly_hitting.
+    game_by_player: dict[int, StatCandidate] = {
+        c.mlb_id: c for c in game_candidates if c.stat_type == "game_hitting"
+    }
+    weekly_by_player: dict[int, StatCandidate] = {
+        c.mlb_id: c for c in weekly_candidates if c.stat_type == "weekly_hitting"
+    }
+    combined_candidates: list[StatCandidate] = []
+    for mlb_id, game_c in game_by_player.items():
+        if mlb_id in weekly_by_player:
+            combined_candidates.append(
+                _build_combined_candidate(game_c, weekly_by_player[mlb_id])
+            )
+    log.info("Built %d combined hitting candidates", len(combined_candidates))
+
+    all_candidates = (game_candidates + weekly_candidates + combined_candidates
+                      + season_candidates + team_candidates)
 
     # ── Per-type multipliers ──────────────────────────────────────────
     # Start with defaults (slight hitter preference overall)
     mults: dict[str, float] = {
-        "game_hitting":    1.3,
-        "weekly_hitting":  1.3,
-        "team_game":       1.3,
-        "season_batting":  1.1,
-        "game_pitching":   1.0,
-        "season_pitching": 1.0,
+        "game_hitting":     1.3,
+        "weekly_hitting":   1.3,
+        "combined_hitting": 1.5,   # combo story is the strongest format
+        "team_game":        1.3,
+        "season_batting":   1.1,
+        "game_pitching":    1.0,
+        "season_pitching":  1.0,
     }
 
     # After a pitching tweet → strongly prefer any hitting type
     if last_tweet_type == "pitching":
-        mults["game_hitting"]   = 1.7
-        mults["weekly_hitting"] = 1.5
-        mults["team_game"]      = 1.4
-        mults["game_pitching"]  = 0.7
-        mults["season_pitching"]= 0.7
+        mults["game_hitting"]     = 1.7
+        mults["weekly_hitting"]   = 1.5
+        mults["combined_hitting"] = 1.9
+        mults["team_game"]        = 1.4
+        mults["game_pitching"]    = 0.7
+        mults["season_pitching"]  = 0.7
 
     # Penalise the exact same category that just ran so it can't chain
     if last_stat_type:

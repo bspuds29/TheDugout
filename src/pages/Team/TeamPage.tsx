@@ -46,25 +46,20 @@ const DIV_NAMES: Record<number, string> = {
 
 // ─── Position grouping ────────────────────────────────────────────────
 
-const POS_ORDER = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF', 'OF', 'DH', 'SP', 'RP', 'P'];
-
 function posGroup(abbr: string): string {
   const a = abbr.toUpperCase();
-  if (a === 'C')  return 'Catcher';
-  if (a === '1B') return 'First Base';
-  if (a === '2B') return 'Second Base';
-  if (a === '3B') return 'Third Base';
-  if (a === 'SS') return 'Shortstop';
-  if (['LF', 'CF', 'RF', 'OF'].includes(a)) return 'Outfield';
+  if (a === 'C')  return 'Catchers';
+  if (['1B', '2B', '3B', 'SS'].includes(a)) return 'Infielders';
+  if (['LF', 'CF', 'RF', 'OF'].includes(a)) return 'Outfielders';
   if (a === 'DH') return 'Designated Hitter';
   if (a === 'SP') return 'Starting Pitchers';
-  if (['RP', 'P'].includes(a)) return 'Relief Pitchers';
+  if (['RP', 'CL', 'MR', 'RL', 'P'].includes(a)) return 'Relief Pitchers';
   return 'Other';
 }
 
 const POS_GROUP_ORDER = [
-  'Catcher', 'First Base', 'Second Base', 'Third Base', 'Shortstop',
-  'Outfield', 'Designated Hitter', 'Starting Pitchers', 'Relief Pitchers', 'Other',
+  'Catchers', 'Infielders', 'Outfielders', 'Designated Hitter',
+  'Starting Pitchers', 'Relief Pitchers', 'Other',
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────
@@ -328,7 +323,13 @@ function RosterSection({ teamId }: { teamId: number }) {
   const grouped = useMemo(() => {
     const map = new Map<string, RawMLBRosterPlayerHydrated[]>();
     for (const player of roster) {
-      const grp = posGroup(player.position.abbreviation);
+      // The active roster API returns 'P' for all pitchers.
+      // primaryPosition from the hydrated person has the accurate SP / RP designation.
+      const rawAbbr = player.position.abbreviation;
+      const posAbbr = rawAbbr === 'P' && player.person.primaryPosition?.abbreviation
+        ? player.person.primaryPosition.abbreviation
+        : rawAbbr;
+      const grp = posGroup(posAbbr);
       if (!map.has(grp)) map.set(grp, []);
       map.get(grp)!.push(player);
     }
@@ -374,7 +375,9 @@ function RosterSection({ teamId }: { teamId: number }) {
                     {group.players.map(p => {
                       const id   = p.person.id;
                       const name = p.person.fullName;
-                      const pos  = p.position.abbreviation;
+                      const pos  = (p.position.abbreviation === 'P' && p.person.primaryPosition?.abbreviation)
+                        ? p.person.primaryPosition.abbreviation
+                        : p.position.abbreviation;
                       const bat  = p.person.batSide?.code ?? '—';
                       const thr  = p.person.pitchHand?.code ?? '—';
                       const age  = p.person.currentAge ?? '—';
