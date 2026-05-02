@@ -357,3 +357,37 @@ https://thedugoutapi.com/player?mlbId=656941&name=Kyle+Schwarber
 2026-05-01 16:43:32,192  INFO      poster — Tweet posted (text only) — id: 2050254805017219227
 2026-05-01 16:43:32,194  INFO      tracker — Marked as used: weekly_2026_2026w18_hit_656941_hislast3games
 2026-05-01 16:43:32,194  INFO      __main__ — Done. Tweet ID: 2050254805017219227
+2026-05-02 06:00:40,891  INFO      __main__ — ============================================================
+2026-05-02 06:00:40,892  INFO      __main__ — TheDugout tweet bot starting — 2026-05-02T06:00:40.892001+00:00
+2026-05-02 06:00:40,892  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-02 06:00:40,892  INFO      __main__ — Collecting stat candidates…
+2026-05-02 06:00:40,892  INFO      collector — Fetching schedule for 2026-05-01
+2026-05-02 06:00:41,180  INFO      collector — Collected 59 game candidates
+2026-05-02 06:00:41,812  INFO      collector — Collected 13 weekly hitter candidates
+2026-05-02 06:00:42,000  INFO      collector — FanGraphs batting leaderboard: 181 rows
+2026-05-02 06:00:42,181  INFO      collector — FanGraphs pitching leaderboard: 77 rows
+2026-05-02 06:00:42,182  INFO      collector — Collected 30 season leader candidates
+2026-05-02 06:00:42,188  INFO      collector — Collected 1 team game candidates
+2026-05-02 06:00:42,219  INFO      collector — Collected 2 team streak candidates
+2026-05-02 06:00:42,220  INFO      collector — Built 4 combined hitting candidates
+2026-05-02 06:00:42,220  INFO      collector — Total candidates: 109 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-02 06:00:42,220  INFO      __main__ — 107 fresh candidates after dedup (of 109 total)
+2026-05-02 06:00:42,220  INFO      __main__ — Selected candidate: 'Julio Rodríguez' — Julio Rodríguez last night: 2-for-4, 2 HRs, 4 RBI
+Last 3 games: 6-for-14, 2 HRs, 6 RBI, 1.500 OPS (score=114.2, type=combined_hitting)
+2026-05-02 06:00:42,220  INFO      __main__ — Generating tweet via Claude…
+2026-05-02 06:00:44,960  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-02 06:00:44,978  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-02 06:00:44,978  INFO      __main__ — TWEET PREVIEW:
+Julio Rodríguez last night: 2-for-4, 2 HRs, 4 RBI
+Last 3 games: 6-for-14, 2 HRs, 6 RBI, 1.500 OPS
+
+nobody's talking about him and he's out here doing this
+
+https://thedugoutapi.com/player?mlbId=677594&name=Julio+Rodríguez
+2026-05-02 06:00:44,978  INFO      __main__ — Length: 154 chars (body) + 23 (t.co URL) = 178 total
+2026-05-02 06:00:44,978  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-02 06:00:44,978  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-02 06:00:44,978  INFO      __main__ — Posting tweet…
+2026-05-02 06:00:45,269  INFO      poster — Tweet posted (text only) — id: 2050455431508623747
+2026-05-02 06:00:45,271  INFO      tracker — Marked as used: combined_677594_2026-05-01
+2026-05-02 06:00:45,271  INFO      __main__ — Done. Tweet ID: 2050455431508623747
