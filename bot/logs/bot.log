@@ -423,3 +423,37 @@ https://thedugoutapi.com/player?mlbId=677594&name=Julio+Rodríguez
 2026-05-02 16:35:33,416  INFO      poster — Tweet posted (text only) — id: 2050615184922665453
 2026-05-02 16:35:33,418  INFO      tracker — Marked as used: weekly_2026_2026w18_hit_677594_hislast3games
 2026-05-02 16:35:33,418  INFO      __main__ — Done. Tweet ID: 2050615184922665453
+2026-05-03 06:21:35,500  INFO      __main__ — ============================================================
+2026-05-03 06:21:35,501  INFO      __main__ — TheDugout tweet bot starting — 2026-05-03T06:21:35.501064+00:00
+2026-05-03 06:21:35,501  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-03 06:21:35,501  INFO      __main__ — Collecting stat candidates…
+2026-05-03 06:21:35,501  INFO      collector — Fetching schedule for 2026-05-02
+2026-05-03 06:21:35,702  INFO      collector — Collected 49 game candidates
+2026-05-03 06:21:36,450  INFO      collector — Collected 15 weekly hitter candidates
+2026-05-03 06:21:36,637  INFO      collector — FanGraphs batting leaderboard: 180 rows
+2026-05-03 06:21:36,828  INFO      collector — FanGraphs pitching leaderboard: 75 rows
+2026-05-03 06:21:36,828  INFO      collector — Collected 30 season leader candidates
+2026-05-03 06:21:36,834  INFO      collector — Collected 8 team game candidates
+2026-05-03 06:21:36,880  INFO      collector — Collected 3 team streak candidates
+2026-05-03 06:21:36,880  INFO      collector — Built 3 combined hitting candidates
+2026-05-03 06:21:36,880  INFO      collector — Total candidates: 108 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-03 06:21:36,881  INFO      __main__ — 105 fresh candidates after dedup (of 108 total)
+2026-05-03 06:21:36,881  INFO      __main__ — Selected candidate: 'Shea Langeliers' — Shea Langeliers last night: 3-for-5, 2 HRs, 3 RBI
+Last 3 games: 7-for-13, 2 HRs, 4 RBI, 1.802 OPS (score=136.0, type=combined_hitting)
+2026-05-03 06:21:36,881  INFO      __main__ — Generating tweet via Claude…
+2026-05-03 06:21:38,718  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-03 06:21:38,739  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-03 06:21:38,739  INFO      __main__ — TWEET PREVIEW:
+Shea Langeliers last night: 3-for-5, 2 HRs, 3 RBI
+Last 3 games: 7-for-13, 2 HRs, 4 RBI, 1.802 OPS
+
+nobody's talking about him but they should be
+
+https://thedugoutapi.com/player?mlbId=669127&name=Shea+Langeliers
+2026-05-03 06:21:38,739  INFO      __main__ — Length: 144 chars (body) + 23 (t.co URL) = 168 total
+2026-05-03 06:21:38,739  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-03 06:21:38,739  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-03 06:21:38,739  INFO      __main__ — Posting tweet…
+2026-05-03 06:21:38,943  INFO      poster — Tweet posted (text only) — id: 2050823077672415689
+2026-05-03 06:21:38,944  INFO      tracker — Marked as used: combined_669127_2026-05-02
+2026-05-03 06:21:38,944  INFO      __main__ — Done. Tweet ID: 2050823077672415689
