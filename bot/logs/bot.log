@@ -457,3 +457,35 @@ https://thedugoutapi.com/player?mlbId=669127&name=Shea+Langeliers
 2026-05-03 06:21:38,943  INFO      poster — Tweet posted (text only) — id: 2050823077672415689
 2026-05-03 06:21:38,944  INFO      tracker — Marked as used: combined_669127_2026-05-02
 2026-05-03 06:21:38,944  INFO      __main__ — Done. Tweet ID: 2050823077672415689
+2026-05-03 16:36:14,646  INFO      __main__ — ============================================================
+2026-05-03 16:36:14,646  INFO      __main__ — TheDugout tweet bot starting — 2026-05-03T16:36:14.646159+00:00
+2026-05-03 16:36:14,646  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-03 16:36:14,646  INFO      __main__ — Collecting stat candidates…
+2026-05-03 16:36:14,646  INFO      collector — Fetching schedule for 2026-05-02
+2026-05-03 16:36:15,944  INFO      collector — Collected 49 game candidates
+2026-05-03 16:36:17,278  INFO      collector — Collected 14 weekly hitter candidates
+2026-05-03 16:36:17,520  INFO      collector — FanGraphs batting leaderboard: 179 rows
+2026-05-03 16:36:17,716  INFO      collector — FanGraphs pitching leaderboard: 78 rows
+2026-05-03 16:36:17,717  INFO      collector — Collected 30 season leader candidates
+2026-05-03 16:36:17,744  INFO      collector — Collected 8 team game candidates
+2026-05-03 16:36:17,830  INFO      collector — Collected 3 team streak candidates
+2026-05-03 16:36:17,830  INFO      collector — Built 3 combined hitting candidates
+2026-05-03 16:36:17,830  INFO      collector — Total candidates: 107 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-03 16:36:17,830  INFO      __main__ — 103 fresh candidates after dedup (of 107 total)
+2026-05-03 16:36:17,830  INFO      __main__ — Selected candidate: 'Bryan Reynolds' — Bryan Reynolds is 6-for-11 (.545) over his last 3 games, 1 HR, 5 RBI (score=121.1, type=weekly_hitting)
+2026-05-03 16:36:17,830  INFO      __main__ — Generating tweet via Claude…
+2026-05-03 16:36:19,928  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-03 16:36:19,946  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-03 16:36:19,946  INFO      __main__ — TWEET PREVIEW:
+Bryan Reynolds: 6-for-11, 1 HR, 5 RBI, 4 BB, 1.940 OPS over his last 3 games.
+
+nobody's talking about him but they should be
+
+https://thedugoutapi.com/player?mlbId=668804&name=Bryan+Reynolds
+2026-05-03 16:36:19,946  INFO      __main__ — Length: 124 chars (body) + 23 (t.co URL) = 148 total
+2026-05-03 16:36:19,946  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-03 16:36:19,946  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-03 16:36:19,946  INFO      __main__ — Posting tweet…
+2026-05-03 16:36:20,258  INFO      poster — Tweet posted (text only) — id: 2050977769111134343
+2026-05-03 16:36:20,260  INFO      tracker — Marked as used: weekly_2026_2026w18_hit_668804_hislast3games
+2026-05-03 16:36:20,260  INFO      __main__ — Done. Tweet ID: 2050977769111134343
