@@ -907,18 +907,14 @@ export default function PlayerPage() {
                 )}
                 {person?.height && <span>{person.height}</span>}
                 {draftInfo?.draftYear && (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    {draftInfo.draftYear} Draft
-                    {draftInfo.round && ` · Rd ${draftInfo.round}`}
-                    {draftInfo.pickNumber != null && `, Pick ${draftInfo.pickNumber}`}
-                    {draftInfo.draftTeam?.name && (
-                      <span> · {draftInfo.draftTeam.name}</span>
-                    )}
-                    {draftInfo.school?.name && (
-                      <span style={{ color: 'var(--color-text-tertiary)' }}>
-                        {' '}({draftInfo.school.name})
-                      </span>
-                    )}
+                  <span style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                    {[
+                      `${draftInfo.draftYear} Draft`,
+                      draftInfo.round     ? `Rd ${draftInfo.round}` : null,
+                      draftInfo.pickNumber != null ? `Pick ${draftInfo.pickNumber}` : null,
+                      draftInfo.draftTeam?.name ?? null,
+                      draftInfo.school?.name ? `(${draftInfo.school.name})` : null,
+                    ].filter(Boolean).join(' · ')}
                   </span>
                 )}
               </div>
