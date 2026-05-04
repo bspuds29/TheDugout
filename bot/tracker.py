@@ -55,6 +55,44 @@ def used_ids() -> set[str]:
     return set(_load().get("used_ids", []))
 
 
+def recently_tweeted_players(n_recent: int = 10) -> set[str]:
+    """
+    Return lowercase player names from the last n_recent tweets.
+    Used to prevent the same player appearing back-to-back, regardless of candidate_id.
+    Team-level candidates (position == TEAM or mlb_id == 0) are excluded.
+    """
+    tweet_log = _load().get("tweet_log", [])
+    recent = tweet_log[-n_recent:]
+    names: set[str] = set()
+    for entry in recent:
+        player = entry.get("player", "")
+        # Skip team-level entries (they have names like "New York Yankees")
+        cand_id = entry.get("id", "")
+        if "team_" in cand_id or "streak_" in cand_id:
+            continue
+        if player:
+            names.add(player.lower())
+    return names
+
+
+def recent_tweet_bodies(n_recent: int = 5) -> list[str]:
+    """
+    Return the body text (without URL) of the last n_recent tweets, oldest first.
+    Used to give Claude context so it avoids repeating reaction lines.
+    """
+    tweet_log = _load().get("tweet_log", [])
+    recent = tweet_log[-n_recent:]
+    bodies: list[str] = []
+    for entry in recent:
+        text = entry.get("tweet_text", "")
+        if text and text != "dry-run":
+            # Strip the URL line (always the last line after a blank line)
+            parts = text.rsplit("\n\n", 1)
+            body = parts[0].strip() if len(parts) == 2 else text.strip()
+            bodies.append(body)
+    return bodies
+
+
 def last_tweet_type() -> str | None:
     """Return 'hitting' or 'pitching' based on the most recent tweet, or None."""
     log = _load().get("tweet_log", [])

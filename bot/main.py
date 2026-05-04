@@ -90,8 +90,46 @@ def run() -> int:
 
     log.info("%d fresh candidates after dedup (of %d total)", len(fresh), len(candidates))
 
+    # ── Filter repeat players (same player tweeted recently) ──
+    # Allow the repeat only for truly exceptional single-game performances:
+    # no-hitter bids, 3+ HR games, or a cycle (1B+2B+3B+HR in one game).
+    def _is_exceptional(c: collector.StatCandidate) -> bool:
+        rs = c.raw_stats
+        if c.stat_type in ("game_hitting", "combined_hitting"):
+            hr = int(rs.get("homeRuns", 0))
+            if hr >= 3:
+                return True
+            # Cycle check: at least one of each extra-base hit plus 4+ hits total
+            if (int(rs.get("doubles", 0)) >= 1
+                    and int(rs.get("triples", 0)) >= 1
+                    and int(rs.get("homeRuns", 0)) >= 1
+                    and int(rs.get("hits", 0)) >= 4):
+                return True
+        if c.stat_type == "game_pitching":
+            hits = int(rs.get("hits", 0))
+            ip   = collector._parse_ip(rs.get("inningsPitched", "0"))
+            if hits == 0 and ip >= 5:
+                return True
+        return False
+
+    recent_players = tracker.recently_tweeted_players(n_recent=10)
+    deduped = [
+        c for c in fresh
+        if c.player_name.lower() not in recent_players or _is_exceptional(c)
+    ]
+
+    if not deduped:
+        log.warning(
+            "All %d fresh candidates belong to recently-tweeted players. "
+            "Falling back to the full fresh list to avoid skipping a day.",
+            len(fresh),
+        )
+        deduped = fresh
+
+    log.info("%d candidates after player-repeat filter", len(deduped))
+
     # ── Pick best candidate ──
-    best = fresh[0]
+    best = deduped[0]
     log.info(
         "Selected candidate: '%s' — %s (score=%.1f, type=%s)",
         best.player_name, best.stat_description, best.score, best.stat_type,
@@ -99,6 +137,7 @@ def run() -> int:
 
     # ── Generate tweet ──
     log.info("Generating tweet via Claude…")
+    recent_bodies = tracker.recent_tweet_bodies(n_recent=5)
     try:
         tweet_body = tweet_writer.generate_tweet(
             player_name=best.player_name,
@@ -108,6 +147,7 @@ def run() -> int:
             context=best.context,
             page_url=best.page_url,
             stat_type=best.stat_type,
+            recent_tweets=recent_bodies,
         )
     except Exception as exc:
         log.error("Tweet generation failed: %s", exc, exc_info=True)

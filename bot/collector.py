@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import logging
 import time
+import unicodedata
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
@@ -21,17 +22,92 @@ log = logging.getLogger(__name__)
 MLB_API = "https://statsapi.mlb.com/api/v1"
 FG_API  = "https://www.fangraphs.com/api/leaders/major-league/data"
 
+
+def _norm(name: str) -> str:
+    """Lowercase + strip accents so 'Julio Rodríguez' matches 'julio rodriguez'."""
+    return unicodedata.normalize("NFD", name.lower()).encode("ascii", "ignore").decode()
+
 # Players that are genuine household names — anyone NOT in this set
 # and playing well can be flagged as "underrated / flying under the radar".
+# Source: MLB Network's official Top 70 players for 2026, plus notable veterans.
 _HOUSEHOLD_NAMES: frozenset[str] = frozenset({
-    "aaron judge", "shohei ohtani", "mike trout", "freddie freeman",
-    "mookie betts", "fernando tatis jr.", "juan soto", "vladimir guerrero jr.",
-    "bryce harper", "ronald acuna jr.", "paul skenes", "spencer strider",
-    "francisco lindor", "pete alonso", "jose ramirez", "yordan alvarez",
-    "corey seager", "trea turner", "gunnar henderson", "julio rodriguez",
-    "nolan arenado", "corbin carroll", "elly de la cruz", "bobby witt jr.",
-    "adley rutschman", "max fried", "zack wheeler", "gerrit cole",
-    "clayton kershaw", "dylan cease",
+    # ── MLB Network Top 70 (2026) ──────────────────────────────────────
+    "shohei ohtani",          # 1
+    "aaron judge",            # 2
+    "bobby witt jr.",         # 3
+    "cal raleigh",            # 4
+    "paul skenes",            # 5
+    "tarik skubal",           # 6
+    "juan soto",              # 7
+    "francisco lindor",       # 8
+    "garrett crochet",        # 9
+    "vladimir guerrero jr.",  # 10
+    "ronald acuna jr.",       # 11
+    "yoshinobu yamamoto",     # 12
+    "fernando tatis jr.",     # 13
+    "julio rodriguez",        # 14
+    "mookie betts",           # 15
+    "jose ramirez",           # 16
+    "ketel marte",            # 17
+    "kyle schwarber",         # 18
+    "will smith",             # 19
+    "nick kurtz",             # 20
+    "geraldo perdomo",        # 21
+    "corbin carroll",         # 22
+    "steven kwan",            # 23
+    "trea turner",            # 24
+    "adley rutschman",        # 25
+    "gunnar henderson",       # 26
+    "yordan alvarez",         # 27
+    "michael harris ii",      # 28
+    "royce lewis",            # 29
+    "pete crow-armstrong",    # 30
+    "matt olson",             # 31
+    "bryce harper",           # 32
+    "pete alonso",            # 33
+    "manny machado",          # 34
+    "alex bregman",           # 35
+    "max fried",              # 36
+    "logan webb",             # 37
+    "chris sale",             # 38
+    "junior caminero",        # 39
+    "roman anthony",          # 41
+    "byron buxton",           # 42
+    "cody bellinger",         # 43
+    "bryan woo",              # 44
+    "hunter greene",          # 45
+    "rafael devers",          # 46
+    "george springer",        # 47
+    "bo bichette",            # 48
+    "jeremy pena",            # 49
+    "jacob degrom",           # 50
+    "zack wheeler",           # 51
+    "elly de la cruz",        # 52
+    "james wood",             # 53
+    "blake snell",            # 54
+    "william contreras",      # 55
+    "jackson chourio",        # 56
+    "riley greene",           # 57
+    "jarren duran",           # 58
+    "jackson merrill",        # 59
+    "mason miller",           # 60
+    "jazz chisholm jr.",      # 61
+    "brice turang",           # 62
+    "freddy peralta",         # 63
+    "nathan eovaldi",         # 64
+    "maikel garcia",          # 65
+    "eugenio suarez",         # 66
+    "michael busch",          # 67
+    "kyle stowers",           # 68
+    "wyatt langford",         # 69
+    "josh naylor",            # 70
+    # ── Notable veterans not in top 70 but still widely known ─────────
+    "mike trout", "freddie freeman", "nolan arenado", "corey seager",
+    "jose altuve", "paul goldschmidt", "manny machado", "gerrit cole",
+    "clayton kershaw", "dylan cease", "corbin burnes", "tyler glasnow",
+    "kevin gausman", "sandy alcantara", "spencer strider", "kyle tucker",
+    "marcus semien", "ozzie albies", "christian yelich", "willy adames",
+    "anthony volpe", "luis robert jr.",
 })
 
 _SESSION = requests.Session()
@@ -56,8 +132,9 @@ class StatCandidate:
     context:          str   # why it's impressive (fed to Claude)
     page_url:         str
     score:            float
-    raw_stats:        dict  = field(default_factory=dict)
-    date:             str   = ""
+    raw_stats:        dict       = field(default_factory=dict)
+    date:             str        = ""
+    age:              int | None = None   # player's current age; None = unknown
 
     def player_page_url(self) -> str:
         params = urlencode({"mlbId": self.mlb_id, "name": self.player_name})
@@ -98,9 +175,184 @@ def _day_name(date_str: str) -> str:
 
 def _recognition(player_name: str) -> str:
     """Return a player-recognition hint for Claude based on name fame."""
-    if player_name.lower() in _HOUSEHOLD_NAMES:
+    if _norm(player_name) in _HOUSEHOLD_NAMES:
         return "star / widely known"
     return "lesser-known / potentially underrated"
+
+
+# Age threshold for "still on rookie/pre-arb/arb deal" framing.
+# Players typically hit free agency around 28–29 after 6 years of service.
+_EXTENSION_AGE_MAX = 27
+
+# Players who are young (≤27) but have ALREADY signed long-term extensions.
+# "Extend him" framing makes no sense — they're already locked up.
+_ALREADY_EXTENDED: frozenset[str] = frozenset({
+    "bobby witt jr.",        # 25, Royals, 11yr/$288.8M
+    "julio rodriguez",       # 25, Mariners, 12yr/$210M
+    "fernando tatis jr.",    # 27, Padres, 14yr/$340M
+    "vladimir guerrero jr.", # 27, Blue Jays, 14yr/$500M
+    "jackson merrill",       # 23, Padres, 9yr/$135M
+    "pete crow-armstrong",   # 24, Cubs, 6yr/$115M
+    "corbin carroll",        # 25, Diamondbacks, 8yr/$111M
+    "roman anthony",         # 21, Red Sox, 8yr/$130M
+    "kevin mcgonigle",       # 21, Tigers, 8yr/$150M
+    "konnor griffin",        # 20, Pirates, 9yr/$140M
+    "jackson chourio",       # 22, Brewers, 8yr/$82M
+    "samuel basallo",        # 21, Orioles, 8yr/$67M
+    "kristian campbell",     # 23, Red Sox, 8yr/$60M
+    "tyler soderstrom",      # 24, Athletics, 7yr/$86M
+    "jacob wilson",          # 24, Athletics, 7yr/$70M
+    "lawrence butler",       # 25, Athletics, 7yr/$65.5M
+    "ezequiel tovar",        # 24, Rockies, 7yr/$63.5M
+    "michael harris ii",     # 25, Braves, 8yr/$72M
+    "spencer strider",       # 27, Braves, 6yr/$75M
+    "hunter greene",         # 26, Reds, 6yr/$53M
+    "brayan bello",          # 26, Red Sox, 6yr/$55M
+    "garrett crochet",       # 26, Red Sox, 6yr/$170M
+    "ceddanne rafaela",      # 25, Red Sox, 8yr/$50M
+    "colt keith",            # 24, Tigers, 6yr/$28.6M
+    "tanner bibee",          # 27, Guardians, 5yr/$48M
+    "maikel garcia",         # 26, Royals, 5yr/$57.5M
+    "brandon pfaadt",        # 27, Diamondbacks, 5yr/$45M
+    "keibert ruiz",          # 27, Nationals, 8yr/$50M
+})
+
+
+def _fetch_career_seasons(mlb_id: int, group: str = "hitting") -> dict[int, dict]:
+    """
+    Fetch year-by-year stats for a player from the MLB Stats API.
+    Returns {year: stat_dict}.  Missing/failed lookups return {}.
+    For players who were on multiple teams in a season, the last split is used
+    (MLB API lists individual team stints then a combined row last).
+    """
+    try:
+        data = _mlb(
+            f"/people/{mlb_id}/stats",
+            stats="yearByYear", group=group, sportId=1,
+        )
+        seasons: dict[int, dict] = {}
+        for grp in data.get("stats", []):
+            if grp.get("type", {}).get("displayName") == "yearByYear":
+                for split in grp.get("splits", []):
+                    raw_year = split.get("season")
+                    if not raw_year:
+                        continue
+                    year = int(raw_year)
+                    seasons[year] = split.get("stat", {})
+        return seasons
+    except Exception as exc:
+        log.debug("Career season fetch failed for mlbId=%d: %s", mlb_id, exc)
+        return {}
+
+
+def _resurgence_hint(career_seasons: dict[int, dict], current_season: int) -> str:
+    """
+    Detect a 'bounce-back' story: player had a strong season in the past,
+    went through a notable down period, and is performing well again now.
+
+    Only fires when:
+      - Peak OPS >= .830 in some season ≥ 2 years before current, with 200+ PA
+      - At least one recent season (between peak and now) had OPS drop ≥ .110 below peak
+        with 150+ PA (i.e. they played, they just weren't themselves)
+      - Current season OPS (if present in career_seasons) is rebounding to ≥ .780
+        AND is ≥ .080 better than the worst down-year OPS
+
+    Returns a hint string for Claude, or "" if the pattern doesn't match.
+    """
+    if len(career_seasons) < 3:
+        return ""
+
+    def _ops(s: dict) -> float:
+        return float(s.get("ops") or s.get("OPS") or 0.0)
+
+    def _pa(s: dict) -> int:
+        return int(s.get("plateAppearances") or s.get("atBats") or 0)
+
+    # ── Find the player's peak season ─────────────────────────────────
+    peak_year: int | None = None
+    peak_ops:  float      = 0.0
+    for year, stats in career_seasons.items():
+        if current_season - year < 2:
+            continue          # must be ≥ 2 years ago
+        if year < 2019:
+            continue          # too old to be relevant
+        ops = _ops(stats)
+        pa  = _pa(stats)
+        if pa >= 200 and ops > peak_ops:
+            peak_ops  = ops
+            peak_year = year
+
+    if peak_year is None or peak_ops < 0.830:
+        return ""             # never had a legitimately strong season
+
+    # ── Find down years between peak and now ──────────────────────────
+    down_ops_list: list[float] = []
+    for year in range(peak_year + 1, current_season):
+        stats = career_seasons.get(year, {})
+        ops   = _ops(stats)
+        pa    = _pa(stats)
+        if pa >= 150 and ops < (peak_ops - 0.110):
+            down_ops_list.append(ops)
+
+    if not down_ops_list:
+        return ""             # no meaningful slump between peak and now
+
+    worst_ops = min(down_ops_list)
+
+    # ── Verify current season is a genuine rebound ─────────────────────
+    current_stats = career_seasons.get(current_season, {})
+    current_ops   = _ops(current_stats)
+    # current_ops may be 0 if the current season isn't in the year-by-year yet;
+    # that's fine — the hint is still valid based on the historical pattern.
+    if current_ops > 0 and current_ops < 0.780:
+        return ""
+    if current_ops > 0 and current_ops < worst_ops + 0.080:
+        return ""
+
+    gap_str = f"{peak_ops:.3f}"
+    down_str = f"{worst_ops:.3f}"
+    return (
+        f"Resurgence context: peaked at OPS {gap_str} in {peak_year}, "
+        f"then slumped (OPS down to ~{down_str}). "
+        f"Now performing well again — 'he's back' / 'the old [name]' framing fits."
+    )
+
+
+def _contract_hint(age: int | None, player_name: str = "") -> str:
+    """
+    Return a contract-status hint for Claude.
+    Young players on cheap deals are candidates for 'extend him' framing.
+    Returns empty string if age is unknown, player is clearly past arb,
+    or the player has already signed a long-term extension.
+    """
+    if age is None:
+        return ""
+    if _norm(player_name) in _ALREADY_EXTENDED:
+        return ""
+    if age <= _EXTENSION_AGE_MAX:
+        return f"Contract status: likely on rookie/pre-arb or arb deal (age {age}) — 'extend him' angle is appropriate."
+    return ""
+
+
+def _fetch_player_ages(mlb_ids: list[int]) -> dict[int, int]:
+    """
+    Batch-fetch current ages for a list of MLB player IDs.
+    Returns a dict {mlb_id: age}. Missing entries mean the lookup failed.
+    One API call for up to ~100 IDs.
+    """
+    if not mlb_ids:
+        return {}
+    try:
+        ids_str = ",".join(str(i) for i in mlb_ids)
+        data = _get(f"{MLB_API}/people", params={"personIds": ids_str, "fields": "people,id,currentAge"})
+        return {
+            p["id"]: p["currentAge"]
+            for p in data.get("people", [])
+            if "id" in p and "currentAge" in p
+        }
+    except Exception as exc:
+        log.warning("Batch player age fetch failed: %s", exc)
+        return {}
 
 
 # ── MLB Stats API helpers ─────────────────────────────────────────────
@@ -322,6 +574,16 @@ def collect_game_standouts(lookback_days: int = 1) -> list[StatCandidate]:
                         raw_stats=meta["stats"],
                         date=date_str,
                     ))
+
+    # ── Batch-fetch ages and patch contract hint into context ──────────
+    player_ids = [c.mlb_id for c in candidates if c.mlb_id]
+    age_map    = _fetch_player_ages(list(set(player_ids)))
+    for c in candidates:
+        if c.mlb_id and c.mlb_id in age_map:
+            c.age = age_map[c.mlb_id]
+            hint  = _contract_hint(c.age, c.player_name)
+            if hint:
+                c.context = f"{c.context} {hint}"
 
     log.info("Collected %d game candidates", len(candidates))
     return candidates
@@ -574,6 +836,40 @@ def collect_season_leaders(season: int) -> list[StatCandidate]:
             date=today,
         ))
 
+    # ── Patch age from FanGraphs row ──────────────────────────────────
+    fg_age_map: dict[int, int] = {}
+    for row in bat_rows + pit_rows:
+        try:
+            mlb_id = int(row["xMLBAMID"])
+            age    = int(float(row["Age"]))
+            fg_age_map[mlb_id] = age
+        except (KeyError, ValueError, TypeError):
+            pass
+
+    for c in candidates:
+        if c.mlb_id in fg_age_map:
+            c.age = fg_age_map[c.mlb_id]
+
+    # ── Batch career-season lookup for resurgence detection ───────────
+    # Only check hitters for now (pitching career OPS doesn't apply).
+    unique_bat_ids = list({c.mlb_id for c in candidates
+                           if c.stat_type == "season_batting" and c.mlb_id})
+    career_map: dict[int, dict[int, dict]] = {}
+    for mlb_id in unique_bat_ids:
+        career_map[mlb_id] = _fetch_career_seasons(mlb_id, group="hitting")
+
+    for c in candidates:
+        hints: list[str] = []
+        contract = _contract_hint(c.age, c.player_name)
+        if contract:
+            hints.append(contract)
+        if c.stat_type == "season_batting" and c.mlb_id in career_map:
+            resurge = _resurgence_hint(career_map[c.mlb_id], season)
+            if resurge:
+                hints.append(resurge)
+        if hints:
+            c.context = f"{c.context} {' '.join(hints)}"
+
     log.info("Collected %d season leader candidates", len(candidates))
     return candidates
 
@@ -665,11 +961,18 @@ def _streak_score(stat: dict, min_pa: int = 8) -> float:
 
 def _build_streak_candidate(mlb_id: int, row: dict, stat: dict,
                              window_label: str, season: int,
-                             iso_week: str, score: float) -> StatCandidate:
+                             iso_week: str, score: float,
+                             resurgence_hint: str = "") -> StatCandidate:
     name = str(row.get("PlayerName") or "")
     team = str(row.get("TeamNameAbb") or row.get("TeamName") or "")
     pos  = str(row.get("positionDB") or row.get("Pos") or "")
     today = _et_date(0)
+
+    # FanGraphs provides Age directly — no extra API call needed.
+    try:
+        age: int | None = int(float(row["Age"]))
+    except (KeyError, ValueError, TypeError):
+        age = None
 
     g   = int(stat.get("gamesPlayed") or 0)
     ab  = int(stat.get("atBats") or 0)
@@ -693,11 +996,15 @@ def _build_streak_candidate(mlb_id: int, row: dict, stat: dict,
 
     extra_str = (", " + ", ".join(extras)) if extras else ""
     stat_desc = f"{name} is {hit_str} ({avg_str}) over {window_label}{extra_str}"
+
+    contract_hint = _contract_hint(age, name)
+    extra_hints   = " ".join(h for h in [contract_hint, resurgence_hint] if h)
     context   = (
         f"{window_label} ({g} G): {hit_str} ({avg_str} AVG), {hr} HR, {rbi} RBI, "
         f"{bb} BB, OPS {ops_str}. "
         f"Season: {int(row.get('HR') or 0)} HR, {float(row.get('AVG') or 0):.3f} AVG. "
         f"Player recognition: {_recognition(name)}."
+        + (f" {extra_hints}" if extra_hints else "")
     )
     return StatCandidate(
         candidate_id=f"weekly_{season}_{iso_week}_hit_{mlb_id}_{window_label.replace(' ', '')}",
@@ -713,6 +1020,7 @@ def _build_streak_candidate(mlb_id: int, row: dict, stat: dict,
         score=score,
         raw_stats={**dict(stat), "window_label": window_label},
         date=today,
+        age=age,
     )
 
 
@@ -734,16 +1042,18 @@ def collect_weekly_hitters(season: int, top_n: int = 30) -> list[StatCandidate]:
     iso_week = datetime.now(timezone.utc).strftime("%Gw%V")
 
     def _fetch_row(row: dict):
-        mlb_id = int(row["xMLBAMID"])
-        l7, _  = _fetch_recent_splits(mlb_id, season)
-        l3     = _compute_last_n_games(mlb_id, season, n=3)
-        return mlb_id, l7, l3, row
+        mlb_id   = int(row["xMLBAMID"])
+        l7, _    = _fetch_recent_splits(mlb_id, season)
+        l3       = _compute_last_n_games(mlb_id, season, n=3)
+        career   = _fetch_career_seasons(mlb_id, group="hitting")
+        resurge  = _resurgence_hint(career, season)
+        return mlb_id, l7, l3, row, resurge
 
     with ThreadPoolExecutor(max_workers=8) as pool:
         results = list(pool.map(_fetch_row, top_hitters))
 
     seen: set[int] = set()  # one candidate per player max
-    for mlb_id, l7, l3, row in results:
+    for mlb_id, l7, l3, row, resurge in results:
         if mlb_id in seen:
             continue
 
@@ -764,7 +1074,8 @@ def collect_weekly_hitters(season: int, top_n: int = 30) -> list[StatCandidate]:
 
         seen.add(mlb_id)
         candidates.append(_build_streak_candidate(
-            mlb_id, row, best_stat, best_window, season, iso_week, best_score
+            mlb_id, row, best_stat, best_window, season, iso_week, best_score,
+            resurgence_hint=resurge,
         ))
 
     log.info("Collected %d weekly hitter candidates", len(candidates))
@@ -1024,11 +1335,21 @@ def _build_combined_candidate(game_cand: StatCandidate,
         f"{window_display}: {', '.join(streak_parts)}"
     )
 
+    # Use age from whichever source has it (game_cand is patched first, weekly as fallback)
+    age           = game_cand.age or weekly_cand.age
+    contract_hint = _contract_hint(age, name)
+    # Carry resurgence hint from the weekly candidate (it already ran the career lookup)
+    resurge_hint  = weekly_cand.context.split("Resurgence context:", 1)
+    resurge_str   = ("Resurgence context:" + resurge_hint[1].split(".")[0] + ".") if len(resurge_hint) > 1 else ""
+
+    extra_hints = " ".join(h for h in [contract_hint, resurge_str] if h)
+
     context = (
         f"Game date: {_day_name(game_date)} ({game_date}). "
         f"Last night: {g_h}/{g_ab}, {g_hr} HR, {g_rbi} RBI, {g_tb} TB, {g_sb} SB. "
         f"{window_display}: {w_h}/{w_ab}, {w_hr} HR, {w_rbi} RBI, OPS {w_ops:.3f}. "
         f"Player recognition: {_recognition(name)}."
+        + (f" {extra_hints}" if extra_hints else "")
     )
 
     # Score is the sum of both signals with a combo bonus
@@ -1048,6 +1369,7 @@ def _build_combined_candidate(game_cand: StatCandidate,
         score=combined_score,
         raw_stats={**gs, "window_label": window_label, "weekly": dict(ws)},
         date=game_date,
+        age=age,
     )
 
 

@@ -51,12 +51,41 @@ TONE — mix these up, don't always go hype:
 
 UNDERRATED PLAYER FRAMING:
 - If context says "Player recognition: lesser-known / potentially underrated", \
-  lean into that angle in the reaction line.
-- Use phrases like: "quietly", "flying under the radar", "nobody's talking about him", \
-  "somehow not getting enough attention", "under the radar"
-- Example: "JJ Wetherholt: 4-for-9, 1 HR, 1.611 OPS over his last 3 games.\n\nquietly locked in"
-- Don't overdo it — one natural reference is enough. If the stat is dominant enough \
-  to stand alone, let it.
+  you can acknowledge it — but the reaction must be about the STAT, not about his fame.
+- The "nobody's talking about him" concept is FULLY BANNED in all forms. \
+  Do not write anything that means "nobody is watching / paying attention / talking / caring." \
+  That includes: "nobody's watching", "nobody's noticing", "nobody's paying attention", \
+  "people should be talking", "not getting enough attention", "flying under the radar", \
+  "under the radar", "the league's sleeping on him", "somehow nobody cares". ALL BANNED.
+- Instead, react to what the numbers actually say. Good options by tone:
+  Dry: "quietly ok" / "quietly locked in" / "sneaky good" / "quietly on one" \
+       / "yeah that works" / "not bad for a guy nobody drafted"
+  Deadpan: "learn the name" / "go look him up" / "put some respect on it" \
+           / "has an argument" / "doing this quietly"
+  Stat-first: Just use a normal dry or deadpan reaction and let the number speak. \
+              A great stat line doesn't need a hype man — the numbers are the point.
+- Rotate through these. Never use the same one back to back.
+
+EXTENSION FRAMING:
+- If context says "Contract status: likely on rookie/pre-arb or arb deal", \
+  you MAY occasionally use "extend him" or "lock him up" as the reaction — \
+  but this should be a rare treat, not a default. Use it maybe 1 in 4 times \
+  the hint appears. Most of the time, just react to the stat normally.
+- Only use it when the performance is genuinely special AND the angle feels fresh. \
+  A routine hot streak doesn't need the contract angle — save it for something that \
+  makes you sit up.
+- When you do use it, keep it short: "extend him" / "lock him up" / \
+  "someone call his agent"
+
+RESURGENCE FRAMING:
+- If context says "Resurgence context:", use a comeback / bounce-back angle.
+- Great options: "he's back", "the old [Name] is back", "[Name] remembered who he was", \
+  "someone forgot to tell him his career was over", "the league thought they had seen \
+  the last of him", "[year] [Name] has entered the chat"
+- Keep it natural — one short line, same format as all other reactions.
+- Example: "Christian Yelich: .340 over his last 7 days, 2 HRs.\n\nthe old Yelich is back"
+- If BOTH resurgence and underrated/extension hints are present, pick the most interesting \
+  angle — don't try to cram all three into one line.
 
 DAY OF WEEK — strict rule:
 - NEVER invent or assume a day of the week.
@@ -75,6 +104,11 @@ PUNCTUATION AND STYLE:
 
 BANNED PHRASES — never use these (ever, under any circumstances):
 "Bowlers", "bowlers",
+"nobody's talking about him", "nobody is talking about him", \
+"nobody's talking about this guy", "nobody's watching", \
+"nobody's paying attention", "not enough people", "not getting enough attention", \
+"people should be talking", "flying under the radar", "under the radar", \
+"the league's sleeping on him", "somehow nobody cares", \
 "That's a statement", "virtually untouchable", "one of the most underrated", \
 "makes a statement", "check out", "full breakdown", "don't miss", "make sure to", \
 "is absolutely", "was absolutely", "doing things", "analytics", "here's why", \
@@ -93,6 +127,10 @@ EXAMPLES — notice the variety of tones and subjects:
   "CJ Abrams: 7-for-12 over his last 3 games, 2 HRs.\n\nok then"
   "JJ Wetherholt: 4-for-9, 1 HR, 1.611 OPS over his last 3 games.\n\nquietly locked in"
   "Hunter Goodman last night: 3-for-4, 2 HRs, 3 RBI\nLast 3 games: 6-11, 3 HRs, 5 RBI\n\nhe's been on one"
+  "Bryson Stott: 6-for-14, 2 HRs over his last 4 games.\n\nsneaky good year"
+  "Kyle Stowers: .341 over his last 7 days, 3 HRs.\n\nlearn the name"
+  "Josh Naylor: 5-for-11, 4 RBI over his last 3 games.\n\nputting together a season"
+  "Brice Turang: 7-for-15, 2 SB, 1.012 OPS over his last 4 games.\n\nhas an argument"
   "the Nationals put up 15 runs last night.\n\nyeah that'll do"
   "the Dodgers have won 9 straight.\n\nit's getting old for everyone else"
   "Cardinals shut out the Cubs 8-0.\n\nnot a great night to be Chicago"
@@ -102,18 +140,28 @@ EXAMPLES — notice the variety of tones and subjects:
 
 def generate_tweet(player_name: str, team: str, position: str,
                    stat_description: str, context: str,
-                   page_url: str, stat_type: str) -> str:
+                   page_url: str, stat_type: str,
+                   recent_tweets: list[str] | None = None) -> str:
     """
     Call Claude to produce a tweet body (without URL).
     Returns the tweet text, stripped of surrounding whitespace.
     """
+    recent_block = ""
+    if recent_tweets:
+        joined = "\n---\n".join(recent_tweets[-5:])
+        recent_block = f"""
+RECENT TWEETS (do NOT repeat the same reaction line or phrasing as any of these):
+{joined}
+
+"""
+
     user_msg = f"""\
 Write a tweet about this stat:
 
 Player: {player_name} ({team}, {position})
 Stat: {stat_description}
 Context: {context}
-
+{recent_block}
 Drop the stat cleanly, then one short reaction. Fan voice, not analyst voice. \
 URL goes on its own line at the end — no intro words before it."""
 
