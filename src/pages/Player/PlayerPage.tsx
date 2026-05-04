@@ -908,7 +908,6 @@ export default function PlayerPage() {
                 {person?.height && <span>{person.height}</span>}
                 {draftInfo?.draftYear && (
                   <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    🎓
                     {draftInfo.draftYear} Draft
                     {draftInfo.round && ` · Rd ${draftInfo.round}`}
                     {draftInfo.pickNumber != null && `, Pick ${draftInfo.pickNumber}`}
