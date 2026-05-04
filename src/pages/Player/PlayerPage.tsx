@@ -907,7 +907,7 @@ export default function PlayerPage() {
                 )}
                 {person?.height && <span>{person.height}</span>}
                 {draftInfo?.draftYear && (
-                  <span style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                  <span className="player-hero-draft">
                     {[
                       `${draftInfo.draftYear} Draft`,
                       draftInfo.round     ? `Rd ${draftInfo.round}` : null,

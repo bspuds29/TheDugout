@@ -879,6 +879,13 @@
   .player-hero {
     padding: var(--space-4);
     gap: var(--space-3);
+    align-items: flex-start;
+  }
+
+  /* Shrink avatar so info section has room */
+  .player-avatar--hero {
+    max-width: 72px !important;
+    max-height: 72px !important;
   }
 
   .player-hero-name {
@@ -891,12 +898,32 @@
     font-size: 11.5px;
   }
 
+  /* Draft info always gets its own row and wraps freely */
+  .player-hero-draft {
+    flex: 1 1 100%;
+    min-width: 0;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
+  }
+
+  /* WAR card wraps to its own full-width row below avatar+info */
   .player-hero-war {
+    order: 10;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
     padding: var(--space-3) var(--space-4);
+    gap: var(--space-4);
   }
 
   .player-hero-war-value {
-    font-size: 26px;
+    font-size: 24px;
+  }
+
+  .player-hero-actions {
+    margin-top: 0;
   }
 
   /* ── Tab strip ── */
