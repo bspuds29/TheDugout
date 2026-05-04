@@ -523,3 +523,35 @@ https://thedugoutapi.com/player?mlbId=592450&name=Aaron+Judge
 2026-05-04 06:33:27,975  INFO      poster — Tweet posted (text only) — id: 2051188439454982408
 2026-05-04 06:33:27,976  INFO      tracker — Marked as used: combined_592450_2026-05-03
 2026-05-04 06:33:27,976  INFO      __main__ — Done. Tweet ID: 2051188439454982408
+2026-05-04 17:20:47,177  INFO      __main__ — ============================================================
+2026-05-04 17:20:47,177  INFO      __main__ — TheDugout tweet bot starting — 2026-05-04T17:20:47.177467+00:00
+2026-05-04 17:20:47,177  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-04 17:20:47,177  INFO      __main__ — Collecting stat candidates…
+2026-05-04 17:20:47,178  INFO      collector — Fetching schedule for 2026-05-03
+2026-05-04 17:20:47,461  INFO      collector — Collected 47 game candidates
+2026-05-04 17:20:51,035  INFO      collector — Collected 14 weekly hitter candidates
+2026-05-04 17:20:51,310  INFO      collector — FanGraphs batting leaderboard: 179 rows
+2026-05-04 17:20:52,128  INFO      collector — FanGraphs pitching leaderboard: 74 rows
+2026-05-04 17:20:52,129  INFO      collector — Collected 30 season leader candidates
+2026-05-04 17:20:52,146  INFO      collector — Collected 3 team game candidates
+2026-05-04 17:20:52,193  INFO      collector — Collected 2 team streak candidates
+2026-05-04 17:20:52,193  INFO      collector — Built 2 combined hitting candidates
+2026-05-04 17:20:52,193  INFO      collector — Total candidates: 98 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-04 17:20:52,193  INFO      __main__ — 97 fresh candidates after dedup (of 98 total)
+2026-05-04 17:20:52,193  INFO      __main__ — Selected candidate: 'Julio Rodríguez' — Julio Rodríguez is 5-for-12 (.417) over his last 3 games, 2 HRs, 4 RBI (score=81.4, type=weekly_hitting)
+2026-05-04 17:20:52,193  INFO      __main__ — Generating tweet via Claude…
+2026-05-04 17:20:53,880  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-04 17:20:53,903  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-04 17:20:53,903  INFO      __main__ — TWEET PREVIEW:
+Julio Rodríguez last 3 games: 5-12, 2 HRs, 4 RBI, 1.417 OPS
+
+nobody's talking about him enough
+
+https://thedugoutapi.com/player?mlbId=677594&name=Julio+Rodríguez
+2026-05-04 17:20:53,903  INFO      __main__ — Length: 94 chars (body) + 23 (t.co URL) = 118 total
+2026-05-04 17:20:53,903  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-04 17:20:53,903  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-04 17:20:53,903  INFO      __main__ — Posting tweet…
+2026-05-04 17:20:54,139  INFO      poster — Tweet posted (text only) — id: 2051351372142952490
+2026-05-04 17:20:54,140  INFO      tracker — Marked as used: weekly_2026_2026w19_hit_677594_hislast3games
+2026-05-04 17:20:54,140  INFO      __main__ — Done. Tweet ID: 2051351372142952490
