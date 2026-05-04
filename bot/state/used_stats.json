@@ -12,7 +12,8 @@
     "combined_677594_2026-05-01",
     "weekly_2026_2026w18_hit_677594_hislast3games",
     "combined_669127_2026-05-02",
-    "weekly_2026_2026w18_hit_668804_hislast3games"
+    "weekly_2026_2026w18_hit_668804_hislast3games",
+    "combined_592450_2026-05-03"
   ],
   "tweet_log": [
     {
@@ -118,7 +119,15 @@
       "player": "Bryan Reynolds",
       "stat": "Bryan Reynolds is 6-for-11 (.545) over his last 3 games, 1 HR, 5 RBI",
       "timestamp": "2026-05-03T16:36:20.259917+00:00"
+    },
+    {
+      "id": "combined_592450_2026-05-03",
+      "tweet_text": "Aaron Judge last night: 2-for-4, 1 HR, 2 RBI\nLast 3 games: 4-for-10, 1 HR, 3 RBI, 1.300 OPS\n\nGood luck.\n\nhttps://thedugoutapi.com/player?mlbId=592450&name=Aaron+Judge",
+      "tweet_id": "2051188439454982408",
+      "player": "Aaron Judge",
+      "stat": "Aaron Judge last night: 2-for-4, 1 HR, 2 RBI\nLast 3 games: 4-for-10, 1 HR, 3 RBI, 1.300 OPS",
+      "timestamp": "2026-05-04T06:33:27.976599+00:00"
     }
   ],
-  "last_run": "2026-05-03T16:36:20.259931+00:00"
+  "last_run": "2026-05-04T06:33:27.976613+00:00"
 }

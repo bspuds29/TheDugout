@@ -489,3 +489,37 @@ https://thedugoutapi.com/player?mlbId=668804&name=Bryan+Reynolds
 2026-05-03 16:36:20,258  INFO      poster — Tweet posted (text only) — id: 2050977769111134343
 2026-05-03 16:36:20,260  INFO      tracker — Marked as used: weekly_2026_2026w18_hit_668804_hislast3games
 2026-05-03 16:36:20,260  INFO      __main__ — Done. Tweet ID: 2050977769111134343
+2026-05-04 06:33:24,222  INFO      __main__ — ============================================================
+2026-05-04 06:33:24,222  INFO      __main__ — TheDugout tweet bot starting — 2026-05-04T06:33:24.222557+00:00
+2026-05-04 06:33:24,222  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-04 06:33:24,222  INFO      __main__ — Collecting stat candidates…
+2026-05-04 06:33:24,223  INFO      collector — Fetching schedule for 2026-05-03
+2026-05-04 06:33:24,457  INFO      collector — Collected 47 game candidates
+2026-05-04 06:33:25,717  INFO      collector — Collected 13 weekly hitter candidates
+2026-05-04 06:33:25,891  INFO      collector — FanGraphs batting leaderboard: 179 rows
+2026-05-04 06:33:26,123  INFO      collector — FanGraphs pitching leaderboard: 78 rows
+2026-05-04 06:33:26,123  INFO      collector — Collected 30 season leader candidates
+2026-05-04 06:33:26,130  INFO      collector — Collected 3 team game candidates
+2026-05-04 06:33:26,263  INFO      collector — Collected 2 team streak candidates
+2026-05-04 06:33:26,264  INFO      collector — Built 2 combined hitting candidates
+2026-05-04 06:33:26,264  INFO      collector — Total candidates: 97 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-04 06:33:26,264  INFO      __main__ — 97 fresh candidates after dedup (of 97 total)
+2026-05-04 06:33:26,264  INFO      __main__ — Selected candidate: 'Aaron Judge' — Aaron Judge last night: 2-for-4, 1 HR, 2 RBI
+Last 3 games: 4-for-10, 1 HR, 3 RBI, 1.300 OPS (score=67.8, type=combined_hitting)
+2026-05-04 06:33:26,264  INFO      __main__ — Generating tweet via Claude…
+2026-05-04 06:33:27,745  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-04 06:33:27,762  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-04 06:33:27,762  INFO      __main__ — TWEET PREVIEW:
+Aaron Judge last night: 2-for-4, 1 HR, 2 RBI
+Last 3 games: 4-for-10, 1 HR, 3 RBI, 1.300 OPS
+
+Good luck.
+
+https://thedugoutapi.com/player?mlbId=592450&name=Aaron+Judge
+2026-05-04 06:33:27,762  INFO      __main__ — Length: 103 chars (body) + 23 (t.co URL) = 127 total
+2026-05-04 06:33:27,762  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-04 06:33:27,762  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-04 06:33:27,762  INFO      __main__ — Posting tweet…
+2026-05-04 06:33:27,975  INFO      poster — Tweet posted (text only) — id: 2051188439454982408
+2026-05-04 06:33:27,976  INFO      tracker — Marked as used: combined_592450_2026-05-03
+2026-05-04 06:33:27,976  INFO      __main__ — Done. Tweet ID: 2051188439454982408
