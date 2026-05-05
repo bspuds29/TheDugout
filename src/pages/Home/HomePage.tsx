@@ -43,18 +43,20 @@ function spark(base: number, amp: number, seed: number, n = 14) {
 function Sparkline({ data, color }: { data: { i: number; v: number }[]; color: string }) {
   const id = `sg-${color.replace(/[^a-z0-9]/gi, '')}`;
   return (
-    <ResponsiveContainer width={160} height={64}>
-      <AreaChart data={data} margin={{ top: 6, right: 4, left: 4, bottom: 6 }}>
-        <defs>
-          <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor={color} stopOpacity={0.45} />
-            <stop offset="100%" stopColor={color} stopOpacity={0}    />
-          </linearGradient>
-        </defs>
-        <Area type="monotone" dataKey="v" stroke={color} strokeWidth={2}
-          fill={`url(#${id})`} dot={false} isAnimationActive={false} />
-      </AreaChart>
-    </ResponsiveContainer>
+    <div style={{ width: 260, height: 80, flexShrink: 0 }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart data={data} margin={{ top: 8, right: 6, left: 6, bottom: 8 }}>
+          <defs>
+            <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stopColor={color} stopOpacity={0.45} />
+              <stop offset="100%" stopColor={color} stopOpacity={0}    />
+            </linearGradient>
+          </defs>
+          <Area type="monotone" dataKey="v" stroke={color} strokeWidth={2.5}
+            fill={`url(#${id})`} dot={false} isAnimationActive={false} />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
 
