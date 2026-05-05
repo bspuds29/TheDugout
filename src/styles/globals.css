@@ -1,6 +1,54 @@
+@import "tailwindcss";
+@import "tw-animate-css";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
+/* ─── Tailwind theme bridge (shadcn semantic tokens → CSS vars) ─────── */
+@theme inline {
+  /* Font */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* shadcn semantic color tokens */
+  --color-background:          var(--background);
+  --color-foreground:          var(--foreground);
+  --color-card:                var(--card);
+  --color-card-foreground:     var(--card-foreground);
+  --color-popover:             var(--popover);
+  --color-popover-foreground:  var(--popover-foreground);
+  --color-primary:             var(--primary);
+  --color-primary-foreground:  var(--primary-foreground);
+  --color-secondary:           var(--secondary);
+  --color-secondary-foreground:var(--secondary-foreground);
+  --color-muted:               var(--muted);
+  --color-muted-foreground:    var(--muted-foreground);
+  --color-destructive:         var(--destructive);
+  --color-ring:                var(--ring);
+  --color-input:               var(--input);
+  /* Radius scale */
+  --radius-sm:  calc(var(--radius) * 0.6);
+  --radius-md:  calc(var(--radius) * 0.8);
+  --radius-lg:  var(--radius);
+  --radius-xl:  calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
 :root {
+  /* ── shadcn semantic tokens (dark by default, matching app dark theme) */
+  --background:           #080d14;
+  --foreground:           #f0f4f8;
+  --card:                 #0f1923;
+  --card-foreground:      #f0f4f8;
+  --popover:              #111c2a;
+  --popover-foreground:   #f0f4f8;
+  --primary:              #20b2ff;
+  --primary-foreground:   #080d14;
+  --secondary:            #1a2535;
+  --secondary-foreground: #f0f4f8;
+  --muted:                #111c2a;
+  --muted-foreground:     #4d6070;
+  --destructive:          #ef4444;
+  --input:                rgba(255, 255, 255, 0.09);
+  --ring:                 #20b2ff;
+  --radius:               0.625rem;
+
   /* Brand Colors */
   --color-bg-primary: #080d14;
   --color-bg-secondary: #0d1520;
@@ -84,6 +132,22 @@
 
 /* ─── Light theme overrides ─────────────────────────────────────────── */
 [data-theme="light"] {
+  /* shadcn semantic tokens — light */
+  --background:           #f0f4f8;
+  --foreground:           #0f172a;
+  --card:                 #ffffff;
+  --card-foreground:      #0f172a;
+  --popover:              #ffffff;
+  --popover-foreground:   #0f172a;
+  --primary:              #20b2ff;
+  --primary-foreground:   #ffffff;
+  --secondary:            #eaf0f8;
+  --secondary-foreground: #0f172a;
+  --muted:                #eaf0f8;
+  --muted-foreground:     #94a3b8;
+  --destructive:          #ef4444;
+  --input:                rgba(0, 0, 0, 0.08);
+  --ring:                 #20b2ff;
   --color-bg-primary:    #f0f4f8;
   --color-bg-secondary:  #e8edf4;
   --color-bg-tertiary:   #dde4ee;
