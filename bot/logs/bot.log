@@ -555,3 +555,38 @@ https://thedugoutapi.com/player?mlbId=677594&name=Julio+Rodríguez
 2026-05-04 17:20:54,139  INFO      poster — Tweet posted (text only) — id: 2051351372142952490
 2026-05-04 17:20:54,140  INFO      tracker — Marked as used: weekly_2026_2026w19_hit_677594_hislast3games
 2026-05-04 17:20:54,140  INFO      __main__ — Done. Tweet ID: 2051351372142952490
+2026-05-05 06:09:47,464  INFO      __main__ — ============================================================
+2026-05-05 06:09:47,464  INFO      __main__ — TheDugout tweet bot starting — 2026-05-05T06:09:47.464969+00:00
+2026-05-05 06:09:47,465  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-05 06:09:47,465  INFO      __main__ — Collecting stat candidates…
+2026-05-05 06:09:47,465  INFO      collector — Fetching schedule for 2026-05-04
+2026-05-05 06:09:48,616  INFO      collector — Collected 46 game candidates
+2026-05-05 06:09:50,713  INFO      collector — Collected 15 weekly hitter candidates
+2026-05-05 06:09:50,958  INFO      collector — FanGraphs batting leaderboard: 179 rows
+2026-05-05 06:09:51,234  INFO      collector — FanGraphs pitching leaderboard: 74 rows
+2026-05-05 06:09:51,612  INFO      collector — Collected 30 season leader candidates
+2026-05-05 06:09:51,680  INFO      collector — Collected 3 team game candidates
+2026-05-05 06:09:51,773  INFO      collector — Collected 3 team streak candidates
+2026-05-05 06:09:51,773  INFO      collector — Built 5 combined hitting candidates
+2026-05-05 06:09:51,773  INFO      collector — Total candidates: 102 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-05 06:09:51,774  INFO      __main__ — 101 fresh candidates after dedup (of 102 total)
+2026-05-05 06:09:51,774  INFO      __main__ — 94 candidates after player-repeat filter
+2026-05-05 06:09:51,774  INFO      __main__ — Selected candidate: 'Drake Baldwin' — Drake Baldwin last night: 1-for-4, 1 HR, 1 RBI
+Last 3 games: 6-for-13, 2 HRs, 5 RBI, 1.533 OPS (score=89.2, type=combined_hitting)
+2026-05-05 06:09:51,774  INFO      __main__ — Generating tweet via Claude…
+2026-05-05 06:09:55,183  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-05 06:09:55,204  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-05 06:09:55,204  INFO      __main__ — TWEET PREVIEW:
+Drake Baldwin last night: 1-for-4, 1 HR, 1 RBI
+Last 3 games: 6-for-13, 2 HRs, 5 RBI, 1.533 OPS
+
+go look him up
+
+https://thedugoutapi.com/player?mlbId=686948&name=Drake+Baldwin
+2026-05-05 06:09:55,204  INFO      __main__ — Length: 110 chars (body) + 23 (t.co URL) = 134 total
+2026-05-05 06:09:55,205  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-05 06:09:55,205  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-05 06:09:55,205  INFO      __main__ — Posting tweet…
+2026-05-05 06:09:55,476  INFO      poster — Tweet posted (text only) — id: 2051544902803321076
+2026-05-05 06:09:55,478  INFO      tracker — Marked as used: combined_686948_2026-05-04
+2026-05-05 06:09:55,478  INFO      __main__ — Done. Tweet ID: 2051544902803321076
