@@ -108,6 +108,15 @@ _HOUSEHOLD_NAMES: frozenset[str] = frozenset({
     "kevin gausman", "sandy alcantara", "spencer strider", "kyle tucker",
     "marcus semien", "ozzie albies", "christian yelich", "willy adames",
     "anthony volpe", "luis robert jr.",
+    # ── Recent award winners / breakout stars ─────────────────────────
+    # These aren't in the current top 70 but are well-known from accolades
+    "drake baldwin",     # NL ROTY 2025
+    "paul skenes",       # already above, but also 2024 NL ROTY / Cy Young buzz
+    "jackson holliday",  # 2024 AL ROTY
+    "cj abrams",         # breakout star, Nationals
+    "james wood",        # already above
+    "colton cowser",     # Orioles breakout
+    "evan carter",       # Rangers breakout
 })
 
 _SESSION = requests.Session()
