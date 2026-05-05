@@ -101,16 +101,32 @@ function buildPitchingPercentiles(stats: PitchingStats, real?: PitchingPercentil
   ];
 }
 
-function buildHittingPercentiles(stats: HittingStats, real?: HittingPercentileRanks | null) {
+function buildHittingPercentiles(stats: HittingStats, real?: HittingPercentileRanks | null, oaaRaw?: number | null) {
   const calc = (v: number) => clamp(Math.round(v));
-  return [
-    { label: 'wRC+',          value: real?.wrcPlus    ?? calc(50 + (stats.wrcPlus - 100) / 60 * 50),                             raw: stats.wrcPlus > 0 ? stats.wrcPlus.toString() : '—' },
-    { label: 'Exit Velocity', value: real?.exitVelo   ?? (stats.exitVelo > 0 ? calc(50 + (stats.exitVelo - 88.5) / 7 * 50) : 50), raw: stats.exitVelo > 0 ? `${stats.exitVelo.toFixed(1)} mph` : '—' },
-    { label: 'Barrel %',      value: real?.barrelPct  ?? (stats.barrelPct > 0 ? calc(50 + (stats.barrelPct - 7.5) / 12 * 50) : 1),  raw: stats.barrelPct > 0 ? `${stats.barrelPct.toFixed(1)}%` : '—' },
-    { label: 'Hard Hit %',    value: real?.hardHitPct ?? (stats.hardHitPct > 0 ? calc(50 + (stats.hardHitPct - 37) / 20 * 50) : 1),  raw: stats.hardHitPct > 0 ? `${stats.hardHitPct.toFixed(1)}%` : '—' },
-    { label: 'BB%',           value: real?.bbPct      ?? calc(50 + (stats.bbPct - 8.5) / 8 * 50),                                raw: `${stats.bbPct.toFixed(1)}%` },
-    { label: 'K%',            value: real?.kPct       ?? calc(50 + (22 - stats.kPct) / 12 * 50),                                 raw: `${stats.kPct.toFixed(1)}%` },
+  const rows = [
+    { label: 'wRC+',          value: real?.wrcPlus    ?? calc(50 + (stats.wrcPlus - 100) / 60 * 50),                              raw: stats.wrcPlus > 0 ? stats.wrcPlus.toString() : '—' },
+    { label: 'Exit Velocity', value: real?.exitVelo   ?? (stats.exitVelo > 0 ? calc(50 + (stats.exitVelo - 88.5) / 7 * 50) : 50),  raw: stats.exitVelo > 0 ? `${stats.exitVelo.toFixed(1)} mph` : '—' },
+    { label: 'Barrel %',      value: real?.barrelPct  ?? (stats.barrelPct > 0 ? calc(50 + (stats.barrelPct - 7.5) / 12 * 50) : 1), raw: stats.barrelPct > 0 ? `${stats.barrelPct.toFixed(1)}%` : '—' },
+    { label: 'Hard Hit %',    value: real?.hardHitPct ?? (stats.hardHitPct > 0 ? calc(50 + (stats.hardHitPct - 37) / 20 * 50) : 1),raw: stats.hardHitPct > 0 ? `${stats.hardHitPct.toFixed(1)}%` : '—' },
+    { label: 'BB%',           value: real?.bbPct      ?? calc(50 + (stats.bbPct - 8.5) / 8 * 50),                                 raw: `${stats.bbPct.toFixed(1)}%` },
+    { label: 'K%',            value: real?.kPct       ?? calc(50 + (22 - stats.kPct) / 12 * 50),                                  raw: `${stats.kPct.toFixed(1)}%` },
   ];
+  // Sprint Speed — only show when we have a real value (not all players tracked)
+  if (real?.sprintSpeed != null || (stats.sprint > 0)) {
+    rows.push({
+      label: 'Sprint Speed',
+      value: real?.sprintSpeed ?? calc(50 + (stats.sprint - 27) / 4 * 50),
+      raw:   stats.sprint > 0 ? `${stats.sprint.toFixed(1)} ft/s` : '—',
+    });
+  }
+  // OAA — only show when we have a real percentile (position players with ≥200 Inn)
+  if (real?.oaa != null) {
+    const oaaDisplay = oaaRaw != null
+      ? (oaaRaw >= 0 ? `+${oaaRaw.toFixed(0)}` : oaaRaw.toFixed(0))
+      : '—';
+    rows.push({ label: 'OAA', value: real.oaa, raw: oaaDisplay });
+  }
+  return rows;
 }
 
 function buildPitchingRadar(stats: PitchingStats, real?: PitchingPercentileRanks | null) {
@@ -830,7 +846,7 @@ export default function PlayerPage() {
   const pitchRadar = pitching ? buildPitchingRadar(pitching, pitchRanks)       : [];
   const pitchIns   = pitching ? buildPitchingInsights(pitching, arsenal.length > 0) : [];
 
-  const hitPct = hitting ? buildHittingPercentiles(hitting, hitRanks) : [];
+  const hitPct = hitting ? buildHittingPercentiles(hitting, hitRanks, defense?.oaa ?? null) : [];
   const hitIns = hitting ? buildHittingInsights(hitting)    : [];
 
   const YEAR = new Date().getFullYear();

@@ -62,6 +62,7 @@ import {
   fetchFanGraphsBatterById,
   computeWrcPlusPercentile,
   computeERAPercentile,
+  computeOAAPercentile,
 } from '../data/api/fangraphs';
 import {
   transformPerson,
@@ -552,12 +553,14 @@ export function useStatcastSprayChart(mlbId: number | null) {
 // calls after the first load.
 
 export interface HittingPercentileRanks {
-  wrcPlus?:    number;
-  exitVelo?:   number;
-  barrelPct?:  number;
-  hardHitPct?: number;
-  bbPct?:      number;
-  kPct?:       number;
+  wrcPlus?:     number;
+  exitVelo?:    number;
+  barrelPct?:   number;
+  hardHitPct?:  number;
+  bbPct?:       number;
+  kPct?:        number;
+  sprintSpeed?: number;
+  oaa?:         number;
 }
 
 export interface PitchingPercentileRanks {
@@ -576,19 +579,23 @@ export function useHittingPercentileRanks(mlbId: number | null) {
   return useQuery<HittingPercentileRanks>({
     queryKey: ['hittingPercentiles', mlbId, YEAR],
     queryFn: async () => {
-      const [savantRes, wrcRes] = await Promise.allSettled([
+      const [savantRes, wrcRes, oaaRes] = await Promise.allSettled([
         computeBatterSavantPercentiles(mlbId!, YEAR),
         computeWrcPlusPercentile(mlbId!, YEAR),
+        computeOAAPercentile(mlbId!, YEAR),
       ]);
       const s = savantRes.status === 'fulfilled' ? savantRes.value : null;
       const w = wrcRes.status === 'fulfilled' ? wrcRes.value : null;
+      const o = oaaRes.status === 'fulfilled' ? oaaRes.value : null;
       return {
-        wrcPlus:    w    ?? undefined,
-        exitVelo:   s?.exitVelo,
-        barrelPct:  s?.barrelPct,
-        hardHitPct: s?.hardHitPct,
-        bbPct:      s?.bbPct,
-        kPct:       s?.kPct,
+        wrcPlus:     w    ?? undefined,
+        exitVelo:    s?.exitVelo,
+        barrelPct:   s?.barrelPct,
+        hardHitPct:  s?.hardHitPct,
+        bbPct:       s?.bbPct,
+        kPct:        s?.kPct,
+        sprintSpeed: s?.sprintSpeed,
+        oaa:         o    ?? undefined,
       };
     },
     enabled: !!mlbId,

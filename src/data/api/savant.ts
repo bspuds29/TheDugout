@@ -319,12 +319,13 @@ export async function fetchStatcastSprayChart(
 // pool meaningful (eliminate 1-game callups skewing the distribution).
 
 export interface SavantBatterPercentiles {
-  exitVelo:   number;  // 1-99 — higher = better
-  barrelPct:  number;
-  hardHitPct: number;
-  bbPct:      number;
-  kPct:       number;  // inverse: lower K% → higher rank
-  xwoba:      number;
+  exitVelo:    number;  // 1-99 — higher = better
+  barrelPct:   number;
+  hardHitPct:  number;
+  bbPct:       number;
+  kPct:        number;  // inverse: lower K% → higher rank
+  xwoba:       number;
+  sprintSpeed: number;  // higher = better
 }
 
 export interface SavantPitcherPercentiles {
@@ -371,12 +372,17 @@ export async function computeBatterSavantPercentiles(
     const pv  = (c: string) => num(player[c]);
 
     return {
-      exitVelo:   rankInLeague(col('exit_velocity_avg'),    pv('exit_velocity_avg'),    true),
-      barrelPct:  rankInLeague(col('barrel_batted_rate'),   pv('barrel_batted_rate'),   true),
-      hardHitPct: rankInLeague(col('hard_hit_percent'),     pv('hard_hit_percent'),     true),
-      bbPct:      rankInLeague(col('bb_percent'),           pv('bb_percent'),           true),
-      kPct:       rankInLeague(col('k_percent'),            pv('k_percent'),            false),
-      xwoba:      rankInLeague(col('xwoba'),                pv('xwoba'),                true),
+      exitVelo:    rankInLeague(col('exit_velocity_avg'),  pv('exit_velocity_avg'),  true),
+      barrelPct:   rankInLeague(col('barrel_batted_rate'), pv('barrel_batted_rate'), true),
+      hardHitPct:  rankInLeague(col('hard_hit_percent'),   pv('hard_hit_percent'),   true),
+      bbPct:       rankInLeague(col('bb_percent'),         pv('bb_percent'),         true),
+      kPct:        rankInLeague(col('k_percent'),          pv('k_percent'),          false),
+      xwoba:       rankInLeague(col('xwoba'),              pv('xwoba'),              true),
+      sprintSpeed: rankInLeague(
+        qualified.map(r => num(r['sprint_speed'])).filter(v => v > 0),
+        pv('sprint_speed'),
+        true,
+      ),
     };
   } catch {
     return null;

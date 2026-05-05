@@ -298,6 +298,30 @@ function buildFieldingStats(mlbId: number, year: number, r: Record<string, unkno
   };
 }
 
+// ─── OAA percentile rank ─────────────────────────────────────────────
+// Computes a player's OAA percentile vs. all qualified fielders (≥200 Inn).
+
+export async function computeOAAPercentile(
+  mlbId: number,
+  year: number,
+): Promise<number | null> {
+  try {
+    const all = await fetchFanGraphsFieldingLeaderboard(year);
+    // Require minimum innings to filter out small samples
+    const qualified = all.filter(r => r.innings >= 200 && r.oaa !== null);
+    if (qualified.length < 10) return null;
+    const player = qualified.find(r => r.mlbId === mlbId);
+    if (!player || player.oaa === null) return null;
+
+    const pool   = qualified.map(r => r.oaa as number);
+    const sorted = [...pool].sort((a, b) => a - b);
+    const below  = sorted.filter(v => v < player.oaa!).length;
+    return Math.max(1, Math.min(99, Math.round((below / sorted.length) * 100)));
+  } catch {
+    return null;
+  }
+}
+
 // ─── Batting leaderboard ─────────────────────────────────────────────
 
 async function getBattingLeaderboard(year: number): Promise<Record<string, unknown>[]> {
