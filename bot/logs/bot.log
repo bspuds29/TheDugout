@@ -590,3 +590,36 @@ https://thedugoutapi.com/player?mlbId=686948&name=Drake+Baldwin
 2026-05-05 06:09:55,476  INFO      poster — Tweet posted (text only) — id: 2051544902803321076
 2026-05-05 06:09:55,478  INFO      tracker — Marked as used: combined_686948_2026-05-04
 2026-05-05 06:09:55,478  INFO      __main__ — Done. Tweet ID: 2051544902803321076
+2026-05-05 17:12:39,665  INFO      __main__ — ============================================================
+2026-05-05 17:12:39,666  INFO      __main__ — TheDugout tweet bot starting — 2026-05-05T17:12:39.666034+00:00
+2026-05-05 17:12:39,666  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-05 17:12:39,666  INFO      __main__ — Collecting stat candidates…
+2026-05-05 17:12:39,666  INFO      collector — Fetching schedule for 2026-05-04
+2026-05-05 17:12:40,034  INFO      collector — Collected 46 game candidates
+2026-05-05 17:12:41,136  INFO      collector — Collected 14 weekly hitter candidates
+2026-05-05 17:12:41,418  INFO      collector — FanGraphs batting leaderboard: 179 rows
+2026-05-05 17:12:41,636  INFO      collector — FanGraphs pitching leaderboard: 73 rows
+2026-05-05 17:12:41,828  INFO      collector — Collected 30 season leader candidates
+2026-05-05 17:12:41,838  INFO      collector — Collected 3 team game candidates
+2026-05-05 17:12:41,871  INFO      collector — Collected 3 team streak candidates
+2026-05-05 17:12:41,872  INFO      collector — Built 5 combined hitting candidates
+2026-05-05 17:12:41,872  INFO      collector — Total candidates: 101 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-05 17:12:41,872  INFO      __main__ — 99 fresh candidates after dedup (of 101 total)
+2026-05-05 17:12:41,872  INFO      __main__ — 90 candidates after player-repeat filter
+2026-05-05 17:12:41,872  INFO      __main__ — Selected candidate: 'Ozzie Albies' — Ozzie Albies is 5-for-11 (.455) over his last 3 games, 1 HR, 3 RBI (score=74.3, type=weekly_hitting)
+2026-05-05 17:12:41,873  INFO      __main__ — Generating tweet via Claude…
+2026-05-05 17:12:43,543  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-05 17:12:43,565  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-05 17:12:43,565  INFO      __main__ — TWEET PREVIEW:
+Ozzie Albies last 3 games: 5-for-11, 1 HR, 3 RBI, 1.356 OPS
+
+the old Ozzie is back
+
+https://thedugoutapi.com/player?mlbId=645277&name=Ozzie+Albies
+2026-05-05 17:12:43,565  INFO      __main__ — Length: 82 chars (body) + 23 (t.co URL) = 106 total
+2026-05-05 17:12:43,565  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-05 17:12:43,565  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-05 17:12:43,565  INFO      __main__ — Posting tweet…
+2026-05-05 17:12:43,813  INFO      poster — Tweet posted (text only) — id: 2051711703360889304
+2026-05-05 17:12:43,815  INFO      tracker — Marked as used: weekly_2026_2026w19_hit_645277_hislast3games
+2026-05-05 17:12:43,815  INFO      __main__ — Done. Tweet ID: 2051711703360889304
