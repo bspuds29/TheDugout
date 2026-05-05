@@ -43,15 +43,15 @@ function spark(base: number, amp: number, seed: number, n = 14) {
 function Sparkline({ data, color }: { data: { i: number; v: number }[]; color: string }) {
   const id = `sg-${color.replace(/[^a-z0-9]/gi, '')}`;
   return (
-    <ResponsiveContainer width={88} height={36}>
-      <AreaChart data={data} margin={{ top: 3, right: 0, left: 0, bottom: 3 }}>
+    <ResponsiveContainer width={160} height={64}>
+      <AreaChart data={data} margin={{ top: 6, right: 4, left: 4, bottom: 6 }}>
         <defs>
           <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor={color} stopOpacity={0.4} />
-            <stop offset="100%" stopColor={color} stopOpacity={0}   />
+            <stop offset="0%"   stopColor={color} stopOpacity={0.45} />
+            <stop offset="100%" stopColor={color} stopOpacity={0}    />
           </linearGradient>
         </defs>
-        <Area type="monotone" dataKey="v" stroke={color} strokeWidth={1.5}
+        <Area type="monotone" dataKey="v" stroke={color} strokeWidth={2}
           fill={`url(#${id})`} dot={false} isAnimationActive={false} />
       </AreaChart>
     </ResponsiveContainer>
@@ -169,8 +169,16 @@ export default function HomePage() {
             and generate front-office insights.
           </p>
           <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap' }}>
-            <Link to="/leaderboard" className="hero-cta-primary">View Leaderboard <ArrowRight size={15} /></Link>
-            <Link to="/trade" className="hero-cta-secondary">Trade Analyzer</Link>
+            <Link to="/leaderboard" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 22px', background: 'var(--color-accent)', color: '#fff', borderRadius: 'var(--radius-lg)', fontSize: 14, fontWeight: 600, textDecoration: 'none', transition: 'all var(--transition-base)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-accent-bright)'; e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = 'var(--shadow-accent)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--color-accent)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}>
+              View Leaderboard <ArrowRight size={15} />
+            </Link>
+            <Link to="/trade" style={{ display: 'inline-flex', alignItems: 'center', padding: '11px 22px', background: 'var(--color-bg-elevated)', border: '1px solid var(--color-border)', color: 'var(--color-text-primary)', borderRadius: 'var(--radius-lg)', fontSize: 14, fontWeight: 600, textDecoration: 'none', transition: 'all var(--transition-fast)' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--color-border-active)'; e.currentTarget.style.background = 'var(--color-bg-card-hover)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.background = 'var(--color-bg-elevated)'; }}>
+              Trade Analyzer
+            </Link>
           </div>
         </div>
 
