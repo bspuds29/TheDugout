@@ -75,6 +75,21 @@ def recently_tweeted_players(n_recent: int = 10) -> set[str]:
     return names
 
 
+def pitching_drought() -> int:
+    """
+    Return the number of consecutive non-pitching tweets at the end of the log.
+    Used to boost pitching candidates when pitchers haven't been featured recently.
+    """
+    tweet_log = _load().get("tweet_log", [])
+    count = 0
+    for entry in reversed(tweet_log):
+        cand_id = entry.get("id", "")
+        if any(k in cand_id for k in ("_pit_", "pit_era", "pit_kpct", "pit_war")):
+            break
+        count += 1
+    return count
+
+
 def recent_tweet_bodies(n_recent: int = 5) -> list[str]:
     """
     Return the body text (without URL) of the last n_recent tweets, oldest first.

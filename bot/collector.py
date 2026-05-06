@@ -1384,7 +1384,8 @@ def _build_combined_candidate(game_cand: StatCandidate,
 
 def collect_all(season: int, lookback_days: int = 1,
                 last_tweet_type: str | None = None,
-                last_stat_type: str | None = None) -> list[StatCandidate]:
+                last_stat_type: str | None = None,
+                pitching_drought: int = 0) -> list[StatCandidate]:
     """Collect all candidates and apply variety weighting so no single type dominates."""
     game_candidates   = collect_game_standouts(lookback_days)
     weekly_candidates = collect_weekly_hitters(season)
@@ -1415,15 +1416,15 @@ def collect_all(season: int, lookback_days: int = 1,
                       + season_candidates + team_candidates)
 
     # ── Per-type multipliers ──────────────────────────────────────────
-    # Start with defaults (slight hitter preference overall)
+    # Pitching raised to 1.2 base so a strong outing competes with hitters.
     mults: dict[str, float] = {
         "game_hitting":     1.3,
         "weekly_hitting":   1.3,
         "combined_hitting": 1.5,   # combo story is the strongest format
         "team_game":        1.3,
         "season_batting":   1.1,
-        "game_pitching":    1.0,
-        "season_pitching":  1.0,
+        "game_pitching":    1.2,   # raised from 1.0 → competes more fairly
+        "season_pitching":  1.1,   # raised from 1.0
     }
 
     # After a pitching tweet → strongly prefer any hitting type
@@ -1434,6 +1435,16 @@ def collect_all(season: int, lookback_days: int = 1,
         mults["team_game"]        = 1.4
         mults["game_pitching"]    = 0.7
         mults["season_pitching"]  = 0.7
+
+    # Drought boost: each non-pitching tweet in a row adds 15% to pitching multiplier.
+    # After 4 straight hitters (drought=4) pitching gets ×1.6 on top of base → ~×1.9.
+    # After 6+ it gets nudged hard enough to almost guarantee the next is a pitcher.
+    if pitching_drought >= 3 and last_tweet_type != "pitching":
+        drought_boost = 1.0 + (pitching_drought * 0.15)
+        mults["game_pitching"]   *= drought_boost
+        mults["season_pitching"] *= drought_boost
+        log.info("Pitching drought=%d → applying ×%.2f boost to pitching candidates",
+                 pitching_drought, drought_boost)
 
     # Penalise the exact same category that just ran so it can't chain
     if last_stat_type:
