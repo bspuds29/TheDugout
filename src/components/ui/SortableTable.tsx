@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 import './SortableTable.css';
 
@@ -12,6 +13,8 @@ export interface SortMeta {
 interface Column<T> {
   key: keyof T | string;
   label: string;
+  /** Short tooltip shown on hover over the column header info icon */
+  tooltip?: string;
   sortable?: boolean;
   /** Direction to use the first time this column is clicked. Defaults to 'desc'.
    *  Set to 'asc' for stats where lower is better (ERA, WHIP, K% for batters, etc.) */
@@ -30,6 +33,80 @@ interface SortableTableProps<T> {
   defaultDir?: 'asc' | 'desc';
   compact?: boolean;
 }
+
+// ─── Portal tooltip — renders at document.body, never clipped ────────
+
+interface TipState { text: string; x: number; y: number }
+
+function TipPortal({ tip }: { tip: TipState }) {
+  const TIP_W = 230;
+  const pad   = 10;
+  // clamp horizontally so it never runs off screen
+  const left = Math.max(pad, Math.min(tip.x - TIP_W / 2, window.innerWidth - TIP_W - pad));
+
+  return createPortal(
+    <div
+      className="stable-tip-portal"
+      style={{ left, top: tip.y }}
+    >
+      {tip.text}
+    </div>,
+    document.body,
+  );
+}
+
+// ─── Column header cell with optional tooltip icon ────────────────────
+
+function ThCell({ col, isActive, sortDir, onSort }: {
+  col: Column<any>;
+  isActive: boolean;
+  sortDir: 'asc' | 'desc';
+  onSort: () => void;
+}) {
+  const [tip, setTip] = useState<TipState | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showTip = useCallback((e: React.MouseEvent) => {
+    if (!col.tooltip) return;
+    if (timer.current) clearTimeout(timer.current);
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setTip({ text: col.tooltip, x: rect.left + rect.width / 2, y: rect.top - 8 + window.scrollY });
+  }, [col.tooltip]);
+
+  const hideTip = useCallback(() => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(() => setTip(null), 60);
+  }, []);
+
+  return (
+    <th
+      className={`stable-th ${col.sortable ? 'stable-th--sortable' : ''} ${isActive ? 'stable-th--active' : ''} stable-align--${col.align ?? 'right'}`}
+      style={{ width: col.width }}
+      onClick={col.sortable ? onSort : undefined}
+    >
+      {col.label}
+      {col.tooltip && (
+        <span
+          className="stable-tip-icon"
+          onMouseEnter={showTip}
+          onMouseLeave={hideTip}
+        >
+          ⓘ
+        </span>
+      )}
+      {col.sortable && (
+        <span className="stable-sort-icon">
+          {isActive
+            ? sortDir === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />
+            : <ChevronDown size={12} className="stable-sort-dim" />}
+        </span>
+      )}
+      {tip && <TipPortal tip={tip} />}
+    </th>
+  );
+}
+
+// ─── SortableTable ────────────────────────────────────────────────────
 
 export default function SortableTable<T extends Record<string, unknown>>({
   columns,
@@ -66,7 +143,6 @@ export default function SortableTable<T extends Record<string, unknown>>({
     return sortDir === 'asc' ? cmp : -cmp;
   });
 
-  // Determine if current sort is "worst-first" (opposite of the column's natural best direction)
   const activeCol = sortKey ? columns.find(c => String(c.key) === sortKey) : undefined;
   const naturalDir = activeCol?.firstClickDir ?? 'desc';
   const reversed = !!sortKey && sortDir !== naturalDir;
@@ -77,26 +153,15 @@ export default function SortableTable<T extends Record<string, unknown>>({
       <table className={`stable ${compact ? 'stable--compact' : ''}`}>
         <thead>
           <tr>
-            {columns.map(col => {
-              const isActive = col.sortable && sortKey === String(col.key);
-              return (
-                <th
-                  key={String(col.key)}
-                  className={`stable-th ${col.sortable ? 'stable-th--sortable' : ''} ${isActive ? 'stable-th--active' : ''} stable-align--${col.align ?? 'right'}`}
-                  style={{ width: col.width }}
-                  onClick={col.sortable ? () => handleSort(String(col.key)) : undefined}
-                >
-                  {col.label}
-                  {col.sortable && (
-                    <span className="stable-sort-icon">
-                      {isActive
-                        ? sortDir === 'asc' ? <ChevronUp size={12} /> : <ChevronDown size={12} />
-                        : <ChevronDown size={12} className="stable-sort-dim" />}
-                    </span>
-                  )}
-                </th>
-              );
-            })}
+            {columns.map(col => (
+              <ThCell
+                key={String(col.key)}
+                col={col}
+                isActive={!!col.sortable && sortKey === String(col.key)}
+                sortDir={sortDir}
+                onSort={() => handleSort(String(col.key))}
+              />
+            ))}
           </tr>
         </thead>
         <tbody>

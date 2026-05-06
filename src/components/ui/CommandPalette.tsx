@@ -24,7 +24,6 @@ interface PageEntry {
 const PAGES: PageEntry[] = [
   { label: 'Dashboard',         path: '/',              icon: <LayoutDashboard size={15} />, keywords: 'home overview' },
   { label: 'Player Stats',      path: '/player',        icon: <TrendingUp     size={15} />, keywords: 'profile' },
-  { label: 'Stats Hub',         path: '/stats',         icon: <Hash           size={15} />, keywords: 'all stats' },
   { label: 'Leaderboard',       path: '/leaderboard',   icon: <BarChart2      size={15} />, keywords: 'leaders rankings' },
   { label: 'Defense',           path: '/defense',       icon: <Shield         size={15} />, keywords: 'fielding oaa drs' },
   { label: 'Clutch Analytics',  path: '/clutch',        icon: <Zap            size={15} />, keywords: 'high leverage' },

@@ -251,6 +251,195 @@ export const STAT_GLOSSARY: Record<string, GlossaryEntry> = {
     context: '0 = avg · positive = strong arm · negative = weak arm',
   },
 
+  // ── Counting stats ──────────────────────────────────────────────────
+  'G': {
+    name: 'Games Played',
+    desc: 'Total games the player has appeared in this season.',
+    context: 'Context matters — SP: 30+ = full season; RP: 60+ = heavy workload',
+  },
+  'GS': {
+    name: 'Games Started',
+    desc: 'Games in which the pitcher was the starter (took the mound to begin the game).',
+    context: 'Full season SP typically makes 30–33 starts',
+  },
+  'PA': {
+    name: 'Plate Appearances',
+    desc: 'Every trip to the plate, including walks, hit-by-pitches, and sacrifice flies. More complete than at-bats for sample size.',
+    context: '502 PA = qualified for batting title',
+  },
+  'AB': {
+    name: 'At-Bats',
+    desc: 'Plate appearances minus walks, HBP, sacrifice flies, and sacrifice bunts. The denominator for batting average.',
+    context: 'Differs from PA — AB excludes walks and sacs',
+  },
+  'H': {
+    name: 'Hits',
+    desc: 'Times the batter reached base safely via a single, double, triple, or home run (not walks/errors).',
+    context: '200 hits in a season is the traditional elite threshold',
+  },
+  '1B': {
+    name: 'Singles',
+    desc: 'Hits where the batter reaches exactly first base. The most common hit type.',
+    context: 'Singles hitters rely on speed and bat-to-ball contact',
+  },
+  '2B': {
+    name: 'Doubles',
+    desc: 'Hits where the batter reaches second base. Doubles correlate strongly with extra-base power.',
+    context: '40+ doubles in a season is an excellent mark',
+  },
+  '3B': {
+    name: 'Triples',
+    desc: 'Hits where the batter reaches third base. The rarest hit type — requires both speed and a well-placed ball.',
+    context: '10+ triples in a season is elite',
+  },
+  'HR': {
+    name: 'Home Runs',
+    desc: 'Balls hit over the fence in fair territory, scoring the batter and all base runners.',
+    context: '30+ = strong power season · 40+ = elite',
+  },
+  'R': {
+    name: 'Runs Scored',
+    desc: 'Times the player crossed home plate to score a run. Partially dependent on teammates\' ability to drive them in.',
+    context: 'Context-dependent: players on good offenses score more',
+  },
+  'RBI': {
+    name: 'Runs Batted In',
+    desc: 'Runs that scored because of the batter\'s plate appearance (hits, walks with bases loaded, etc.). Very context-dependent.',
+    context: '100 RBI = traditional benchmark · heavily lineup-dependent',
+  },
+  'SB': {
+    name: 'Stolen Bases',
+    desc: 'Times a runner successfully advanced a base without the ball being hit. Success rate matters — below ~70% actually hurts run expectancy.',
+    context: '30+ SB = elite speed · use with Caught Stealing',
+  },
+  'BB': {
+    name: 'Walks (Bases on Balls)',
+    desc: 'Times the batter reached first base on four balls. A walk is as good as a single for reaching base.',
+    context: 'High walk totals indicate strong plate discipline',
+  },
+  'SO': {
+    name: 'Strikeouts',
+    desc: 'Times the batter was called out on three strikes. For hitters, lower is better — strikeouts remove the chance to put the ball in play.',
+    context: 'Modern league avg ≈ 150 K/season per hitter',
+  },
+  'W': {
+    name: 'Pitcher Wins',
+    desc: 'Awarded to the pitcher of record when their team takes a lead that holds for the rest of the game. Heavily context/defense dependent.',
+    context: 'Use FIP or WAR instead for true quality assessment',
+  },
+  'L': {
+    name: 'Pitcher Losses',
+    desc: 'Charged to the pitcher who allowed the opponent to take a permanent lead. Like wins, largely influenced by run support and team context.',
+    context: 'A bad metric for evaluating pitchers independently',
+  },
+  'SV': {
+    name: 'Saves',
+    desc: 'Awarded to a reliever who finishes a win while protecting a lead of ≤3 runs, inherited lead, or entering with tying run on base/deck/at plate.',
+    context: '30+ saves = elite closer season',
+  },
+
+  // ── Rate stats (additional) ──────────────────────────────────────────
+  'BB/K': {
+    name: 'Walk-to-Strikeout Ratio',
+    desc: 'Walks divided by strikeouts. A simple measure of plate discipline — higher means the hitter walks more than they strike out, indicating excellent pitch recognition.',
+    context: '≥ 0.50 = good discipline · ≥ 1.0 = elite',
+  },
+  'LOB%': {
+    name: 'Left on Base Percentage',
+    desc: 'Percentage of runners a pitcher strands — left on base without scoring. High LOB% can indicate luck or exceptional performance in clutch situations; it tends to regress toward ~72–73%.',
+    context: '72–73% = average · ≥78% = lucky or truly elite',
+  },
+  'IFFB%': {
+    name: 'Infield Fly Ball Rate',
+    desc: 'Percentage of fly balls that are pop-ups to the infield. Infield pop-ups are essentially automatic outs — high IFFB% is great for pitchers, bad for hitters.',
+    context: '≥12% for pitchers = pop-up machine (good)',
+  },
+  'HR/FB': {
+    name: 'Home Run per Fly Ball Rate',
+    desc: 'Percentage of fly balls that became home runs. Largely influenced by park factors and exit velocity. For pitchers, ≤7% is elite, ≥13% is concerning.',
+    context: 'League avg ≈ 10–11% · park-adjusted versions preferred',
+  },
+
+  // ── Statcast expected stats ──────────────────────────────────────────
+  'xBA': {
+    name: 'Expected Batting Average',
+    desc: 'Expected batting average based on the exit velocity and launch angle of every batted ball — ignoring defense and luck. A better measure of true contact quality than AVG.',
+    context: 'Same scale as AVG · .260+ = above average',
+  },
+  'xSLG': {
+    name: 'Expected Slugging Percentage',
+    desc: 'Expected slugging based on Statcast contact quality. Accounts for the type and quality of contact rather than actual outcomes.',
+    context: 'Same scale as SLG · .430+ = above average',
+  },
+  'xISO': {
+    name: 'Expected Isolated Power',
+    desc: 'Expected ISO calculated as xSLG − xBA. Measures raw power potential based on contact quality, stripped of luck and park effects.',
+    context: 'Same scale as ISO · .170+ = above average',
+  },
+  'BA−xBA': {
+    name: 'Batting Average vs Expected',
+    desc: 'Actual BA minus Expected BA. Positive value = over-performing (getting lucky or beating defense); negative = under-performing (unlucky or facing good defense). Tends to regress toward zero.',
+    context: 'Positive = currently lucky · Negative = due for improvement',
+  },
+  'SLG−xSLG': {
+    name: 'Slugging vs Expected Slugging',
+    desc: 'Actual SLG minus Expected SLG. A large positive difference often means the player has been getting lucky on batted balls (e.g. more extra-base hits than their contact quality warrants).',
+    context: 'Positive = over-performing · Negative = under-performing',
+  },
+  'wOBA−xwOBA': {
+    name: 'wOBA vs Expected wOBA',
+    desc: 'Actual wOBA minus Expected wOBA (xwOBA). The single best indicator of batting luck — if wOBA greatly exceeds xwOBA, regression is likely. If xwOBA leads, a breakout may be coming.',
+    context: 'Positive = currently over-performing · Negative = due to improve',
+  },
+
+  // ── Velocity (pitching) ──────────────────────────────────────────────
+  'Avg Velo': {
+    name: 'Average Pitch Velocity',
+    desc: 'Average speed in mph across all pitch types. Higher velocity correlates with more swing-and-miss and less reaction time for hitters.',
+    context: 'League avg ≈ 93–94 mph · Elite starters ≥ 96 mph',
+  },
+  'Max Velo': {
+    name: 'Maximum Pitch Velocity',
+    desc: 'Top recorded pitch velocity this season. The highest velocity fastball thrown, useful for tracking velocity spikes or drops.',
+    context: '100+ mph = elite velocity ceiling',
+  },
+
+  // ── Launch angle ─────────────────────────────────────────────────────
+  'Launch Angle': {
+    name: 'Average Launch Angle',
+    desc: 'Average vertical angle at which the ball leaves the bat (degrees). Negative = grounders, 10–25° = line drives and home runs, >30° = pop-ups.',
+    context: '10–20° is the optimal range for extra-base hits',
+  },
+
+  // ── Sprint speed ─────────────────────────────────────────────────────
+  'Sprint Speed': {
+    name: 'Sprint Speed',
+    desc: 'Statcast measure of a player\'s top running speed in ft/sec, calculated as the peak 1-second burst in their fastest 10% of competitive runs.',
+    context: 'League avg ≈ 27 ft/s · Elite ≥ 29 ft/s',
+  },
+
+  // ── Defense (counting) ───────────────────────────────────────────────
+  'Inn': {
+    name: 'Innings (Defensive)',
+    desc: 'Total innings played in the field this season. A full season at a position is roughly 1,350–1,440 innings.',
+    context: 'Used to normalize defensive metrics per 150 games',
+  },
+  'E': {
+    name: 'Errors',
+    desc: 'Fielding mistakes where the official scorer determined a play should have been made but wasn\'t. Doesn\'t capture range or poor routes.',
+    context: 'Low error counts are necessary but not sufficient for good defense',
+  },
+  'A': {
+    name: 'Assists',
+    desc: 'Times a fielder touched the ball before a putout was recorded. Pitchers get an assist on strikeouts. Catchers get assists on pickoffs.',
+    context: 'Middle infielders typically lead in assists',
+  },
+  'PO': {
+    name: 'Putouts',
+    desc: 'Times a fielder directly recorded an out — catching a fly ball, tagging a runner, or receiving a throw. First basemen and catchers lead in putouts.',
+    context: '1B and C typically lead all positions in putouts',
+  },
+
   // ── Game log ────────────────────────────────────────────────────────
   'Season AVG': {
     name: 'Cumulative Season Batting Average',

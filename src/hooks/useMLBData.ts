@@ -52,6 +52,11 @@ import {
   fetchStatcastZoneData,
   computeBatterSavantPercentiles,
   computePitcherSavantPercentiles,
+  fetchSavantExpectedBatterStats,
+  fetchSavantExpectedPitcherStats,
+  fetchSavantCustomBatterMap,
+  fetchSavantCustomPitcherMap,
+  type SavantExpectedStats,
 } from '../data/api/savant';
 import {
   fetchFanGraphsPitcherById,
@@ -663,6 +668,50 @@ export function useCareerStats(mlbId: number | null) {
     staleTime: 60 * 60 * 1000,
   });
   return { hitting, pitching, isLoading: hitLoad || pitLoad };
+}
+
+// ─── Savant expected statistics (leaderboard, keyed by mlbId) ────────
+
+export type { SavantExpectedStats };
+
+/** Full batter expected-stats leaderboard (xBA, xSLG, xwOBA, etc.) from Savant */
+export function useSavantExpectedBatterStats() {
+  return useQuery({
+    queryKey: ['savantExpectedBatters', SEASON],
+    queryFn:  () => fetchSavantExpectedBatterStats(SEASON),
+    staleTime: 60 * 60 * 1000, // 1 hour
+    retry: false,
+  });
+}
+
+/** Full pitcher expected-stats leaderboard from Savant */
+export function useSavantExpectedPitcherStats() {
+  return useQuery({
+    queryKey: ['savantExpectedPitchers', SEASON],
+    queryFn:  () => fetchSavantExpectedPitcherStats(SEASON),
+    staleTime: 60 * 60 * 1000,
+    retry: false,
+  });
+}
+
+/** Full Savant custom leaderboard for batters as mlbId→raw-row Map */
+export function useSavantCustomBatterMap() {
+  return useQuery({
+    queryKey: ['savantCustomBatterMap', SEASON],
+    queryFn:  () => fetchSavantCustomBatterMap(SEASON),
+    staleTime: 60 * 60 * 1000,
+    retry: false,
+  });
+}
+
+/** Full Savant custom leaderboard for pitchers as mlbId→raw-row Map */
+export function useSavantCustomPitcherMap() {
+  return useQuery({
+    queryKey: ['savantCustomPitcherMap', SEASON],
+    queryFn:  () => fetchSavantCustomPitcherMap(SEASON),
+    staleTime: 60 * 60 * 1000,
+    retry: false,
+  });
 }
 
 // ─── Team schedule (recent + upcoming games) ──────────────────────────

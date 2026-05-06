@@ -90,6 +90,56 @@
   padding: 8px 12px;
 }
 
+/* ─── Column header info icon ────────────────────────────────────────── */
+
+.stable-tip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 3px;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  cursor: help;
+  vertical-align: middle;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: 0;
+  transition: color 0.15s ease;
+}
+
+.stable-tip-icon:hover {
+  color: var(--color-accent);
+}
+
+/* ─── Portal tooltip (rendered at document.body, never clipped) ──────── */
+
+.stable-tip-portal {
+  position: absolute;
+  z-index: 9999;
+  width: 230px;
+  transform: translateY(-100%) translateY(-8px);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-hover);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-size: 11.5px;
+  font-weight: 400;
+  line-height: 1.55;
+  white-space: normal;
+  text-align: left;
+  pointer-events: none;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  animation: stable-tip-in 0.1s ease;
+}
+
+@keyframes stable-tip-in {
+  from { opacity: 0; transform: translateY(-100%) translateY(-2px); }
+  to   { opacity: 1; transform: translateY(-100%) translateY(-8px); }
+}
+
 @media (max-width: 600px) {
   .stable-th,
   .stable-td {

@@ -4,7 +4,7 @@ import './PlayerAvatar.css';
 interface PlayerAvatarProps {
   /** MLB player ID — drives the official headshot URL */
   mlbId?: number | null;
-  name: string;
+  name?: string;
   /** Pixel size (width = height). Default 72. */
   size?: number;
   className?: string;
@@ -47,7 +47,7 @@ export default function PlayerAvatar({
 }: PlayerAvatarProps) {
   const [imgError, setImgError] = useState(false);
 
-  const initials = name
+  const initials = (name ?? '')
     .split(' ')
     .map(n => n[0] ?? '')
     .join('')

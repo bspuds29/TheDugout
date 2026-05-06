@@ -66,7 +66,7 @@ const BATTER_COLS = [
   'exit_velocity_avg', 'launch_angle_avg',
   'barrel_batted_rate', 'hard_hit_percent', 'sweet_spot_percent',
   'xba', 'xslg', 'xwoba', 'xwobacon',
-  'sprint_speed', 'whiff_percent', 'chase_percent',
+  'sprint_speed', 'whiff_percent', 'chase_percent', 'o_swing_percent', 'oz_swing_percent',
   'k_percent', 'bb_percent',
   // Batted-ball profile (gb_percent etc. are accepted but return empty — use full names)
   'groundballs_percent', 'flyballs_percent', 'linedrives_percent',
@@ -488,6 +488,184 @@ export async function fetchStatcastZoneData(
 export async function fetchSavantBatters(_season?: number, _minPA?: number): Promise<SavantBatterStats[]> { return []; }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function fetchSavantPitchers(_season?: number, _minPA?: number): Promise<SavantPitcherStats[]> { return []; }
+
+// ─── Expected stats (Baseball Savant /leaderboard/expected_statistics) ──
+//
+// Fetched as a full leaderboard CSV once per year/type. Returns a Map keyed
+// by mlbId so the caller can do O(1) lookups during table rendering.
+//
+// Confirmed CSV columns (2024): player_id, last_name, first_name, year, pa,
+//   bip, ba, est_ba, slg, est_slg, woba, est_woba, obp, iso, wobacon,
+//   est_wobacon, bacon, est_bacon
+// Note: est_obp and est_iso may not always be present — we fall back to 0.
+
+export interface SavantExpectedStats {
+  mlbId:     number;
+  pa:        number;
+  ba:        number;
+  xba:       number;
+  slg:       number;
+  xslg:      number;
+  woba:      number;
+  xwoba:     number;
+  obp:       number;
+  xobp:      number;
+  iso:       number;
+  xiso:      number;
+  wobacon:   number;
+  xwobacon:  number;
+  bacon:     number;
+  xbacon:    number;
+  baxba:     number;   // BA  − xBA  (positive = over-performing expectations)
+  slgxslg:   number;   // SLG − xSLG (pitchers: opponent over-performing)
+  wobaxwoba: number;   // wOBA − xwOBA
+}
+
+const _expectedCache = new Map<string, Promise<Map<string, Record<string, string>>>>();
+
+function getExpectedStatsLeaderboard(
+  year: number,
+  type: 'batter' | 'pitcher',
+): Promise<Map<string, Record<string, string>>> {
+  const key = `expected-${type}-${year}`;
+  if (!_expectedCache.has(key)) {
+    const url =
+      `${SAVANT_BASE}/leaderboard/expected_statistics` +
+      `?type=${type}&year=${year}&position=&team=&min=1&csv=true`;
+
+    const promise = fetch(url)
+      .then(r => {
+        if (!r.ok) throw new Error(`Savant expected_statistics ${r.status}`);
+        return r.text();
+      })
+      .then(text => {
+        const rows = parseCSV(text.replace(/^﻿/, '')); // strip BOM
+        console.info(`[Savant] Expected stats loaded: ${rows.length} ${type}s for ${year}`);
+        const map = new Map<string, Record<string, string>>();
+        for (const row of rows) {
+          const id = row['player_id'];
+          if (id) map.set(id, row);
+        }
+        return map;
+      })
+      .catch(e => {
+        _expectedCache.delete(key);
+        console.warn(`[Savant] Expected stats fetch failed (${type} ${year}):`, e);
+        throw e;
+      });
+
+    _expectedCache.set(key, promise);
+  }
+  return _expectedCache.get(key)!;
+}
+
+function rowToExpected(r: Record<string, string>): SavantExpectedStats {
+  // 2026 CSV columns: ba, est_ba, est_ba_minus_ba_diff,
+  //                   slg, est_slg, est_slg_minus_slg_diff,
+  //                   woba, est_woba, est_woba_minus_woba_diff
+  // wobacon / bacon / xobp etc. are NOT present in 2026 — default to 0.
+  const ba    = num(r['ba']);
+  const xba   = num(r['est_ba']);
+  const slg   = num(r['slg']);
+  const xslg  = num(r['est_slg']);
+  const woba  = num(r['woba']);
+  const xwoba = num(r['est_woba']);
+
+  // ISO not provided — derive from SLG − BA
+  const iso  = slg - ba;
+  const xiso = xslg - xba;
+
+  // Diffs: Savant stores (actual − expected) under the "est_x_minus_x_diff" columns.
+  // We re-compute for clarity & consistency; the pre-computed columns are a cross-check.
+  const baxba     = Math.round((ba   - xba)   * 1000) / 1000;
+  const slgxslg   = Math.round((slg  - xslg)  * 1000) / 1000;
+  const wobaxwoba = Math.round((woba - xwoba)  * 1000) / 1000;
+
+  return {
+    mlbId:     parseInt(r['player_id'] ?? '0') || 0,
+    pa:        num(r['pa']),
+    ba, xba,
+    slg, xslg,
+    woba, xwoba,
+    obp:       num(r['obp']),       // 0 if absent
+    xobp:      num(r['est_obp']),   // 0 if absent
+    iso, xiso,
+    wobacon:   num(r['wobacon']),   // 0 if absent
+    xwobacon:  num(r['est_wobacon']),
+    bacon:     num(r['bacon']),
+    xbacon:    num(r['est_bacon']),
+    baxba, slgxslg, wobaxwoba,
+  };
+}
+
+export async function fetchSavantExpectedBatterStats(
+  year: number,
+): Promise<Map<number, SavantExpectedStats>> {
+  try {
+    const raw = await getExpectedStatsLeaderboard(year, 'batter');
+    const result = new Map<number, SavantExpectedStats>();
+    for (const [id, r] of raw) {
+      const mlbId = parseInt(id);
+      if (mlbId) result.set(mlbId, rowToExpected(r));
+    }
+    return result;
+  } catch {
+    return new Map();
+  }
+}
+
+export async function fetchSavantExpectedPitcherStats(
+  year: number,
+): Promise<Map<number, SavantExpectedStats>> {
+  try {
+    const raw = await getExpectedStatsLeaderboard(year, 'pitcher');
+    const result = new Map<number, SavantExpectedStats>();
+    for (const [id, r] of raw) {
+      const mlbId = parseInt(id);
+      if (mlbId) result.set(mlbId, rowToExpected(r));
+    }
+    return result;
+  } catch {
+    return new Map();
+  }
+}
+
+// ─── Full custom leaderboard as mlbId→row Maps ───────────────────────
+//
+// Reuses the same `getLeaderboard()` cache — zero extra network calls
+// if the per-player hooks have already triggered a fetch.
+
+export async function fetchSavantCustomBatterMap(
+  year: number,
+): Promise<Map<number, Record<string, string>>> {
+  try {
+    const rows = await getLeaderboard(year, 'batter');
+    const map = new Map<number, Record<string, string>>();
+    for (const row of rows) {
+      const id = parseInt(row['player_id'] ?? '');
+      if (id) map.set(id, row);
+    }
+    return map;
+  } catch {
+    return new Map();
+  }
+}
+
+export async function fetchSavantCustomPitcherMap(
+  year: number,
+): Promise<Map<number, Record<string, string>>> {
+  try {
+    const rows = await getLeaderboard(year, 'pitcher');
+    const map = new Map<number, Record<string, string>>();
+    for (const row of rows) {
+      const id = parseInt(row['player_id'] ?? '');
+      if (id) map.set(id, row);
+    }
+    return map;
+  } catch {
+    return new Map();
+  }
+}
 
 // ─── Per-pitch-type spin rates ────────────────────────────────────────
 //

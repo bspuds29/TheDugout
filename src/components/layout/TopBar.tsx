@@ -45,8 +45,7 @@ export default function TopBar({ onMenuToggle }: TopBarProps) {
   }, []);
 
   const handleSelect = (id: number, name: string) => {
-    // Stay on Stats Hub if already there; otherwise go to Player Profile
-    const dest = location.pathname === '/stats' ? '/stats' : '/player';
+    const dest = '/player';
     navigate(`${dest}?mlbId=${id}&name=${encodeURIComponent(name)}`);
     setQuery('');
     setFocused(false);

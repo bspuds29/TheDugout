@@ -6,627 +6,1117 @@ import Badge from '../../components/ui/Badge';
 import SortableTable from '../../components/ui/SortableTable';
 import PlayerAvatar from '../../components/ui/PlayerAvatar';
 import TeamLogo, { ABBR_TO_MLB_ID } from '../../components/ui/TeamLogo';
-import { useBattingLeaderboard, usePitchingLeaderboard } from '../../hooks/useMLBData';
+import {
+  useBattingLeaderboard,
+  usePitchingLeaderboard,
+  useSavantExpectedBatterStats,
+  useSavantExpectedPitcherStats,
+  useSavantCustomBatterMap,
+  useSavantCustomPitcherMap,
+  type SavantExpectedStats,
+} from '../../hooks/useMLBData';
 import type { FanGraphsBatterRow, FanGraphsPitcherRow } from '../../data/api/fangraphs';
 import FanGraphsBanner from '../../components/ui/FanGraphsBanner';
 import '../../styles/shared.css';
 import './LeaderboardPage.css';
 
-// Position groups for batters
-const BAT_POS_GROUPS: { label: string; values: string[] }[] = [
-  { label: 'All',  values: [] },
-  { label: 'C',    values: ['C'] },
-  { label: '1B',   values: ['1B'] },
-  { label: '2B',   values: ['2B'] },
-  { label: '3B',   values: ['3B'] },
-  { label: 'SS',   values: ['SS'] },
-  { label: 'OF',   values: ['LF','CF','RF','OF'] },
-  { label: 'DH',   values: ['DH'] },
-];
+// ─── Constants ────────────────────────────────────────────────────────────────
 
-const PIT_ROLE_GROUPS: { label: string; values: string[] }[] = [
+/** Sentinel for "show qualified players only" — maps to the dynamically-computed threshold */
+const QUALIFIED = -1;
+
+const BAT_POS_GROUPS = [
   { label: 'All', values: [] },
-  { label: 'SP',  values: ['SP'] },
-  { label: 'RP',  values: ['RP'] },
+  { label: 'C', values: ['C'] },
+  { label: '1B', values: ['1B'] },
+  { label: '2B', values: ['2B'] },
+  { label: '3B', values: ['3B'] },
+  { label: 'SS', values: ['SS'] },
+  { label: 'OF', values: ['LF', 'CF', 'RF', 'OF'] },
+  { label: 'DH', values: ['DH'] },
 ];
 
-// ─── Helpers ─────────────────────────────────────────────────────────
+const PIT_ROLE_GROUPS = [
+  { label: 'All', values: [] },
+  { label: 'SP', values: ['SP'] },
+  { label: 'RP', values: ['RP'] },
+];
 
-const pct = (v: number) => `${v.toFixed(1)}%`;
-const avg = (v: number) => v.toFixed(3);
-const dec2 = (v: number) => v.toFixed(2);
-const dec1 = (v: number) => v.toFixed(1);
-const int  = (v: number) => Math.round(v).toString();
+// ─── Formatters ───────────────────────────────────────────────────────────────
 
-function colorPlus(v: number, neutral = 100) {
-  if (v > neutral + 20) return 'var(--color-teal)';
-  if (v > neutral + 5)  return '#22c55e';
-  if (v < neutral - 20) return '#ef4444';
-  if (v < neutral - 5)  return '#f59e0b';
-  return 'var(--color-text-primary)';
+const pct = (v: number | null) => (v != null ? `${v.toFixed(1)}%` : '—');
+const avg3 = (v: number | null) => (v != null ? v.toFixed(3) : '—');
+const dec2 = (v: number | null) => (v != null ? v.toFixed(2) : '—');
+const dec1 = (v: number | null) => (v != null ? v.toFixed(1) : '—');
+const int = (v: number | null) => (v != null ? Math.round(v).toString() : '—');
+const mph = (v: number | null) => (v != null ? v.toFixed(1) : '—');
+
+// ─── Merged row types ─────────────────────────────────────────────────────────
+
+type MergedBatterRow = FanGraphsBatterRow & {
+  sc_ev: number | null;
+  sc_la: number | null;
+  sc_sweet: number | null;
+  sc_pull: number | null;
+  sc_straight: number | null;
+  sc_oppo: number | null;
+  sc_whiff: number | null;
+  sc_chase: number | null;
+  sc_sprint: number | null;
+  xs_xba: number | null;
+  xs_xslg: number | null;
+  xs_woba: number | null;
+  xs_xwoba: number | null;
+  xs_xobp: number | null;
+  xs_xiso: number | null;
+  xs_wobacon: number | null;
+  xs_xwobacon: number | null;
+  xs_bacon: number | null;
+  xs_xbacon: number | null;
+  xs_baxba: number | null;
+};
+
+type MergedPitcherRow = FanGraphsPitcherRow & {
+  sc_ev: number | null;
+  sc_la: number | null;
+  sc_whiff: number | null;
+  sc_chase: number | null;
+  sc_fbVelo: number | null;
+  sc_fbSpin: number | null;
+  sc_barrel: number | null;
+  sc_hard: number | null;
+  xs_xba: number | null;
+  xs_xslg: number | null;
+  xs_woba: number | null;
+  xs_xwoba: number | null;
+  xs_xobp: number | null;
+  xs_xiso: number | null;
+  xs_wobacon: number | null;
+  xs_xwobacon: number | null;
+  xs_bacon: number | null;
+  xs_xbacon: number | null;
+  xs_baxba: number | null;
+  xs_slgxslg: number | null;
+  xs_wobaxwoba: number | null;
+};
+
+// ─── Helper functions ─────────────────────────────────────────────────────────
+
+function scVal(
+  map: Map<number, Record<string, string>> | undefined,
+  mlbId: number,
+  col: string
+): number | null {
+  if (!map) return null;
+  const row = map.get(mlbId);
+  if (!row) return null;
+  const raw = row[col];
+  if (raw == null || raw === '' || raw === 'null') return null;
+  const n = parseFloat(raw);
+  return isNaN(n) ? null : n;
 }
 
-function colorStat(v: number, goodHigh = true, threshold = 0) {
-  if (goodHigh) return v > threshold ? 'var(--color-teal)' : v < threshold ? '#ef4444' : 'var(--color-text-secondary)';
-  return v < threshold ? 'var(--color-teal)' : v > threshold ? '#ef4444' : 'var(--color-text-secondary)';
+function xsVal(
+  xStats: Map<number, SavantExpectedStats> | undefined,
+  mlbId: number,
+  field: keyof SavantExpectedStats
+): number | null {
+  if (!xStats) return null;
+  const row = xStats.get(mlbId);
+  if (!row) return null;
+  const v = row[field];
+  if (v == null) return null;
+  const n = typeof v === 'number' ? v : parseFloat(v as string);
+  return isNaN(n) ? null : n;
 }
 
-function posMatch(rowPos: string, filter: string[]): boolean {
-  if (filter.length === 0) return true;
-  const p = rowPos.toUpperCase();
-  return filter.some(f => p.includes(f));
+function mergeBatterRows(
+  rows: FanGraphsBatterRow[],
+  xStats: Map<number, SavantExpectedStats> | undefined,
+  scMap: Map<number, Record<string, string>> | undefined
+): MergedBatterRow[] {
+  return rows.map((r) => ({
+    ...r,
+    sc_ev: scVal(scMap, r.mlbId, 'exit_velocity_avg'),
+    sc_la: scVal(scMap, r.mlbId, 'launch_angle_avg'),
+    sc_sweet: scVal(scMap, r.mlbId, 'sweet_spot_percent'),
+    sc_pull: scVal(scMap, r.mlbId, 'pull_percent'),
+    sc_straight: scVal(scMap, r.mlbId, 'straightaway_percent'),
+    sc_oppo: scVal(scMap, r.mlbId, 'opposite_percent'),
+    sc_whiff: scVal(scMap, r.mlbId, 'whiff_percent'),
+    sc_chase: scVal(scMap, r.mlbId, 'chase_percent') ?? scVal(scMap, r.mlbId, 'o_swing_percent') ?? scVal(scMap, r.mlbId, 'oz_swing_percent'),
+    sc_sprint: scVal(scMap, r.mlbId, 'sprint_speed'),
+    xs_xba: xsVal(xStats, r.mlbId, 'xba'),
+    xs_xslg: xsVal(xStats, r.mlbId, 'xslg'),
+    xs_woba: xsVal(xStats, r.mlbId, 'woba'),
+    xs_xwoba: xsVal(xStats, r.mlbId, 'xwoba'),
+    xs_xobp: xsVal(xStats, r.mlbId, 'xobp'),
+    xs_xiso: xsVal(xStats, r.mlbId, 'xiso'),
+    xs_wobacon: xsVal(xStats, r.mlbId, 'wobacon'),
+    xs_xwobacon: xsVal(xStats, r.mlbId, 'xwobacon'),
+    xs_bacon: xsVal(xStats, r.mlbId, 'bacon'),
+    xs_xbacon: xsVal(xStats, r.mlbId, 'xbacon'),
+    xs_baxba: xsVal(xStats, r.mlbId, 'baxba'),
+  }));
 }
 
-// ─── Rank renderer ────────────────────────────────────────────────────
+function mergePitcherRows(
+  rows: FanGraphsPitcherRow[],
+  xStats: Map<number, SavantExpectedStats> | undefined,
+  scMap: Map<number, Record<string, string>> | undefined
+): MergedPitcherRow[] {
+  return rows.map((r) => ({
+    ...r,
+    sc_ev: scVal(scMap, r.mlbId, 'exit_velocity_avg'),
+    sc_la: scVal(scMap, r.mlbId, 'launch_angle_avg'),
+    sc_whiff: scVal(scMap, r.mlbId, 'whiff_percent'),
+    sc_chase: scVal(scMap, r.mlbId, 'chase_percent'),
+    sc_fbVelo: scVal(scMap, r.mlbId, 'fastball_avg_speed'),
+    sc_fbSpin: scVal(scMap, r.mlbId, 'fastball_avg_spin'),
+    sc_barrel: scVal(scMap, r.mlbId, 'barrel_batted_rate'),
+    sc_hard: scVal(scMap, r.mlbId, 'hard_hit_percent'),
+    xs_xba: xsVal(xStats, r.mlbId, 'xba'),
+    xs_xslg: xsVal(xStats, r.mlbId, 'xslg'),
+    xs_woba: xsVal(xStats, r.mlbId, 'woba'),
+    xs_xwoba: xsVal(xStats, r.mlbId, 'xwoba'),
+    xs_xobp: xsVal(xStats, r.mlbId, 'xobp'),
+    xs_xiso: xsVal(xStats, r.mlbId, 'xiso'),
+    xs_wobacon: xsVal(xStats, r.mlbId, 'wobacon'),
+    xs_xwobacon: xsVal(xStats, r.mlbId, 'xwobacon'),
+    xs_bacon: xsVal(xStats, r.mlbId, 'bacon'),
+    xs_xbacon: xsVal(xStats, r.mlbId, 'xbacon'),
+    xs_baxba: xsVal(xStats, r.mlbId, 'baxba'),
+    xs_slgxslg: xsVal(xStats, r.mlbId, 'slgxslg'),
+    xs_wobaxwoba: xsVal(xStats, r.mlbId, 'wobaxwoba'),
+  }));
+}
+
+// ─── Color helpers ────────────────────────────────────────────────────────────
+
+function colorPlus(v: number, neutral = 100): string {
+  if (v >= 120) return 'var(--color-teal)';
+  if (v >= 105) return 'var(--color-green)';
+  if (v <= 80) return 'var(--color-red)';
+  if (v <= 95) return 'var(--color-amber)';
+  return 'var(--color-text-secondary)';
+}
+
+function diffColor(v: number | null, posIsGood: boolean): string {
+  if (v == null) return 'var(--color-text-tertiary)';
+  if (v > 0) return posIsGood ? 'var(--color-green)' : 'var(--color-red)';
+  if (v < 0) return posIsGood ? 'var(--color-red)' : 'var(--color-green)';
+  return 'var(--color-text-secondary)';
+}
+
+// ─── Render helpers ───────────────────────────────────────────────────────────
+
+function monoSpan(v: number | null, format: (n: number) => string): React.ReactNode {
+  if (v == null) return <span style={{ color: 'var(--color-text-tertiary)' }}>—</span>;
+  return <span className="mono">{format(v)}</span>;
+}
+
+function coloredSpan(
+  v: number | null,
+  format: (n: number) => string,
+  color: string
+): React.ReactNode {
+  if (v == null) return <span style={{ color: 'var(--color-text-tertiary)' }}>—</span>;
+  return (
+    <span className="mono" style={{ color }}>
+      {format(v)}
+    </span>
+  );
+}
+
+// ─── RankCell ─────────────────────────────────────────────────────────────────
 
 function RankCell({ rank }: { rank: number }) {
-  const color = rank === 1 ? '#f59e0b' : rank === 2 ? '#94a3b8' : rank === 3 ? '#b45309' : 'var(--color-text-tertiary)';
-  return <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color, fontWeight: 700 }}>#{rank}</span>;
+  return (
+    <span
+      className="mono"
+      style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}
+    >
+      {rank}
+    </span>
+  );
 }
 
-// ─── Name cell ────────────────────────────────────────────────────────
+// ─── NameCell ─────────────────────────────────────────────────────────────────
 
-function NameCell({ name, mlbId, team }: { name: string; mlbId: number; team: string }) {
-  const navigate = useNavigate();
-  const teamId = ABBR_TO_MLB_ID[team?.toUpperCase()] ?? null;
+function NameCell({
+  mlbId,
+  name,
+  team,
+  onClick,
+}: {
+  mlbId: number;
+  name: string;
+  team: string;
+  onClick: () => void;
+}) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <PlayerAvatar mlbId={mlbId} name={name} size={26} />
-      <div>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', whiteSpace: 'nowrap' }}>{name}</div>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        cursor: 'pointer',
+        minWidth: 0,
+      }}
+      onClick={onClick}
+    >
+      <PlayerAvatar mlbId={mlbId} name={name} size={28} />
+      <div style={{ minWidth: 0 }}>
         <div
-          style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: teamId ? 'pointer' : 'default' }}
-          onClick={teamId ? (e) => { e.stopPropagation(); navigate(`/team/${teamId}`); } : undefined}
-          title={teamId ? `View ${team} team page` : undefined}
+          style={{
+            fontWeight: 600,
+            fontSize: 13,
+            color: 'var(--color-text-primary)',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
         >
-          <TeamLogo abbr={team} size={13} />
-          <span style={{ fontSize: 10, color: 'var(--color-accent)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{team}</span>
+          {name}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <TeamLogo abbr={team} size={12} />
+          <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)' }}>{team}</span>
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Filter bar ───────────────────────────────────────────────────────
+// ─── FilterBar ────────────────────────────────────────────────────────────────
 
-function FilterBar({
-  groups, active, onSelect,
-  teamFilter, onTeamChange,
-  minPA, onMinPAChange,
-  qualifiedThreshold,
-  qualifiedLabel,
-  label = 'PA',
-  teams = [],
-}: {
-  groups: { label: string }[];
+interface FilterBarProps {
+  groups: { label: string; values: string[] }[];
   active: string;
-  onSelect: (s: string) => void;
+  onSelect: (label: string) => void;
   teamFilter: string;
-  onTeamChange: (s: string) => void;
+  onTeamChange: (team: string) => void;
   minPA: number;
-  onMinPAChange: (n: number) => void;
+  onMinPAChange: (v: number) => void;
+  /** Computed qualified threshold — used only for the dropdown label */
   qualifiedThreshold?: number;
   qualifiedLabel?: string;
   label?: string;
   teams?: string[];
-}) {
+  paOptionsList: number[];
+}
+
+function FilterBar({
+  groups,
+  active,
+  onSelect,
+  teamFilter,
+  onTeamChange,
+  minPA,
+  onMinPAChange,
+  qualifiedThreshold,
+  qualifiedLabel,
+  label = 'Min PA',
+  teams = [],
+  paOptionsList,
+}: FilterBarProps) {
+  const isIP = label.includes('IP');
+  const unit = isIP ? 'IP' : 'PA';
+  const resolvedQualifiedLabel =
+    qualifiedLabel ??
+    (qualifiedThreshold != null ? `Qualified (${qualifiedThreshold}+ ${unit})` : 'Qualified');
+
   return (
-    <div className="lb-filter-bar">
-      {/* Position tabs */}
-      <div className="lb-tabs">
-        {groups.map(g => (
-          <button
-            key={g.label}
-            className={`lb-tab ${active === g.label ? 'lb-tab--active' : ''}`}
-            onClick={() => onSelect(g.label)}
+    <div className="lb-filter-bar" style={{ flexDirection: 'column', gap: 8 }}>
+      <div
+        className="lb-filter-row"
+        style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', width: '100%' }}
+      >
+        <div className="lb-tabs">
+          {groups.map((g) => (
+            <button
+              key={g.label}
+              className={`lb-tab${active === g.label ? ' lb-tab--active' : ''}`}
+              onClick={() => onSelect(g.label)}
+            >
+              {g.label}
+            </button>
+          ))}
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            marginLeft: 'auto',
+            flexWrap: 'wrap',
+          }}
+        >
+          {teams.length > 0 && (
+            <select
+              className="lb-select"
+              value={teamFilter}
+              onChange={(e) => onTeamChange(e.target.value)}
+            >
+              <option value="">All Teams</option>
+              {teams.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          )}
+
+          <select
+            className="lb-select"
+            value={minPA}
+            onChange={(e) => onMinPAChange(Number(e.target.value))}
           >
-            {g.label}
-          </button>
-        ))}
+            {/* Qualified sentinel option — always first so it's the natural default */}
+            <option value={QUALIFIED}>{resolvedQualifiedLabel}</option>
+            {paOptionsList.map((v) => (
+              <option key={v} value={v}>
+                {v === 0 ? `All ${unit}` : `${v}+ ${unit}`}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-
-      {/* Team select — options derived from actual data so abbreviations always match */}
-      <select
-        className="lb-select"
-        value={teamFilter}
-        onChange={e => onTeamChange(e.target.value)}
-      >
-        <option value="">All Teams</option>
-        {teams.map(t => <option key={t} value={t}>{t}</option>)}
-      </select>
-
-      {/* Min PA/IP — -1 = qualified (dynamic threshold) */}
-      <select
-        className="lb-select"
-        value={minPA}
-        onChange={e => onMinPAChange(Number(e.target.value))}
-      >
-        {qualifiedThreshold != null && (
-          <option value={-1}>{qualifiedLabel ?? 'Qualified'}</option>
-        )}
-        <option value={0}>All {label}</option>
-        <option value={30}>≥30 {label}</option>
-        <option value={50}>≥50 {label}</option>
-        <option value={100}>≥100 {label}</option>
-        <option value={150}>≥150 {label}</option>
-        <option value={300}>≥300 {label}</option>
-        <option value={502}>≥502 {label}</option>
-      </select>
     </div>
   );
 }
 
-// ─── Batting tab ─────────────────────────────────────────────────────
+// ─── BattingLeaderboardWithFilters ────────────────────────────────────────────
 
-function BattingLeaderboard() {
+function BattingLeaderboardWithFilters() {
+  const navigate = useNavigate();
+  const { data: rawRows = [], isLoading: loadingFG } = useBattingLeaderboard();
+  const { data: xStatsArr = [], isLoading: loadingXS } = useSavantExpectedBatterStats();
+  const { data: scMapRaw, isLoading: loadingSC } = useSavantCustomBatterMap();
+
+  // Filter state — QUALIFIED sentinel means "≥ 3.1 × team games played"
   const [posGroup, setPosGroup] = useState('All');
   const [teamFilter, setTeamFilter] = useState('');
-  const [minPA, setMinPA] = useState(50);
+  const [minPA, setMinPA] = useState(QUALIFIED);
 
-  const { data: raw = [], isLoading } = useBattingLeaderboard();
+  // Dynamic qualified threshold: 3.1 PA per team game played
+  const qualifiedPA = useMemo(() => {
+    if (rawRows.length === 0) return null;
+    const maxG = Math.max(...rawRows.map((r) => r.g ?? 0));
+    return maxG > 0 ? Math.round(3.1 * maxG) : null;
+  }, [rawRows]);
 
-  const posValues = BAT_POS_GROUPS.find(g => g.label === posGroup)?.values ?? [];
+  const allTeams = useMemo(() => Object.keys(ABBR_TO_MLB_ID).sort(), []);
 
-  const rows = useMemo(() => {
-    return raw.filter(r =>
-      r.pa >= minPA &&
-      posMatch(r.pos, posValues) &&
-      (!teamFilter || r.team === teamFilter)
-    );
-  }, [raw, minPA, posValues, teamFilter]);
+  const xStatsMap = useMemo(() => {
+    const m = new Map<number, SavantExpectedStats>();
+    xStatsArr.forEach((r) => m.set(r.mlbId, r));
+    return m;
+  }, [xStatsArr]);
 
-  // Leaders for summary cards
-  const byHR   = [...rows].sort((a, b) => b.hr    - a.hr)[0];
-  const byAVG  = [...rows].filter(r => r.pa >= 100).sort((a, b) => b.avg   - a.avg)[0];
-  const byOPS  = [...rows].filter(r => r.pa >= 50).sort((a, b) => b.ops   - a.ops)[0];
-  const byWAR  = [...rows].sort((a, b) => b.war   - a.war)[0];
+  const isLoading = loadingFG || loadingXS || loadingSC;
 
-  if (isLoading) return (
-    <div className="live-loading-bar">
-      <span className="live-loading-dot" />
-      Loading batting leaderboard from FanGraphs…
-    </div>
+  const posGroupObj = BAT_POS_GROUPS.find((g) => g.label === posGroup);
+
+  // Resolve sentinel to actual threshold
+  const effectiveMinPA = minPA === QUALIFIED ? (qualifiedPA ?? 0) : minPA;
+
+  const filteredRows = useMemo(() => {
+    return rawRows.filter((r) => {
+      if (effectiveMinPA > 0 && r.pa < effectiveMinPA) return false;
+      if (teamFilter && r.team !== teamFilter) return false;
+      if (posGroupObj && posGroupObj.values.length > 0) {
+        const pos = r.pos ?? '';
+        const matches = posGroupObj.values.some((pv) => pos === pv || pos.includes(pv));
+        if (!matches) return false;
+      }
+      return true;
+    });
+  }, [rawRows, effectiveMinPA, teamFilter, posGroupObj]);
+
+  const mergedRows = useMemo(
+    () => mergeBatterRows(filteredRows, xStatsMap, scMapRaw),
+    [filteredRows, xStatsMap, scMapRaw]
   );
 
-  return (
-    <>
-      <div className="stat-grid-4">
-        <StatCard label="HR Leader"  value={byHR  ? int(byHR.hr)        : '—'} sub={byHR  ? byHR.name  : '—'} color="red"    accent />
-        <StatCard label="AVG Leader" value={byAVG ? avg(byAVG.avg)      : '—'} sub={byAVG ? byAVG.name : '—'} color="accent" />
-        <StatCard label="OPS Leader" value={byOPS ? avg(byOPS.ops)      : '—'} sub={byOPS ? byOPS.name : '—'} color="green"  />
-        <StatCard label="WAR Leader" value={byWAR ? dec1(byWAR.war)     : '—'} sub={byWAR ? byWAR.name : '—'} color="purple" accent />
-      </div>
+  // Leader cards
+  const leaderCards = useMemo(() => {
+    if (mergedRows.length === 0) return null;
+    const byWar    = [...mergedRows].sort((a, b) => (b.war    ?? 0)  - (a.war    ?? 0));
+    const byHr     = [...mergedRows].sort((a, b) => (b.hr     ?? 0)  - (a.hr     ?? 0));
+    const byWrcPlus = [...mergedRows].sort((a, b) => (b.wrcPlus ?? 0) - (a.wrcPlus ?? 0));
+    const byXwoba  = [...mergedRows].sort((a, b) => (b.xs_xwoba ?? 0) - (a.xs_xwoba ?? 0));
+    return { byWar, byHr, byWrcPlus, byXwoba };
+  }, [mergedRows]);
 
-      <Card title={`Batting Leaderboard`} subtitle={`${rows.length} qualified batters · ${new Date().getFullYear()} season · Source: FanGraphs`}>
+  // Columns — single unified set
+  const columns = useMemo(() => [
+    {
+      key: '__rank__',
+      label: '#',
+      tooltip: 'Current rank based on the sorted column',
+      sortable: false,
+      align: 'right' as const,
+      width: '36px',
+      render: (_v: unknown, _row: MergedBatterRow, rowIndex: number, meta) => (
+        <RankCell rank={meta.reversed ? meta.total - rowIndex : rowIndex + 1} />
+      ),
+    },
+    {
+      key: 'name',
+      label: 'Player',
+      tooltip: 'Click any row to open the full player profile',
+      sortable: true,
+      align: 'left' as const,
+      width: '160px',
+      render: (_v: unknown, row: MergedBatterRow) => (
+        <NameCell
+          mlbId={row.mlbId}
+          name={row.name}
+          team={row.team}
+          onClick={() => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name)}`)}
+        />
+      ),
+    },
+    {
+      key: 'pos',
+      label: 'Pos',
+      tooltip: 'Primary fielding position',
+      sortable: true,
+      align: 'center' as const,
+      width: '50px',
+      render: (_v: unknown, row: MergedBatterRow) => (
+        <span className="lb-pos-badge">{row.pos}</span>
+      ),
+    },
+    {
+      key: 'pa',
+      label: 'PA',
+      tooltip: 'Plate appearances — every trip to the plate including walks and HBP',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '52px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.pa, int),
+    },
+    {
+      key: 'war',
+      label: 'fWAR',
+      tooltip: 'FanGraphs Wins Above Replacement. 2+ = solid starter, 5+ = All-Star, 8+ = MVP caliber',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '58px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.war, dec1),
+    },
+    {
+      key: 'hr',
+      label: 'HR',
+      tooltip: 'Home runs',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '48px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.hr, int),
+    },
+    {
+      key: 'avg',
+      label: 'AVG',
+      tooltip: 'Batting average (H ÷ AB). League avg ≈ .250',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '58px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.avg, avg3),
+    },
+    {
+      key: 'obp',
+      label: 'OBP',
+      tooltip: 'On-base percentage — fraction of PAs resulting in a reach. League avg ≈ .320',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '58px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.obp, avg3),
+    },
+    {
+      key: 'slg',
+      label: 'SLG',
+      tooltip: 'Slugging percentage — total bases per AB. League avg ≈ .415',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '58px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.slg, avg3),
+    },
+    {
+      key: 'wrcPlus',
+      label: 'wRC+',
+      tooltip: 'Park-adjusted offensive value. 100 = league avg, 130 = 30% above avg',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '58px',
+      render: (_v: unknown, row: MergedBatterRow) =>
+        row.wrcPlus != null
+          ? coloredSpan(row.wrcPlus, int, colorPlus(row.wrcPlus))
+          : <span style={{ color: 'var(--color-text-tertiary)' }}>—</span>,
+    },
+    {
+      key: 'xs_xwoba',
+      label: 'xwOBA',
+      tooltip: 'Expected wOBA — best Statcast contact metric. Strips out batted-ball luck and defense',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '66px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.xs_xwoba, avg3),
+    },
+    {
+      key: 'xs_xba',
+      label: 'xBA',
+      tooltip: 'Expected Batting Average — Statcast model based on exit velocity + launch angle',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '58px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.xs_xba, avg3),
+    },
+    {
+      key: 'kPct',
+      label: 'K%',
+      tooltip: 'Strikeout rate per PA. Lower is better for hitters. League avg ≈ 22%',
+      sortable: true,
+      firstClickDir: 'asc' as const,
+      align: 'right' as const,
+      width: '54px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.kPct, pct),
+    },
+    {
+      key: 'bbPct',
+      label: 'BB%',
+      tooltip: 'Walk rate per PA. ≥12% = highly selective',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '54px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.bbPct, pct),
+    },
+    {
+      key: 'sc_ev',
+      label: 'EV',
+      tooltip: 'Average Exit Velocity in mph. ≥90 = consistent hard contact',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '56px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.sc_ev, mph),
+    },
+    {
+      key: 'barrelPct',
+      label: 'Barrel%',
+      tooltip: 'Barrel rate — exit velo ≥98 mph at optimal launch angle. ≥10% = elite',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '68px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.barrelPct, pct),
+    },
+    {
+      key: 'hardPct',
+      label: 'Hard%',
+      tooltip: 'Hard-hit rate — % of batted balls with exit velocity ≥95 mph',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '58px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.hardPct, pct),
+    },
+    {
+      key: 'sc_whiff',
+      label: 'Whiff%',
+      tooltip: 'Swing-and-miss rate — swings that miss ÷ total swings. Lower = better contact',
+      sortable: true,
+      firstClickDir: 'asc' as const,
+      align: 'right' as const,
+      width: '62px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.sc_whiff, pct),
+    },
+    {
+      key: 'sc_chase',
+      label: 'Chase%',
+      tooltip: 'Chase rate — % of swings at pitches outside the strike zone. Lower is better',
+      sortable: true,
+      firstClickDir: 'asc' as const,
+      align: 'right' as const,
+      width: '62px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.sc_chase, pct),
+    },
+    {
+      key: 'sc_sprint',
+      label: 'Sprint',
+      tooltip: 'Sprint Speed in ft/sec. League avg ≈ 27 ft/s. ≥29 = elite speed',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '60px',
+      render: (_v: unknown, row: MergedBatterRow) => monoSpan(row.sc_sprint, dec1),
+    },
+  ], [navigate]);
+
+  if (isLoading) {
+    return (
+      <Card>
+        <div
+          className="live-loading-bar"
+          style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '24px' }}
+        >
+          <div className="live-loading-dot" />
+          <span className="live-prompt">Loading batting stats…</span>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <FilterBar
+        groups={BAT_POS_GROUPS}
+        active={posGroup}
+        onSelect={setPosGroup}
+        teamFilter={teamFilter}
+        onTeamChange={setTeamFilter}
+        minPA={minPA}
+        onMinPAChange={setMinPA}
+        qualifiedThreshold={qualifiedPA ?? undefined}
+        label="Min PA"
+        teams={allTeams}
+        paOptionsList={[0, 50, 100, 150, 200, 250, 300, 350, 400]}
+      />
+
+      {leaderCards && (
+        <div className="stat-grid-4">
+          <StatCard
+            label="fWAR Leader"
+            value={leaderCards.byWar[0] ? dec1(leaderCards.byWar[0].war) : '—'}
+            sub={leaderCards.byWar[0]?.name}
+            icon={<PlayerAvatar mlbId={leaderCards.byWar[0]?.mlbId} size={32} />}
+          />
+          <StatCard
+            label="HR Leader"
+            value={leaderCards.byHr[0] ? int(leaderCards.byHr[0].hr) : '—'}
+            sub={leaderCards.byHr[0]?.name}
+            icon={<PlayerAvatar mlbId={leaderCards.byHr[0]?.mlbId} size={32} />}
+          />
+          <StatCard
+            label="wRC+ Leader"
+            value={leaderCards.byWrcPlus[0] ? int(leaderCards.byWrcPlus[0].wrcPlus) : '—'}
+            sub={leaderCards.byWrcPlus[0]?.name}
+            icon={<PlayerAvatar mlbId={leaderCards.byWrcPlus[0]?.mlbId} size={32} />}
+          />
+          <StatCard
+            label="xwOBA Leader"
+            value={leaderCards.byXwoba[0] ? avg3(leaderCards.byXwoba[0].xs_xwoba) : '—'}
+            sub={leaderCards.byXwoba[0]?.name}
+            icon={<PlayerAvatar mlbId={leaderCards.byXwoba[0]?.mlbId} size={32} />}
+          />
+        </div>
+      )}
+
+      <Card>
         <SortableTable
-          columns={[
-            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.reversed ? m.total - i : i + 1} /> },
-            { key: 'name',    label: 'Player', align: 'left', sortable: true,
-              render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
-            { key: 'pos',     label: 'Pos',   align: 'center',
-              render: v => <span className="lb-pos-badge">{String(v).split('/')[0]}</span> },
-            { key: 'g',       label: 'G',     sortable: true },
-            { key: 'pa',      label: 'PA',    sortable: true },
-            { key: 'war',     label: 'fWAR',  sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 3 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
-            { key: 'hr',      label: 'HR',    sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 10 ? '#ef4444' : 'inherit' }}>{int(Number(v))}</span> },
-            { key: 'rbi',     label: 'RBI',   sortable: true },
-            { key: 'sb',      label: 'SB',    sortable: true },
-            { key: 'avg',     label: 'AVG',   sortable: true,
-              render: v => <span className="mono">{avg(Number(v))}</span> },
-            { key: 'obp',     label: 'OBP',   sortable: true,
-              render: v => <span className="mono">{avg(Number(v))}</span> },
-            { key: 'slg',     label: 'SLG',   sortable: true,
-              render: v => <span className="mono">{avg(Number(v))}</span> },
-            { key: 'ops',     label: 'OPS',   sortable: true,
-              render: v => <span className="mono" style={{ color: Number(v) >= 0.850 ? 'var(--color-teal)' : Number(v) <= 0.680 ? '#ef4444' : 'inherit', fontWeight: 600 }}>{avg(Number(v))}</span> },
-            { key: 'woba',    label: 'wOBA',  sortable: true,
-              render: v => <span className="mono">{avg(Number(v))}</span> },
-            { key: 'wrcPlus', label: 'wRC+',  sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: colorPlus(Number(v)) }}>{int(Number(v))}</span> },
-            { key: 'kPct',    label: 'K%',    sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono" style={{ color: Number(v) > 28 ? '#ef4444' : Number(v) < 15 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'bbPct',   label: 'BB%',   sortable: true,
-              render: v => <span className="mono" style={{ color: Number(v) > 12 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'hardPct', label: 'Hard%', sortable: true,
-              render: v => <span className="mono">{pct(Number(v))}</span> },
-            { key: 'barrelPct', label: 'Barrel%', sortable: true,
-              render: v => <span className="mono" style={{ color: Number(v) > 10 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'xwoba',   label: 'xwOBA', sortable: true,
-              render: v => <span className="mono">{avg(Number(v))}</span> },
-          ]}
-          data={rows as any}
+          data={mergedRows}
+          columns={columns as any}
           rowKey="mlbId"
           defaultSort="war"
+          defaultDir="desc"
+          onRowClick={(row) => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name)}`)}
         />
       </Card>
-    </>
+    </div>
   );
 }
 
-// ─── Pitching tab ─────────────────────────────────────────────────────
+// ─── PitchingLeaderboardWithFilters ───────────────────────────────────────────
 
-function PitchingLeaderboard() {
+function PitchingLeaderboardWithFilters() {
+  const navigate = useNavigate();
+  const { data: rawRows = [], isLoading: loadingFG } = usePitchingLeaderboard();
+  const { data: xStatsArr = [], isLoading: loadingXS } = useSavantExpectedPitcherStats();
+  const { data: scMapRaw, isLoading: loadingSC } = useSavantCustomPitcherMap();
+
+  // Filter state — QUALIFIED sentinel means "≥ 1.0 IP per team game played"
   const [roleGroup, setRoleGroup] = useState('All');
   const [teamFilter, setTeamFilter] = useState('');
-  const [minIP, setMinIP] = useState(10);
+  const [minIP, setMinIP] = useState(QUALIFIED);
 
-  const { data: raw = [], isLoading } = usePitchingLeaderboard();
+  // Dynamic qualified threshold: 1.0 IP per team game played
+  const qualifiedIP = useMemo(() => {
+    if (rawRows.length === 0) return null;
+    const maxG = Math.max(...rawRows.map((r) => r.g ?? 0));
+    return maxG > 0 ? maxG : null;
+  }, [rawRows]);
 
-  const roleValues = PIT_ROLE_GROUPS.find(g => g.label === roleGroup)?.values ?? [];
+  const allTeams = useMemo(() => Object.keys(ABBR_TO_MLB_ID).sort(), []);
 
-  const rows = useMemo(() => {
-    return raw.filter(r =>
-      r.ip >= minIP &&
-      (roleValues.length === 0 || roleValues.includes(r.pos)) &&
-      (!teamFilter || r.team === teamFilter)
-    );
-  }, [raw, minIP, roleValues, teamFilter]);
+  const xStatsMap = useMemo(() => {
+    const m = new Map<number, SavantExpectedStats>();
+    xStatsArr.forEach((r) => m.set(r.mlbId, r));
+    return m;
+  }, [xStatsArr]);
 
-  const byERA  = [...rows].filter(r => r.ip >= 20).sort((a, b) => a.era  - b.era)[0];
-  const byK    = [...rows].sort((a, b) => b.kPct - a.kPct)[0];
-  const byWAR  = [...rows].sort((a, b) => b.war  - a.war)[0];
-  const byXERA = [...rows].filter(r => r.ip >= 20).sort((a, b) => a.xera - b.xera)[0];
+  const isLoading = loadingFG || loadingXS || loadingSC;
 
-  if (isLoading) return (
-    <div className="live-loading-bar">
-      <span className="live-loading-dot" />
-      Loading pitching leaderboard from FanGraphs…
-    </div>
+  const roleGroupObj = PIT_ROLE_GROUPS.find((g) => g.label === roleGroup);
+
+  // Resolve sentinel to actual threshold
+  const effectiveMinIP = minIP === QUALIFIED ? (qualifiedIP ?? 0) : minIP;
+
+  const filteredRows = useMemo(() => {
+    return rawRows.filter((r) => {
+      if (effectiveMinIP > 0 && (r.ip ?? 0) < effectiveMinIP) return false;
+      if (teamFilter && r.team !== teamFilter) return false;
+      if (roleGroupObj && roleGroupObj.values.length > 0) {
+        if (!roleGroupObj.values.includes(r.pos ?? '')) return false;
+      }
+      return true;
+    });
+  }, [rawRows, effectiveMinIP, teamFilter, roleGroupObj]);
+
+  const mergedRows = useMemo(
+    () => mergePitcherRows(filteredRows, xStatsMap, scMapRaw),
+    [filteredRows, xStatsMap, scMapRaw]
   );
 
-  return (
-    <>
-      <div className="stat-grid-4">
-        <StatCard label="ERA Leader"  value={byERA  ? dec2(byERA.era)   : '—'} sub={byERA  ? byERA.name  : '—'} color="accent" accent />
-        <StatCard label="K% Leader"   value={byK    ? pct(byK.kPct)     : '—'} sub={byK    ? byK.name    : '—'} color="green"  />
-        <StatCard label="WAR Leader"  value={byWAR  ? dec1(byWAR.war)   : '—'} sub={byWAR  ? byWAR.name  : '—'} color="purple" accent />
-        <StatCard label="xERA Leader" value={byXERA ? dec2(byXERA.xera) : '—'} sub={byXERA ? byXERA.name : '—'} color="teal"   />
-      </div>
+  // Leader cards
+  const leaderCards = useMemo(() => {
+    if (mergedRows.length === 0) return null;
+    const byWar = [...mergedRows].sort((a, b) => (b.war  ?? 0)  - (a.war  ?? 0));
+    const byEra = [...mergedRows].sort((a, b) => (a.era  ?? 99) - (b.era  ?? 99));
+    const byK   = [...mergedRows].sort((a, b) => (b.kPct ?? 0)  - (a.kPct ?? 0));
+    const byFip = [...mergedRows].sort((a, b) => (a.fip  ?? 99) - (b.fip  ?? 99));
+    return { byWar, byEra, byK, byFip };
+  }, [mergedRows]);
 
-      <Card title="Pitching Leaderboard" subtitle={`${rows.length} qualified pitchers · ${new Date().getFullYear()} season · Source: FanGraphs`}>
+  // Columns — single unified set
+  const columns = useMemo(() => [
+    {
+      key: '__rank__',
+      label: '#',
+      tooltip: 'Current rank based on the sorted column',
+      sortable: false,
+      align: 'right' as const,
+      width: '36px',
+      render: (_v: unknown, _row: MergedPitcherRow, rowIndex: number, meta) => (
+        <RankCell rank={meta.reversed ? meta.total - rowIndex : rowIndex + 1} />
+      ),
+    },
+    {
+      key: 'name',
+      label: 'Player',
+      tooltip: 'Click any row to open the full player profile',
+      sortable: true,
+      align: 'left' as const,
+      width: '160px',
+      render: (_v: unknown, row: MergedPitcherRow) => (
+        <NameCell
+          mlbId={row.mlbId}
+          name={row.name}
+          team={row.team}
+          onClick={() => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name)}`)}
+        />
+      ),
+    },
+    {
+      key: 'pos',
+      label: 'Role',
+      tooltip: 'Pitching role: SP (starter) or RP (reliever)',
+      sortable: true,
+      align: 'center' as const,
+      width: '52px',
+      render: (_v: unknown, row: MergedPitcherRow) => (
+        <span className="lb-pos-badge lb-pos-badge--pit">{row.pos}</span>
+      ),
+    },
+    {
+      key: 'ip',
+      label: 'IP',
+      tooltip: 'Innings pitched',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '52px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.ip, dec1),
+    },
+    {
+      key: 'war',
+      label: 'fWAR',
+      tooltip: 'FanGraphs WAR for pitchers. 2+ = solid starter, 4+ = ace-level',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '58px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.war, dec1),
+    },
+    {
+      key: 'era',
+      label: 'ERA',
+      tooltip: 'Earned Run Average. ≤3.00 = excellent, ≥5.00 = struggling',
+      sortable: true,
+      firstClickDir: 'asc' as const,
+      align: 'right' as const,
+      width: '56px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.era, dec2),
+    },
+    {
+      key: 'fip',
+      label: 'FIP',
+      tooltip: 'Fielding Independent Pitching — K, BB, HBP, HR only. Better ERA predictor',
+      sortable: true,
+      firstClickDir: 'asc' as const,
+      align: 'right' as const,
+      width: '56px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.fip, dec2),
+    },
+    {
+      key: 'xera',
+      label: 'xERA',
+      tooltip: 'Expected ERA from Statcast contact quality. ≤3.00 = elite',
+      sortable: true,
+      firstClickDir: 'asc' as const,
+      align: 'right' as const,
+      width: '58px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.xera, dec2),
+    },
+    {
+      key: 'whip',
+      label: 'WHIP',
+      tooltip: 'Walks + Hits per Inning. ≤1.00 = elite command',
+      sortable: true,
+      firstClickDir: 'asc' as const,
+      align: 'right' as const,
+      width: '58px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.whip, dec2),
+    },
+    {
+      key: 'kPct',
+      label: 'K%',
+      tooltip: 'Strikeout rate per batter faced. ≥28% = elite swing-and-miss stuff',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '54px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.kPct, pct),
+    },
+    {
+      key: 'bbPct',
+      label: 'BB%',
+      tooltip: 'Walk rate per batter faced. ≤6% = elite command',
+      sortable: true,
+      firstClickDir: 'asc' as const,
+      align: 'right' as const,
+      width: '54px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.bbPct, pct),
+    },
+    {
+      key: 'kBBPct',
+      label: 'K-BB%',
+      tooltip: 'Net strikeout rate (K% minus BB%). ≥20% = elite',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '62px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.kBBPct, pct),
+    },
+    {
+      key: 'swStrPct',
+      label: 'SwStr%',
+      tooltip: 'Swinging strike rate per pitch. ≥13% = elite',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '62px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.swStrPct, pct),
+    },
+    {
+      key: 'oSwingPct',
+      label: 'Chase%',
+      tooltip: 'Chase rate generated — % of out-of-zone pitches batters swing at. ≥32% = elite',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '62px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.oSwingPct, pct),
+    },
+    {
+      key: 'gbPct',
+      label: 'GB%',
+      tooltip: 'Ground ball rate. Higher GB% = fewer HRs allowed',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '54px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.gbPct, pct),
+    },
+    {
+      key: 'sc_ev',
+      label: 'EV',
+      tooltip: 'Avg exit velocity allowed (mph). Lower = better. ≤87 = excellent',
+      sortable: true,
+      firstClickDir: 'asc' as const,
+      align: 'right' as const,
+      width: '56px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.sc_ev, mph),
+    },
+    {
+      key: 'sc_barrel',
+      label: 'Barrel%',
+      tooltip: 'Barrel rate allowed — % of contact that was barreled. Lower = better',
+      sortable: true,
+      firstClickDir: 'asc' as const,
+      align: 'right' as const,
+      width: '68px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.sc_barrel, pct),
+    },
+    {
+      key: 'sc_fbVelo',
+      label: 'FB Velo',
+      tooltip: 'Average fastball velocity in mph. ≥95 = plus velocity',
+      sortable: true,
+      firstClickDir: 'desc' as const,
+      align: 'right' as const,
+      width: '64px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.sc_fbVelo, mph),
+    },
+    {
+      key: 'xs_xwoba',
+      label: 'xwOBA',
+      tooltip: 'Expected wOBA allowed — best Statcast contact quality metric. Lower = better',
+      sortable: true,
+      firstClickDir: 'asc' as const,
+      align: 'right' as const,
+      width: '66px',
+      render: (_v: unknown, row: MergedPitcherRow) => monoSpan(row.xs_xwoba, avg3),
+    },
+  ], [navigate]);
+
+  if (isLoading) {
+    return (
+      <Card>
+        <div
+          className="live-loading-bar"
+          style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '24px' }}
+        >
+          <div className="live-loading-dot" />
+          <span className="live-prompt">Loading pitching stats…</span>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <FilterBar
+        groups={PIT_ROLE_GROUPS}
+        active={roleGroup}
+        onSelect={setRoleGroup}
+        teamFilter={teamFilter}
+        onTeamChange={setTeamFilter}
+        minPA={minIP}
+        onMinPAChange={setMinIP}
+        qualifiedThreshold={qualifiedIP ?? undefined}
+        label="Min IP"
+        teams={allTeams}
+        paOptionsList={[0, 5, 10, 20, 30, 40, 50, 60, 80, 100, 130]}
+      />
+
+      {leaderCards && (
+        <div className="stat-grid-4">
+          <StatCard
+            label="fWAR Leader"
+            value={leaderCards.byWar[0] ? dec1(leaderCards.byWar[0].war) : '—'}
+            sub={leaderCards.byWar[0]?.name}
+            icon={<PlayerAvatar mlbId={leaderCards.byWar[0]?.mlbId} size={32} />}
+          />
+          <StatCard
+            label="ERA Leader"
+            value={leaderCards.byEra[0] ? dec2(leaderCards.byEra[0].era) : '—'}
+            sub={leaderCards.byEra[0]?.name}
+            icon={<PlayerAvatar mlbId={leaderCards.byEra[0]?.mlbId} size={32} />}
+          />
+          <StatCard
+            label="K% Leader"
+            value={leaderCards.byK[0] ? pct(leaderCards.byK[0].kPct) : '—'}
+            sub={leaderCards.byK[0]?.name}
+            icon={<PlayerAvatar mlbId={leaderCards.byK[0]?.mlbId} size={32} />}
+          />
+          <StatCard
+            label="FIP Leader"
+            value={leaderCards.byFip[0] ? dec2(leaderCards.byFip[0].fip) : '—'}
+            sub={leaderCards.byFip[0]?.name}
+            icon={<PlayerAvatar mlbId={leaderCards.byFip[0]?.mlbId} size={32} />}
+          />
+        </div>
+      )}
+
+      <Card>
         <SortableTable
-          columns={[
-            { key: 'mlbId', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.reversed ? m.total - i : i + 1} /> },
-            { key: 'name',    label: 'Player', align: 'left', sortable: true,
-              render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
-            { key: 'pos',     label: 'Role', align: 'center',
-              render: v => <span className="lb-pos-badge lb-pos-badge--pit">{String(v)}</span> },
-            { key: 'g',       label: 'G',    sortable: true },
-            { key: 'gs',      label: 'GS',   sortable: true },
-            { key: 'ip',      label: 'IP',   sortable: true,
-              render: v => <span className="mono">{dec1(Number(v))}</span> },
-            { key: 'war',     label: 'fWAR', sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 2 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
-            { key: 'w',       label: 'W',    sortable: true },
-            { key: 'sv',      label: 'SV',   sortable: true },
-            { key: 'era',     label: 'ERA',  sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono" style={{ color: Number(v) <= 3.0 ? 'var(--color-teal)' : Number(v) >= 5.0 ? '#ef4444' : 'inherit', fontWeight: 600 }}>{dec2(Number(v))}</span> },
-            { key: 'fip',     label: 'FIP',  sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono">{dec2(Number(v))}</span> },
-            { key: 'xfip',    label: 'xFIP', sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono">{dec2(Number(v))}</span> },
-            { key: 'xera',    label: 'xERA', sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono" style={{ color: Number(v) <= 3.0 ? 'var(--color-teal)' : 'inherit' }}>{dec2(Number(v))}</span> },
-            { key: 'whip',    label: 'WHIP', sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono" style={{ color: Number(v) <= 1.0 ? 'var(--color-teal)' : Number(v) >= 1.40 ? '#ef4444' : 'inherit' }}>{dec2(Number(v))}</span> },
-            { key: 'kPct',    label: 'K%',   sortable: true,
-              render: v => <span className="mono" style={{ color: Number(v) >= 28 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'bbPct',   label: 'BB%',  sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono" style={{ color: Number(v) >= 10 ? '#ef4444' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'kBBPct',  label: 'K-BB%',sortable: true,
-              render: v => <span className="mono">{pct(Number(v))}</span> },
-            { key: 'gbPct',   label: 'GB%',  sortable: true,
-              render: v => <span className="mono">{pct(Number(v))}</span> },
-            { key: 'swStrPct',label: 'SwStr%',sortable: true,
-              render: v => <span className="mono" style={{ color: Number(v) >= 13 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'oSwingPct',label: 'Chase%',sortable: true,
-              render: v => <span className="mono">{pct(Number(v))}</span> },
-          ]}
-          data={rows as any}
+          data={mergedRows}
+          columns={columns as any}
           rowKey="mlbId"
           defaultSort="war"
+          defaultDir="desc"
+          onRowClick={(row) => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name)}`)}
         />
       </Card>
-    </>
+    </div>
   );
 }
 
-// ─── Main page ────────────────────────────────────────────────────────
+// ─── LeaderboardPage ──────────────────────────────────────────────────────────
 
-type Tab = 'hitting' | 'pitching';
 
 export default function LeaderboardPage() {
-  const [tab, setTab] = useState<Tab>('hitting');
-  const [batPos,   setBatPos]   = useState('All');
-  const [batTeam,  setBatTeam]  = useState('');
-  const [batMinPA, setBatMinPA] = useState(-1); // -1 = qualified
-  const [pitRole,  setPitRole]  = useState('All');
-  const [pitTeam,  setPitTeam]  = useState('');
-  const [pitMinIP, setPitMinIP] = useState(-1); // -1 = qualified
-
-  // Derive available teams from real data so abbreviations always match FanGraphs exactly
-  const { data: batRaw = [] } = useBattingLeaderboard();
-  const { data: pitRaw = [] } = usePitchingLeaderboard();
-
-  const batTeams = useMemo(() =>
-    [...new Set(batRaw.map(r => r.team).filter(t => t && !/^\d/.test(t)))].sort()
-  , [batRaw]);
-
-  const pitTeams = useMemo(() =>
-    [...new Set(pitRaw.map(r => r.team).filter(t => t && !/^\d/.test(t)))].sort()
-  , [pitRaw]);
-
-  // Dynamic qualified thresholds: 3.1 PA/game for batters, 1.0 IP/game for pitchers
-  const batTeamGames = useMemo(() =>
-    batRaw.length > 0 ? Math.max(...batRaw.map(r => r.g)) : 162
-  , [batRaw]);
-  const pitTeamGames = useMemo(() =>
-    pitRaw.length > 0 ? Math.max(...pitRaw.map(r => r.g)) : 162
-  , [pitRaw]);
-  const qualifiedPA = Math.floor(3.1 * batTeamGames);
-  const qualifiedIP = Math.floor(1.0 * pitTeamGames);
+  const [tab, setTab] = useState<'hitting' | 'pitching'>('hitting');
 
   return (
     <div className="leaderboard-page">
-      <FanGraphsBanner />
       {/* Header */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">Statistical Leaderboard</h1>
+          <h1 className="page-title">Leaderboard</h1>
           <p className="page-subtitle">
-            Full MLB rankings for all batting and pitching stats · {new Date().getFullYear()} season
+            MLB batting and pitching stats — FanGraphs + Baseball Savant
           </p>
         </div>
         <div className="page-header-controls">
           <div className="lb-main-tabs">
             <button
-              className={`lb-main-tab ${tab === 'hitting' ? 'lb-main-tab--active' : ''}`}
+              className={`lb-main-tab${tab === 'hitting' ? ' lb-main-tab--active' : ''}`}
               onClick={() => setTab('hitting')}
             >
-              ⚾ Hitting
+              Hitting
             </button>
             <button
-              className={`lb-main-tab ${tab === 'pitching' ? 'lb-main-tab--active' : ''}`}
+              className={`lb-main-tab${tab === 'pitching' ? ' lb-main-tab--active' : ''}`}
               onClick={() => setTab('pitching')}
             >
-              🎯 Pitching
+              Pitching
             </button>
           </div>
-          <Badge variant="accent">{new Date().getFullYear()} Live</Badge>
         </div>
       </div>
 
-      {/* Filters */}
-      {tab === 'hitting' ? (
-        <FilterBar
-          groups={BAT_POS_GROUPS}
-          active={batPos}
-          onSelect={setBatPos}
-          teamFilter={batTeam}
-          onTeamChange={setBatTeam}
-          minPA={batMinPA}
-          onMinPAChange={setBatMinPA}
-          qualifiedThreshold={qualifiedPA}
-          qualifiedLabel="Qualified Hitters"
-          label="PA"
-          teams={batTeams}
-        />
-      ) : (
-        <FilterBar
-          groups={PIT_ROLE_GROUPS}
-          active={pitRole}
-          onSelect={setPitRole}
-          teamFilter={pitTeam}
-          onTeamChange={setPitTeam}
-          minPA={pitMinIP}
-          onMinPAChange={setPitMinIP}
-          qualifiedThreshold={qualifiedIP}
-          qualifiedLabel="Qualified Pitchers"
-          label="IP"
-          teams={pitTeams}
-        />
-      )}
+      {/* FanGraphs attribution */}
+      <FanGraphsBanner />
 
-      {/* Content */}
+      {/* Leaderboard content (each owns its own filter bar + state) */}
       {tab === 'hitting' ? (
-        <BattingLeaderboardWithFilters
-          posGroup={batPos} teamFilter={batTeam} minPA={batMinPA} qualifiedPA={qualifiedPA}
-        />
+        <BattingLeaderboardWithFilters />
       ) : (
-        <PitchingLeaderboardWithFilters
-          roleGroup={pitRole} teamFilter={pitTeam} minIP={pitMinIP} qualifiedIP={qualifiedIP}
-        />
+        <PitchingLeaderboardWithFilters />
       )}
     </div>
-  );
-}
-
-// ─── Filter-aware wrappers ────────────────────────────────────────────
-
-function BattingLeaderboardWithFilters({
-  posGroup, teamFilter, minPA, qualifiedPA,
-}: { posGroup: string; teamFilter: string; minPA: number; qualifiedPA: number }) {
-  const navigate = useNavigate();
-  const { data: raw = [], isLoading } = useBattingLeaderboard();
-  const posValues = BAT_POS_GROUPS.find(g => g.label === posGroup)?.values ?? [];
-
-  // -1 = use dynamic qualified threshold; team filter drops threshold entirely
-  const thresholdPA = minPA === -1 ? qualifiedPA : minPA;
-  const effectiveMinPA = teamFilter ? 1 : thresholdPA;
-
-  const rows = useMemo(() =>
-    raw.filter(r =>
-      r.pa >= effectiveMinPA &&
-      posMatch(r.pos, posValues) &&
-      (!teamFilter || r.team === teamFilter)
-    )
-  , [raw, effectiveMinPA, posValues, teamFilter]);
-
-  const byHR   = [...rows].sort((a, b) => b.hr    - a.hr)[0];
-  const byAVG  = [...rows].filter(r => r.pa >= 10).sort((a, b) => b.avg   - a.avg)[0];
-  const byOPS  = [...rows].filter(r => r.pa >= 10).sort((a, b) => b.ops   - a.ops)[0];
-  const byWAR  = [...rows].sort((a, b) => b.war   - a.war)[0];
-
-  if (isLoading) return (
-    <div className="live-loading-bar">
-      <span className="live-loading-dot" />
-      Loading batting leaderboard from FanGraphs…
-    </div>
-  );
-
-  if (!rows.length) return (
-    <div className="live-prompt">
-      <div className="live-prompt-icon">⚾</div>
-      <p>No batters match the current filters.</p>
-    </div>
-  );
-
-  return (
-    <>
-      <div className="stat-grid-4">
-        <StatCard label="HR Leader"  value={byHR  ? int(byHR.hr)    : '—'} sub={byHR  ? byHR.name  : '—'} color="red"    accent />
-        <StatCard label="AVG Leader" value={byAVG ? avg(byAVG.avg)  : '—'} sub={byAVG ? byAVG.name : '—'} color="accent" />
-        <StatCard label="OPS Leader" value={byOPS ? avg(byOPS.ops)  : '—'} sub={byOPS ? byOPS.name : '—'} color="green"  />
-        <StatCard label="WAR Leader" value={byWAR ? dec1(byWAR.war) : '—'} sub={byWAR ? byWAR.name : '—'} color="purple" accent />
-      </div>
-
-      <Card
-        title="Batting Leaderboard"
-        subtitle={`${rows.length} qualified batters · ${new Date().getFullYear()} season · Source: FanGraphs`}
-      >
-        <SortableTable
-          columns={[
-            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.reversed ? m.total - i : i + 1} /> },
-            { key: 'name',     label: 'Player',  align: 'left', sortable: true,
-              render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
-            { key: 'pos',      label: 'Pos',     align: 'center',
-              render: v => <span className="lb-pos-badge">{String(v).split('/')[0]}</span> },
-            { key: 'g',        label: 'G',       sortable: true },
-            { key: 'pa',       label: 'PA',      sortable: true },
-            { key: 'war',      label: 'fWAR',    sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 3 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
-            { key: 'hr',       label: 'HR',      sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 10 ? '#ef4444' : 'inherit' }}>{int(Number(v))}</span> },
-            { key: 'rbi',      label: 'RBI',     sortable: true },
-            { key: 'sb',       label: 'SB',      sortable: true },
-            { key: 'avg',      label: 'AVG',     sortable: true, render: v => <span className="mono">{avg(Number(v))}</span> },
-            { key: 'obp',      label: 'OBP',     sortable: true, render: v => <span className="mono">{avg(Number(v))}</span> },
-            { key: 'slg',      label: 'SLG',     sortable: true, render: v => <span className="mono">{avg(Number(v))}</span> },
-            { key: 'ops',      label: 'OPS',     sortable: true,
-              render: v => <span className="mono" style={{ color: Number(v) >= 0.850 ? 'var(--color-teal)' : Number(v) <= 0.680 ? '#ef4444' : 'inherit', fontWeight: 600 }}>{avg(Number(v))}</span> },
-            { key: 'woba',     label: 'wOBA',    sortable: true, render: v => <span className="mono">{avg(Number(v))}</span> },
-            { key: 'wrcPlus',  label: 'wRC+',    sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: colorPlus(Number(v)) }}>{int(Number(v))}</span> },
-            { key: 'kPct',     label: 'K%',      sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono" style={{ color: Number(v) > 28 ? '#ef4444' : Number(v) < 15 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'bbPct',    label: 'BB%',     sortable: true,
-              render: v => <span className="mono" style={{ color: Number(v) > 12 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'hardPct',  label: 'Hard%',   sortable: true, render: v => <span className="mono">{pct(Number(v))}</span> },
-            { key: 'barrelPct',label: 'Barrel%', sortable: true,
-              render: v => <span className="mono" style={{ color: Number(v) > 10 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'xwoba',    label: 'xwOBA',   sortable: true, render: v => <span className="mono">{avg(Number(v))}</span> },
-          ]}
-          data={rows as any}
-          rowKey="mlbId"
-          defaultSort="war"
-          onRowClick={(row: any) => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name)}`)}
-        />
-      </Card>
-    </>
-  );
-}
-
-function PitchingLeaderboardWithFilters({
-  roleGroup, teamFilter, minIP, qualifiedIP,
-}: { roleGroup: string; teamFilter: string; minIP: number; qualifiedIP: number }) {
-  const navigate = useNavigate();
-  const { data: raw = [], isLoading } = usePitchingLeaderboard();
-  const roleValues = PIT_ROLE_GROUPS.find(g => g.label === roleGroup)?.values ?? [];
-
-  // -1 = use dynamic qualified threshold; team filter relaxes threshold
-  const thresholdIP = minIP === -1 ? qualifiedIP : minIP;
-  const effectiveMinIP = teamFilter ? 0.1 : thresholdIP;
-
-  const rows = useMemo(() =>
-    raw.filter(r =>
-      r.ip >= effectiveMinIP &&
-      (roleValues.length === 0 || roleValues.includes(r.pos)) &&
-      (!teamFilter || r.team === teamFilter)
-    )
-  , [raw, effectiveMinIP, roleValues, teamFilter]);
-
-  const byERA  = [...rows].filter(r => r.ip >= 5).sort((a, b) => a.era  - b.era)[0];
-  const byK    = [...rows].sort((a, b) => b.kPct - a.kPct)[0];
-  const byWAR  = [...rows].sort((a, b) => b.war  - a.war)[0];
-  const byXERA = [...rows].filter(r => r.ip >= 5).sort((a, b) => a.xera - b.xera)[0];
-
-  if (isLoading) return (
-    <div className="live-loading-bar">
-      <span className="live-loading-dot" />
-      Loading pitching leaderboard from FanGraphs…
-    </div>
-  );
-
-  if (!rows.length) return (
-    <div className="live-prompt">
-      <div className="live-prompt-icon">🎯</div>
-      <p>No pitchers match the current filters.</p>
-    </div>
-  );
-
-  return (
-    <>
-      <div className="stat-grid-4">
-        <StatCard label="ERA Leader"  value={byERA  ? dec2(byERA.era)   : '—'} sub={byERA  ? byERA.name  : '—'} color="accent" accent />
-        <StatCard label="K% Leader"   value={byK    ? pct(byK.kPct)     : '—'} sub={byK    ? byK.name    : '—'} color="green"  />
-        <StatCard label="WAR Leader"  value={byWAR  ? dec1(byWAR.war)   : '—'} sub={byWAR  ? byWAR.name  : '—'} color="purple" accent />
-        <StatCard label="xERA Leader" value={byXERA ? dec2(byXERA.xera) : '—'} sub={byXERA ? byXERA.name : '—'} color="teal"   />
-      </div>
-
-      <Card
-        title="Pitching Leaderboard"
-        subtitle={`${rows.length} qualified pitchers · ${new Date().getFullYear()} season · Source: FanGraphs`}
-      >
-        <SortableTable
-          columns={[
-            { key: '_rank', label: '#', align: 'center', render: (_v, _r, i, m) => <RankCell rank={m.reversed ? m.total - i : i + 1} /> },
-            { key: 'name',     label: 'Player', align: 'left', sortable: true,
-              render: (v, row: any) => <NameCell name={String(v)} mlbId={row.mlbId} team={row.team} /> },
-            { key: 'pos',      label: 'Role',   align: 'center',
-              render: v => <span className="lb-pos-badge lb-pos-badge--pit">{String(v)}</span> },
-            { key: 'g',        label: 'G',      sortable: true },
-            { key: 'gs',       label: 'GS',     sortable: true },
-            { key: 'ip',       label: 'IP',     sortable: true, render: v => <span className="mono">{dec1(Number(v))}</span> },
-            { key: 'war',      label: 'fWAR',   sortable: true,
-              render: v => <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: Number(v) >= 2 ? 'var(--color-teal)' : Number(v) < 0 ? '#ef4444' : 'inherit' }}>{dec1(Number(v))}</span> },
-            { key: 'w',        label: 'W',      sortable: true },
-            { key: 'sv',       label: 'SV',     sortable: true },
-            { key: 'era',      label: 'ERA',    sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono" style={{ color: Number(v) <= 3.0 ? 'var(--color-teal)' : Number(v) >= 5.0 ? '#ef4444' : 'inherit', fontWeight: 600 }}>{dec2(Number(v))}</span> },
-            { key: 'fip',      label: 'FIP',    sortable: true, firstClickDir: 'asc', render: v => <span className="mono">{dec2(Number(v))}</span> },
-            { key: 'xfip',     label: 'xFIP',   sortable: true, firstClickDir: 'asc', render: v => <span className="mono">{dec2(Number(v))}</span> },
-            { key: 'xera',     label: 'xERA',   sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono" style={{ color: Number(v) <= 3.0 ? 'var(--color-teal)' : 'inherit' }}>{dec2(Number(v))}</span> },
-            { key: 'whip',     label: 'WHIP',   sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono" style={{ color: Number(v) <= 1.0 ? 'var(--color-teal)' : Number(v) >= 1.40 ? '#ef4444' : 'inherit' }}>{dec2(Number(v))}</span> },
-            { key: 'kPct',     label: 'K%',     sortable: true,
-              render: v => <span className="mono" style={{ color: Number(v) >= 28 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'bbPct',    label: 'BB%',    sortable: true, firstClickDir: 'asc',
-              render: v => <span className="mono" style={{ color: Number(v) >= 10 ? '#ef4444' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'kBBPct',   label: 'K-BB%',  sortable: true, render: v => <span className="mono">{pct(Number(v))}</span> },
-            { key: 'gbPct',    label: 'GB%',    sortable: true, render: v => <span className="mono">{pct(Number(v))}</span> },
-            { key: 'swStrPct', label: 'SwStr%', sortable: true,
-              render: v => <span className="mono" style={{ color: Number(v) >= 13 ? 'var(--color-teal)' : 'inherit' }}>{pct(Number(v))}</span> },
-            { key: 'oSwingPct',label: 'Chase%', sortable: true, render: v => <span className="mono">{pct(Number(v))}</span> },
-          ]}
-          data={rows as any}
-          rowKey="mlbId"
-          defaultSort="war"
-          onRowClick={(row: any) => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name)}`)}
-        />
-      </Card>
-    </>
   );
 }

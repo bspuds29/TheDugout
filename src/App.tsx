@@ -16,7 +16,6 @@ const TeamStatsPage      = lazy(() => import('./pages/TeamStats/TeamStatsPage'))
 const TradeAnalyzerPage  = lazy(() => import('./pages/TradeAnalyzer/TradeAnalyzerPage'));
 const ToolsPage          = lazy(() => import('./pages/Tools/ToolsPage'));
 const PlayerComparePage  = lazy(() => import('./pages/Tools/PlayerComparePage'));
-const StatsHubPage       = lazy(() => import('./pages/Stats/StatsHubPage'));
 const TeamPage           = lazy(() => import('./pages/Team/TeamPage'));
 const GlossaryPage       = lazy(() => import('./pages/Glossary/GlossaryPage'));
 
@@ -73,7 +72,7 @@ function AppRoutes() {
         <Route path="/trade"         element={<TradeAnalyzerPage />} />
         <Route path="/tools"         element={<ToolsPage />} />
         <Route path="/tools/compare" element={<PlayerComparePage />} />
-        <Route path="/stats"         element={<StatsHubPage />} />
+        <Route path="/stats"         element={<Navigate to="/player" replace />} />
         <Route path="/team/:teamId"  element={<TeamPage />} />
         <Route path="/glossary"      element={<GlossaryPage />} />
         <Route path="*"              element={<NotFound />} />

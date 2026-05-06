@@ -33,6 +33,10 @@ import {
   useHittingPercentileRanks,
   usePitchingPercentileRanks,
   useDraftInfo,
+  useSavantExpectedBatterStats,
+  useSavantExpectedPitcherStats,
+  useSavantCustomBatterMap,
+  useSavantCustomPitcherMap,
   type HittingPercentileRanks,
   type PitchingPercentileRanks,
   type HittingSplitEntry,
@@ -689,23 +693,36 @@ function CareerStatsTab({
 // Maps the short display labels used in the Stats Hub grid → STAT_GLOSSARY keys
 
 const ALLSTATS_TT: Record<string, string> = {
+  // Counting — standard
+  'G': 'G', 'GS': 'GS', 'PA': 'PA', 'AB': 'AB',
+  'H': 'H', '1B': '1B', '2B': '2B', '3B': '3B',
+  'HR': 'HR', 'R': 'R', 'RBI': 'RBI', 'SB': 'SB',
+  'BB': 'BB', 'SO': 'SO',
+  'W': 'W', 'L': 'L', 'SV': 'SV', 'IP': 'IP',
   // Slash / rate
   'AVG': 'AVG', 'OBP': 'OBP', 'SLG': 'SLG', 'OPS': 'OPS',
   'wOBA': 'wOBA', 'wRC+': 'wRC+', 'ISO': 'ISO', 'BABIP': 'BABIP',
-  'BB%': 'BB%', 'K%': 'K%',
+  'BB%': 'BB%', 'K%': 'K%', 'BB/K': 'BB/K',
+  'LOB%': 'LOB%', 'IFFB%': 'IFFB%', 'HR/FB': 'HR/FB',
   // Statcast contact
-  'Exit Velo': 'Exit Velo', 'Barrel%': 'Barrel %',
-  'Hard Hit%': 'Hard Hit %', 'Sweet Spot%': 'Sweet Spot%',
+  'Exit Velo': 'Exit Velo', 'Launch Ang': 'Launch Angle',
+  'Barrel%': 'Barrel %', 'Hard Hit%': 'Hard Hit %', 'Sweet Spot%': 'Sweet Spot%',
+  'Sprint': 'Sprint Speed',
   // Batted ball
   'GB%': 'GB%', 'FB%': 'FB%', 'LD%': 'LD%',
   'Pull%': 'Pull%', 'Cent%': 'Center%', 'Oppo%': 'Oppo%',
-  // Pitching
+  // Statcast xStats
+  'xBA': 'xBA', 'xSLG': 'xSLG', 'xwOBA': 'xwOBA', 'xISO': 'xISO',
+  'BA−xBA': 'BA−xBA', 'SLG−xSLG': 'SLG−xSLG', 'wOBA−xwOBA': 'wOBA−xwOBA',
+  // Pitching rate
   'ERA': 'ERA', 'FIP': 'FIP', 'xFIP': 'xERA', 'WHIP': 'WHIP',
   'K-BB%': 'K-BB%', 'K/9': 'K/9', 'BB/9': 'BB/9', 'HR/9': 'HR/9',
   'Whiff%': 'Whiff%', 'Chase%': 'Chase%',
+  'Avg Velo': 'Avg Velo', 'Max Velo': 'Max Velo',
   // Value
   'WAR': 'fWAR', 'WPA': 'WPA', 'RE24': 'RE24', 'Clutch': 'Clutch',
   // Defense
+  'Inn': 'Inn', 'E': 'E', 'A': 'A', 'PO': 'PO',
   'OAA': 'OAA', 'DRS': 'DRS', 'UZR': 'UZR', 'UZR/150': 'UZR/150',
   'ARM': 'ARM', 'FLD%': 'FLD%', 'Framing': 'Framing',
 };
@@ -770,6 +787,21 @@ export default function PlayerPage() {
   const { data: hitRanks }      = useHittingPercentileRanks(mlbId);
   const { data: pitchRanks }    = usePitchingPercentileRanks(mlbId);
   const { draftInfo }           = useDraftInfo(mlbId);
+
+  // Savant expected / custom maps
+  const { data: xBatMap }  = useSavantExpectedBatterStats();
+  const { data: xPitMap }  = useSavantExpectedPitcherStats();
+  const { data: scBatMap } = useSavantCustomBatterMap();
+  const { data: scPitMap } = useSavantCustomPitcherMap();
+  const xBat  = mlbId ? (xBatMap?.get(mlbId)  ?? null) : null;
+  const xPit  = mlbId ? (xPitMap?.get(mlbId)  ?? null) : null;
+  const scBat = mlbId ? (scBatMap?.get(mlbId) ?? null) : null;
+  const scPit = mlbId ? (scPitMap?.get(mlbId) ?? null) : null;
+  const scNum = (row: Record<string,string>|null, col: string): string => {
+    if (!row) return '—';
+    const v = row[col]; if (!v || v.trim() === '') return '—';
+    const n = parseFloat(v); return isNaN(n) ? '—' : n.toFixed(1);
+  };
 
   // Update document title — person is now initialized above
   const resolvedName = person?.name ?? playerName;
@@ -1502,21 +1534,59 @@ export default function PlayerPage() {
                 </div>
 
                 <div className="allstats-section">
-                  <div className="allstats-section-header" style={{ borderLeftColor: 'var(--color-amber)' }}>Statcast</div>
+                  <div className="allstats-section-header" style={{ borderLeftColor: 'var(--color-amber)' }}>Statcast · Contact Quality</div>
                   <div className="allstats-grid">
                     {[
-                      { l: 'Exit Velo',    v: hitting.exitVelo > 0    ? `${hitting.exitVelo.toFixed(1)} mph`    : '—', c: hitting.exitVelo >= 92 ? 'var(--color-teal)' : hitting.exitVelo > 0 && hitting.exitVelo < 87 ? '#ef4444' : undefined },
-                      { l: 'Launch Ang',   v: hitting.launchAngle !== 0 ? `${hitting.launchAngle.toFixed(1)}°`  : '—' },
-                      { l: 'Barrel%',      v: hitting.barrelPct > 0   ? `${hitting.barrelPct.toFixed(1)}%`      : '—', c: hitting.barrelPct >= 10 ? 'var(--color-teal)' : hitting.barrelPct > 0 && hitting.barrelPct < 4 ? '#ef4444' : undefined },
-                      { l: 'Hard Hit%',    v: hitting.hardHitPct > 0  ? `${hitting.hardHitPct.toFixed(1)}%`     : '—', c: hitting.hardHitPct >= 45 ? 'var(--color-teal)' : hitting.hardHitPct > 0 && hitting.hardHitPct < 30 ? '#ef4444' : undefined },
-                      { l: 'Sweet Spot%',  v: hitting.sweetSpotPct > 0 ? `${hitting.sweetSpotPct.toFixed(1)}%` : '—', c: hitting.sweetSpotPct >= 35 ? 'var(--color-teal)' : undefined },
-                      { l: 'GB%',          v: hitting.gbPct > 0       ? `${hitting.gbPct.toFixed(1)}%`          : '—' },
-                      { l: 'FB%',          v: hitting.fbPct > 0       ? `${hitting.fbPct.toFixed(1)}%`          : '—' },
-                      { l: 'LD%',          v: hitting.ldPct > 0       ? `${hitting.ldPct.toFixed(1)}%`          : '—', c: hitting.ldPct >= 22 ? 'var(--color-teal)' : undefined },
-                      { l: 'Pull%',        v: hitting.pullPct > 0     ? `${hitting.pullPct.toFixed(1)}%`        : '—' },
-                      { l: 'Cent%',        v: hitting.centPct > 0     ? `${hitting.centPct.toFixed(1)}%`        : '—' },
-                      { l: 'Oppo%',        v: hitting.oppoShotPct > 0 ? `${hitting.oppoShotPct.toFixed(1)}%`   : '—' },
-                      { l: 'Sprint',       v: hitting.sprint > 0      ? `${hitting.sprint.toFixed(1)} ft/s`     : '—', c: hitting.sprint >= 27 ? 'var(--color-teal)' : hitting.sprint > 0 && hitting.sprint < 24 ? '#ef4444' : undefined },
+                      { l: 'Exit Velo',   v: hitting.exitVelo > 0     ? `${hitting.exitVelo.toFixed(1)} mph`    : '—', c: hitting.exitVelo >= 92 ? 'var(--color-teal)' : hitting.exitVelo > 0 && hitting.exitVelo < 87 ? '#ef4444' : undefined },
+                      { l: 'Launch Ang',  v: hitting.launchAngle !== 0 ? `${hitting.launchAngle.toFixed(1)}°`   : '—' },
+                      { l: 'Barrel%',     v: hitting.barrelPct > 0    ? `${hitting.barrelPct.toFixed(1)}%`      : '—', c: hitting.barrelPct >= 10 ? 'var(--color-teal)' : hitting.barrelPct > 0 && hitting.barrelPct < 4 ? '#ef4444' : undefined },
+                      { l: 'Hard Hit%',   v: hitting.hardHitPct > 0   ? `${hitting.hardHitPct.toFixed(1)}%`    : '—', c: hitting.hardHitPct >= 45 ? 'var(--color-teal)' : hitting.hardHitPct > 0 && hitting.hardHitPct < 30 ? '#ef4444' : undefined },
+                      { l: 'Sweet Spot%', v: hitting.sweetSpotPct > 0 ? `${hitting.sweetSpotPct.toFixed(1)}%`  : '—', c: hitting.sweetSpotPct >= 35 ? 'var(--color-teal)' : undefined },
+                      { l: 'GB%',         v: hitting.gbPct > 0        ? `${hitting.gbPct.toFixed(1)}%`         : '—' },
+                      { l: 'FB%',         v: hitting.fbPct > 0        ? `${hitting.fbPct.toFixed(1)}%`         : '—' },
+                      { l: 'LD%',         v: hitting.ldPct > 0        ? `${hitting.ldPct.toFixed(1)}%`         : '—', c: hitting.ldPct >= 22 ? 'var(--color-teal)' : undefined },
+                      { l: 'Pull%',       v: hitting.pullPct > 0      ? `${hitting.pullPct.toFixed(1)}%`       : scNum(scBat, 'pull_percent') !== '—' ? `${scNum(scBat, 'pull_percent')}%` : '—' },
+                      { l: 'Cent%',       v: hitting.centPct > 0      ? `${hitting.centPct.toFixed(1)}%`       : scNum(scBat, 'straightaway_percent') !== '—' ? `${scNum(scBat, 'straightaway_percent')}%` : '—' },
+                      { l: 'Oppo%',       v: hitting.oppoShotPct > 0  ? `${hitting.oppoShotPct.toFixed(1)}%`  : scNum(scBat, 'opposite_percent') !== '—' ? `${scNum(scBat, 'opposite_percent')}%` : '—' },
+                      { l: 'Sprint',      v: hitting.sprint > 0       ? `${hitting.sprint.toFixed(1)} ft/s`    : '—', c: hitting.sprint >= 27 ? 'var(--color-teal)' : hitting.sprint > 0 && hitting.sprint < 24 ? '#ef4444' : undefined },
+                    ].map(s => (
+                      <ACell key={s.l} l={s.l} v={s.v} c={(s as any).c} />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="allstats-section">
+                  <div className="allstats-section-header" style={{ borderLeftColor: 'var(--color-accent)' }}>Statcast · Expected Stats (xStats)</div>
+                  <div className="allstats-grid">
+                    {[
+                      { l: 'xBA',     v: xBat && xBat.xba   ? xBat.xba.toFixed(3)   : '—', c: xBat && xBat.xba >= 0.280 ? 'var(--color-teal)' : xBat && xBat.xba < 0.220 ? '#ef4444' : undefined },
+                      { l: 'xSLG',    v: xBat && xBat.xslg  ? xBat.xslg.toFixed(3)  : '—', c: xBat && xBat.xslg >= 0.480 ? 'var(--color-teal)' : undefined },
+                      { l: 'xwOBA',   v: xBat && xBat.xwoba ? xBat.xwoba.toFixed(3) : '—', c: xBat && xBat.xwoba >= 0.360 ? 'var(--color-teal)' : xBat && xBat.xwoba < 0.290 ? '#ef4444' : undefined },
+                      { l: 'wOBA',    v: xBat && xBat.woba  ? xBat.woba.toFixed(3)  : hitting.woba > 0 ? hitting.woba.toFixed(3).replace('0.', '.') : '—' },
+                      { l: 'xISO',    v: xBat && xBat.xiso  ? xBat.xiso.toFixed(3)  : '—', c: xBat && xBat.xiso >= 0.200 ? 'var(--color-teal)' : undefined },
+                      { l: 'BA−xBA',  v: xBat ? (xBat.baxba >= 0 ? '+' : '') + xBat.baxba.toFixed(3) : '—',
+                        c: xBat ? (xBat.baxba > 0.015 ? 'var(--color-green)' : xBat.baxba < -0.015 ? '#ef4444' : undefined) : undefined },
+                      { l: 'SLG−xSLG', v: xBat ? (xBat.slgxslg >= 0 ? '+' : '') + xBat.slgxslg.toFixed(3) : '—',
+                        c: xBat ? (xBat.slgxslg > 0.020 ? 'var(--color-green)' : xBat.slgxslg < -0.020 ? '#ef4444' : undefined) : undefined },
+                      { l: 'wOBA−xwOBA', v: xBat ? (xBat.wobaxwoba >= 0 ? '+' : '') + xBat.wobaxwoba.toFixed(3) : '—',
+                        c: xBat ? (xBat.wobaxwoba > 0.015 ? 'var(--color-green)' : xBat.wobaxwoba < -0.015 ? '#ef4444' : undefined) : undefined },
+                    ].map(s => (
+                      <ACell key={s.l} l={s.l} v={s.v} c={(s as any).c} />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="allstats-section">
+                  <div className="allstats-section-header" style={{ borderLeftColor: 'var(--color-purple)' }}>Statcast · Plate Discipline</div>
+                  <div className="allstats-grid">
+                    {[
+                      { l: 'Whiff%',  v: hitting.whiffPct > 0 ? `${hitting.whiffPct.toFixed(1)}%` : scNum(scBat, 'whiff_percent') !== '—' ? `${scNum(scBat, 'whiff_percent')}%` : '—',
+                        c: hitting.whiffPct < 18 ? 'var(--color-teal)' : hitting.whiffPct > 28 ? '#ef4444' : undefined },
+                      { l: 'Chase%',  v: hitting.chasePct > 0 ? `${hitting.chasePct.toFixed(1)}%` : scNum(scBat, 'chase_percent') !== '—' ? `${scNum(scBat, 'chase_percent')}%` : '—',
+                        c: hitting.chasePct < 26 ? 'var(--color-teal)' : hitting.chasePct > 35 ? '#ef4444' : undefined },
+                      { l: 'K%',      v: hitting.kPct > 0  ? `${hitting.kPct.toFixed(1)}%`  : '—', c: hitting.kPct > 28 ? '#ef4444' : hitting.kPct < 15 ? 'var(--color-teal)' : undefined },
+                      { l: 'BB%',     v: hitting.bbPct > 0 ? `${hitting.bbPct.toFixed(1)}%` : '—', c: hitting.bbPct > 12 ? 'var(--color-teal)' : undefined },
+                      { l: 'BABIP',   v: hitting.babip > 0 ? hitting.babip.toFixed(3).replace('0.','.') : '—' },
                     ].map(s => (
                       <ACell key={s.l} l={s.l} v={s.v} c={(s as any).c} />
                     ))}
