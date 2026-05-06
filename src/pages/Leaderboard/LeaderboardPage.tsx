@@ -144,7 +144,7 @@ function mergeBatterRows(
     sc_straight: scVal(scMap, r.mlbId, 'straightaway_percent'),
     sc_oppo: scVal(scMap, r.mlbId, 'opposite_percent'),
     sc_whiff: scVal(scMap, r.mlbId, 'whiff_percent'),
-    sc_chase: scVal(scMap, r.mlbId, 'chase_percent') ?? scVal(scMap, r.mlbId, 'o_swing_percent') ?? scVal(scMap, r.mlbId, 'oz_swing_percent'),
+    sc_chase: scVal(scMap, r.mlbId, 'o_swing_percent') ?? scVal(scMap, r.mlbId, 'chase_percent'),
     sc_sprint: scVal(scMap, r.mlbId, 'sprint_speed'),
     xs_xba: xsVal(xStats, r.mlbId, 'xba'),
     xs_xslg: xsVal(xStats, r.mlbId, 'xslg'),

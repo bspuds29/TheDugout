@@ -7,20 +7,24 @@ import './GlossaryPage.css';
 
 const CATEGORIES: { label: string; keys: string[] }[] = [
   {
+    label: 'Counting Stats',
+    keys: ['G', 'GS', 'PA', 'AB', 'H', '1B', '2B', '3B', 'HR', 'R', 'RBI', 'SB', 'BB', 'SO', 'W', 'L', 'SV', 'IP'],
+  },
+  {
     label: 'Batting',
-    keys: ['AVG', 'OBP', 'SLG', 'OPS', 'ISO', 'BABIP'],
-  },
-  {
-    label: 'Advanced Hitting',
-    keys: ['wOBA', 'wRC+', 'xwOBA'],
-  },
-  {
-    label: 'Contact Quality',
-    keys: ['Exit Velo', 'Barrel %', 'Hard Hit %', 'Sweet Spot%'],
+    keys: ['AVG', 'OBP', 'SLG', 'OPS', 'ISO', 'BABIP', 'wOBA', 'wRC+'],
   },
   {
     label: 'Plate Discipline',
-    keys: ['BB%', 'K%'],
+    keys: ['BB%', 'K%', 'BB/K', 'Whiff%', 'Chase%', 'LOB%', 'IFFB%', 'HR/FB'],
+  },
+  {
+    label: 'Expected Stats',
+    keys: ['xwOBA', 'xBA', 'xSLG', 'xISO', 'BA−xBA', 'SLG−xSLG', 'wOBA−xwOBA'],
+  },
+  {
+    label: 'Contact Quality',
+    keys: ['Exit Velo', 'Launch Angle', 'Barrel %', 'Hard Hit %', 'Sweet Spot%', 'Sprint Speed'],
   },
   {
     label: 'Batted Ball Profile',
@@ -28,11 +32,11 @@ const CATEGORIES: { label: string; keys: string[] }[] = [
   },
   {
     label: 'Pitching',
-    keys: ['ERA', 'xERA', 'WHIP', 'FIP', 'K/9', 'BB/9', 'HR/9', 'K-BB%', 'Avg FB', 'Whiff%', 'Chase%'],
+    keys: ['ERA', 'xERA', 'WHIP', 'FIP', 'K/9', 'BB/9', 'HR/9', 'K-BB%', 'Avg FB', 'Avg Velo', 'Max Velo'],
   },
   {
     label: 'Defense',
-    keys: ['OAA', 'DRS', 'UZR', 'UZR/150', 'Defense', 'FLD%', 'Framing', 'ARM'],
+    keys: ['OAA', 'DRS', 'UZR', 'UZR/150', 'Defense', 'FLD%', 'Framing', 'ARM', 'Inn', 'E', 'A', 'PO'],
   },
   {
     label: 'Value',
@@ -40,7 +44,7 @@ const CATEGORIES: { label: string; keys: string[] }[] = [
   },
   {
     label: 'Game Log',
-    keys: ['Season AVG', 'IP', 'PC', 'Dec'],
+    keys: ['Season AVG', 'PC', 'Dec'],
   },
 ];
 

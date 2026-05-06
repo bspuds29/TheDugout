@@ -66,7 +66,7 @@ const BATTER_COLS = [
   'exit_velocity_avg', 'launch_angle_avg',
   'barrel_batted_rate', 'hard_hit_percent', 'sweet_spot_percent',
   'xba', 'xslg', 'xwoba', 'xwobacon',
-  'sprint_speed', 'whiff_percent', 'chase_percent', 'o_swing_percent', 'oz_swing_percent',
+  'sprint_speed', 'whiff_percent', 'o_swing_percent', 'chase_percent',
   'k_percent', 'bb_percent',
   // Batted-ball profile (gb_percent etc. are accepted but return empty — use full names)
   'groundballs_percent', 'flyballs_percent', 'linedrives_percent',
@@ -79,7 +79,7 @@ const PITCHER_COLS = [
   'barrel_batted_rate', 'hard_hit_percent',
   'xwoba', 'xera',
   'fastball_avg_speed', 'fastball_avg_spin',
-  'whiff_percent', 'chase_percent', 'o_swing_percent', 'oz_swing_percent',
+  'whiff_percent', 'o_swing_percent', 'chase_percent',
   'groundballs_percent', 'flyballs_percent', 'linedrives_percent',
 ].join(',');
 
@@ -147,6 +147,9 @@ function getLeaderboard(
       .then(text => {
         const rows = parseCSV(text);
         console.info(`[Savant] Leaderboard loaded: ${rows.length} ${type}s for ${year}`);
+        if (rows.length > 0) {
+          console.info(`[Savant] ${type} columns:`, Object.keys(rows[0]));
+        }
         return rows;
       })
       .catch(e => {
@@ -190,7 +193,7 @@ export async function fetchSavantBatterById(
       xba:          num(r['xba']),
       sprintSpeed:  num(r['sprint_speed']),
       whiffPct:     num(r['whiff_percent']),
-      chasePct:     num(r['chase_percent']),
+      chasePct:     num(r['o_swing_percent'] || r['chase_percent']),
       contactPct:   0,
       woba:         num(r['woba'] ?? r['xwoba']),
       gbPct:        num(r['groundballs_percent']),
