@@ -68,6 +68,7 @@ import {
   computeWrcPlusPercentile,
   computeERAPercentile,
   computeFIPPercentile,
+  fetchFanGraphsPitcherFullById,
   computeOAAPercentile,
 } from '../data/api/fangraphs';
 import {
@@ -184,11 +185,12 @@ export function usePitchingStats(mlbId: number | null): {
   const { data, isLoading, error } = useQuery({
     queryKey: ['pitchingStats', mlbId, SEASON],
     queryFn: async () => {
-      const [raw, savant, saber, fg] = await Promise.all([
+      const [raw, savant, saber, fg, fgFull] = await Promise.all([
         fetchPitchingStats(mlbId!, SEASON),
         fetchSavantPitcherWithFallback(mlbId!, SEASON),
         fetchSabermetrics(mlbId!, SEASON, 'pitching'),
         fetchFanGraphsPitcherById(mlbId!, SEASON),
+        fetchFanGraphsPitcherFullById(mlbId!, SEASON),
       ]);
       if (!raw) return { stats: null, savantLoaded: false };
       // Merge FanGraphs chase rate into savant object (Savant doesn't provide it via leaderboard)
@@ -196,8 +198,16 @@ export function usePitchingStats(mlbId: number | null): {
         ...savant,
         chasePct: fg?.oSwingPct ?? savant.chasePct,
       } : savant;
+      const base = transformPitchingStats(raw, mlbId!, SEASON, mergedSavant, saber);
       return {
-        stats: transformPitchingStats(raw, mlbId!, SEASON, mergedSavant, saber),
+        stats: fgFull ? {
+          ...base,
+          fip:        fgFull.fip     || base.fip,
+          babip:      fgFull.babip   || base.babip,
+          lobPct:     fgFull.lobPct  || base.lobPct,
+          iffbPct:    fgFull.iffbPct || base.iffbPct,
+          hrFbPct:    fgFull.hrFbPct || base.hrFbPct,
+        } : base,
         savantLoaded: savant !== null,
       };
     },

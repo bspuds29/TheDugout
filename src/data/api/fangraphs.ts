@@ -469,6 +469,8 @@ export interface FanGraphsPitcherRow {
   fbPct:     number;
   swStrPct:  number;
   oSwingPct: number;
+  iffbPct:   number;
+  hrFbPct:   number;
   war:       number;
   wpa:       number;
   re24:      number;
@@ -559,6 +561,8 @@ export async function fetchFanGraphsPitchingLeaderboard(year: number): Promise<F
           fbPct:     asPct(r['FB%']),
           swStrPct:  asPct(r['SwStr%']),
           oSwingPct: asPct(r['O-Swing%']),
+          iffbPct:   asPct(r['IFFB%']),
+          hrFbPct:   asPct(r['HR/FB']),
           war:       asNum(r['WAR'], 1),
           wpa:       asNum(r['WPA'], 2),
           re24:      asNum(r['RE24'],1),
@@ -658,6 +662,29 @@ export async function computeFIPPercentile(
       .filter(v => v > 0);
 
     return pool.length >= 20 ? rankInLeague(pool, playerFip, false) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Look up a single pitcher's full FanGraphs stats (FIP, BABIP, LOB%, IFFB%, HR/FB). */
+export async function fetchFanGraphsPitcherFullById(
+  mlbId: number,
+  year: number,
+): Promise<Pick<FanGraphsPitcherRow, 'fip' | 'babip' | 'lobPct' | 'iffbPct' | 'hrFbPct'> | null> {
+  try {
+    const rows = await getPitchingLeaderboard8(year);
+    const r = rows.find(row =>
+      Number(row['xMLBAMID']) === mlbId || Number(row['MLBAMID']) === mlbId,
+    );
+    if (!r) return null;
+    return {
+      fip:     asNum(r['FIP'],    2),
+      babip:   asNum(r['BABIP'],  3),
+      lobPct:  asPct(r['LOB%']),
+      iffbPct: asPct(r['IFFB%']),
+      hrFbPct: asPct(r['HR/FB']),
+    };
   } catch {
     return null;
   }
