@@ -209,8 +209,8 @@ export function transformHittingStats(
     re24: 0,
     sprint: savant?.sprintSpeed ?? 0,
     outs: raw.airOuts ?? 0,
-    whiffPct: 0,
-    chasePct: 0,
+    whiffPct: savant?.whiffPct ?? 0,
+    chasePct: savant?.chasePct ?? 0,
   };
 }
 
