@@ -392,6 +392,41 @@ async function getPitchingLeaderboard8(year: number): Promise<Record<string, unk
   return _cache.get(key)!;
 }
 
+/** type=2 = Advanced pitching tab — includes IFFB%, HR/FB not present in type=8 */
+async function getPitchingLeaderboardAdv(year: number): Promise<Record<string, unknown>[]> {
+  const key = `fg-pit2-${year}`;
+  if (!_cache.has(key)) {
+    const url =
+      `${FG_BASE}/api/leaders/major-league/data` +
+      `?pos=all&stats=pit&lg=all&qual=0` +
+      `&season=${year}&season1=${year}` +
+      `&startdate=&enddate=&month=0&hand=&team=0` +
+      `&pageitems=100000&pagenum=1&ind=0&rost=0&players=0` +
+      `&type=2&postseason=&sortdir=default&sortstat=WAR`;
+
+    const promise = fetch(url)
+      .then(r => {
+        if (!r.ok) throw new Error(`FanGraphs pitching adv ${r.status}`);
+        return r.json() as Promise<{ data?: Record<string, unknown>[] } | Record<string, unknown>[]>;
+      })
+      .then(json => {
+        const rows = (json as { data?: Record<string, unknown>[] }).data ?? (json as Record<string, unknown>[]);
+        markReachable();
+        console.info(`[FanGraphs] Pitching adv leaderboard: ${rows.length} rows for ${year}`);
+        return rows;
+      })
+      .catch(e => {
+        _cache.delete(key);
+        if (isCorsError(e)) markUnreachable();
+        console.warn('[FanGraphs] Pitching adv fetch failed:', e);
+        throw e;
+      });
+
+    _cache.set(key, promise);
+  }
+  return _cache.get(key)!;
+}
+
 function asPct(v: unknown): number {
   if (v === null || v === undefined || v === '') return 0;
   const n = typeof v === 'number' ? v : parseFloat(String(v));
@@ -669,16 +704,40 @@ export async function computeFIPPercentile(
 
 /**
  * Look up a single pitcher's full FanGraphs stats.
- * Reuses fetchFanGraphsPitchingLeaderboard so the leaderboard cache is shared
- * and column mapping is consistent with what the leaderboard page uses.
+ * Merges type=8 (Dashboard — FIP/BABIP/LOB%/WPA/RE24) with type=2 (Advanced —
+ * IFFB%/HR/FB) since those stats live on different FanGraphs leaderboard tabs.
  */
 export async function fetchFanGraphsPitcherFullById(
   mlbId: number,
   year: number,
 ): Promise<FanGraphsPitcherRow | null> {
   try {
-    const rows = await fetchFanGraphsPitchingLeaderboard(year);
-    return rows.find(r => r.mlbId === mlbId) ?? null;
+    const [dashRows, advRows] = await Promise.allSettled([
+      fetchFanGraphsPitchingLeaderboard(year),
+      getPitchingLeaderboardAdv(year),
+    ]);
+
+    const dash = dashRows.status === 'fulfilled'
+      ? dashRows.value.find(r => r.mlbId === mlbId) ?? null
+      : null;
+
+    if (!dash) return null;
+
+    // Overlay IFFB% / HR/FB from the Advanced tab if available
+    if (advRows.status === 'fulfilled') {
+      const adv = advRows.value.find(r =>
+        Number(r['xMLBAMID']) === mlbId || Number(r['MLBAMID']) === mlbId,
+      );
+      if (adv) {
+        return {
+          ...dash,
+          iffbPct: asPct(adv['IFFB%']) || dash.iffbPct,
+          hrFbPct: asPct(adv['HR/FB']) || dash.hrFbPct,
+        };
+      }
+    }
+
+    return dash;
   } catch {
     return null;
   }
