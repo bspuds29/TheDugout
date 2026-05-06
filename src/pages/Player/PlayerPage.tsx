@@ -98,7 +98,7 @@ function buildPitchingPercentiles(stats: PitchingStats, real?: PitchingPercentil
     { label: 'BB%',          value: real?.bbPct      ?? calc(100 - ((stats.bbPct - 4) / 8) * 100),                   raw: `${stats.bbPct.toFixed(1)}%` },
     { label: 'ERA',          value: real?.era        ?? calc(100 - ((stats.era - 2.5) / 3) * 100),                   raw: stats.era.toFixed(2) },
     { label: 'xERA',         value: real?.xera       ?? (stats.xfip > 0 ? calc(100 - ((stats.xfip - 2.5) / 3) * 100) : 50), raw: stats.xfip > 0 ? stats.xfip.toFixed(2) : '—' },
-    { label: 'FIP',          value: real?.fip        ?? (stats.fip  > 0 ? calc(100 - ((stats.fip  - 2.5) / 3) * 100) : 50), raw: stats.fip  > 0 ? stats.fip.toFixed(2)  : '—' },
+    { label: 'FIP',          value: real?.fip        ?? (stats.fip  !== 0 ? calc(100 - ((stats.fip  - 2.5) / 3) * 100) : 50), raw: stats.fip  !== 0 ? stats.fip.toFixed(2)  : '—' },
     { label: 'GB%',          value: real?.gbPct      ?? calc(((stats.gbPct - 30) / 25) * 100),                       raw: stats.gbPct > 0 ? `${stats.gbPct.toFixed(1)}%` : '—' },
     { label: 'Avg Velocity', value: real?.velocity   ?? (stats.avgVelocity > 0 ? calc(((stats.avgVelocity - 88) / 10) * 100) : 50), raw: stats.avgVelocity > 0 ? `${stats.avgVelocity.toFixed(1)} mph` : '—' },
     { label: 'Whiff%',       value: real?.whiffPct   ?? (stats.whiffPct > 0 ? calc(((stats.whiffPct - 15) / 15) * 100) : 50),      raw: stats.whiffPct > 0 ? `${stats.whiffPct.toFixed(1)}%` : '—' },
@@ -1633,7 +1633,7 @@ export default function PlayerPage() {
                   <div className="allstats-grid">
                     {[
                       { l: 'ERA',   v: pitching.era > 0   ? pitching.era.toFixed(2)   : '—', c: pitching.era <= 3.0 ? 'var(--color-teal)' : pitching.era >= 5.0 ? '#ef4444' : undefined },
-                      { l: 'FIP',   v: pitching.fip > 0   ? pitching.fip.toFixed(2)   : '—', c: pitching.fip <= 3.2 ? 'var(--color-teal)' : pitching.fip >= 4.8 ? '#ef4444' : undefined },
+                      { l: 'FIP',   v: pitching.fip !== 0  ? pitching.fip.toFixed(2)   : '—', c: pitching.fip <= 3.2 ? 'var(--color-teal)' : pitching.fip >= 4.8 ? '#ef4444' : undefined },
                       { l: 'xFIP',  v: pitching.xfip > 0  ? pitching.xfip.toFixed(2)  : '—', c: pitching.xfip > 0 && pitching.xfip <= 3.2 ? 'var(--color-teal)' : pitching.xfip >= 4.8 ? '#ef4444' : undefined },
                       { l: 'WHIP',  v: pitching.whip > 0  ? pitching.whip.toFixed(2)  : '—', c: pitching.whip <= 1.10 ? 'var(--color-teal)' : pitching.whip >= 1.40 ? '#ef4444' : undefined },
                       { l: 'K%',    v: pitching.kPct > 0  ? `${pitching.kPct.toFixed(1)}%`  : '—', c: pitching.kPct >= 28 ? 'var(--color-teal)' : pitching.kPct < 16 ? '#ef4444' : undefined },

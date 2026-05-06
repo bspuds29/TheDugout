@@ -202,7 +202,7 @@ export function usePitchingStats(mlbId: number | null): {
       return {
         stats: fgFull ? {
           ...base,
-          fip:     fgFull.fip     > 0   ? fgFull.fip     : base.fip,
+          fip:     fgFull.fip     !== 0  ? fgFull.fip     : base.fip,
           babip:   fgFull.babip   > 0   ? fgFull.babip   : base.babip,
           lobPct:  fgFull.lobPct  > 0   ? fgFull.lobPct  : base.lobPct,
           iffbPct: fgFull.iffbPct > 0   ? fgFull.iffbPct : base.iffbPct,
