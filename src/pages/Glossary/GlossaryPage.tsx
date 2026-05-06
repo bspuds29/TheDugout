@@ -16,7 +16,7 @@ const CATEGORIES: { label: string; keys: string[] }[] = [
   },
   {
     label: 'Plate Discipline',
-    keys: ['BB%', 'K%', 'BB/K', 'Whiff%', 'Chase%', 'LOB%', 'IFFB%', 'HR/FB'],
+    keys: ['BB%', 'K%', 'BB/K', 'Whiff%', 'Chase%', 'LOB%', 'HR/FB'],
   },
   {
     label: 'Expected Stats',

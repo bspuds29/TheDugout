@@ -73,7 +73,6 @@ export interface PitchingStats {
   gbPct: number;
   fbPct: number;
   ldPct: number;
-  iffbPct: number;
   hrFbPct: number;
   avgVelocity: number;
   maxVelocity: number;

@@ -139,7 +139,6 @@ export function transformPitchingStats(
     gbPct: savant?.gbPct ?? 0,
     fbPct: savant?.fbPct ?? 0,
     ldPct: savant?.ldPct ?? 0,
-    iffbPct: 0,
     hrFbPct: 0,
     avgVelocity: savant?.fastballVelo ?? 0,
     maxVelocity: 0,

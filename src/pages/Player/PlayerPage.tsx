@@ -705,7 +705,7 @@ const ALLSTATS_TT: Record<string, string> = {
   'AVG': 'AVG', 'OBP': 'OBP', 'SLG': 'SLG', 'OPS': 'OPS',
   'wOBA': 'wOBA', 'wRC+': 'wRC+', 'ISO': 'ISO', 'BABIP': 'BABIP',
   'BB%': 'BB%', 'K%': 'K%', 'BB/K': 'BB/K',
-  'LOB%': 'LOB%', 'IFFB%': 'IFFB%', 'HR/FB': 'HR/FB',
+  'LOB%': 'LOB%', 'HR/FB': 'HR/FB',
   // Statcast contact
   'Exit Velo': 'Exit Velo', 'Launch Ang': 'Launch Angle',
   'Barrel%': 'Barrel %', 'Hard Hit%': 'Hard Hit %', 'Sweet Spot%': 'Sweet Spot%',
@@ -1649,7 +1649,6 @@ export default function PlayerPage() {
                       { l: 'GB%',   v: pitching.gbPct > 0  ? `${pitching.gbPct.toFixed(1)}%`  : '—', c: pitching.gbPct >= 50 ? 'var(--color-teal)' : undefined },
                       { l: 'FB%',   v: pitching.fbPct > 0  ? `${pitching.fbPct.toFixed(1)}%`  : '—' },
                       { l: 'LD%',   v: pitching.ldPct > 0  ? `${pitching.ldPct.toFixed(1)}%`  : '—' },
-                      { l: 'IFFB%', v: pitching.iffbPct > 0 ? `${pitching.iffbPct.toFixed(1)}%` : '—', c: pitching.iffbPct >= 12 ? 'var(--color-teal)' : undefined },
                       { l: 'HR/FB', v: pitching.hrFbPct > 0 ? `${pitching.hrFbPct.toFixed(1)}%` : '—', c: pitching.hrFbPct >= 13 ? '#ef4444' : pitching.hrFbPct <= 7 ? 'var(--color-teal)' : undefined },
                     ].map(s => (
                       <ACell key={s.l} l={s.l} v={s.v} c={(s as any).c} />

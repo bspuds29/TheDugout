@@ -504,7 +504,6 @@ export interface FanGraphsPitcherRow {
   fbPct:     number;
   swStrPct:  number;
   oSwingPct: number;
-  iffbPct:   number;
   hrFbPct:   number;
   war:       number;
   wpa:       number;
@@ -596,7 +595,6 @@ export async function fetchFanGraphsPitchingLeaderboard(year: number): Promise<F
           fbPct:     asPct(r['FB%']),
           swStrPct:  asPct(r['SwStr%']),
           oSwingPct: asPct(r['O-Swing%']),
-          iffbPct:   asPct(r['IFFB%']),
           hrFbPct:   asPct(r['HR/FB']),
           war:       asNum(r['WAR'], 1),
           wpa:       asNum(r['WPA'], 2),
@@ -723,7 +721,7 @@ export async function fetchFanGraphsPitcherFullById(
 
     if (!dash) return null;
 
-    // Overlay IFFB% / HR/FB from the Advanced tab if available
+    // Overlay HR/FB from the Advanced tab (type=2) if available
     if (advRows.status === 'fulfilled') {
       const adv = advRows.value.find(r =>
         Number(r['xMLBAMID']) === mlbId || Number(r['MLBAMID']) === mlbId,
@@ -731,7 +729,6 @@ export async function fetchFanGraphsPitcherFullById(
       if (adv) {
         return {
           ...dash,
-          iffbPct: asPct(adv['IFFB%']) || dash.iffbPct,
           hrFbPct: asPct(adv['HR/FB']) || dash.hrFbPct,
         };
       }
