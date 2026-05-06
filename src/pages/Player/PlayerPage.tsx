@@ -774,6 +774,14 @@ export default function PlayerPage() {
     }
   }, [mlbId, playerName, person, addRecent]);
 
+  // Default pitchers to pitching mode. NL starters who bat have hitting.games > 0
+  // which makes them appear "two-way" and would land on the hitting tab showing zeros.
+  React.useEffect(() => {
+    if (person?.position && PITCHER_POS.includes(person.position)) {
+      setTwoWayRole('pitching');
+    }
+  }, [person?.position]);
+
   const { stats: pitching, isLoading: pitchLoading }    = usePitchingStats(mlbId);
   const { stats: hitting,  isLoading: hitLoading }      = useHittingStats(mlbId);
   const { data: gameLog = [] }                          = useGameLog(mlbId);
