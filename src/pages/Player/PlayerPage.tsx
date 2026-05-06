@@ -98,6 +98,7 @@ function buildPitchingPercentiles(stats: PitchingStats, real?: PitchingPercentil
     { label: 'BB%',          value: real?.bbPct      ?? calc(100 - ((stats.bbPct - 4) / 8) * 100),                   raw: `${stats.bbPct.toFixed(1)}%` },
     { label: 'ERA',          value: real?.era        ?? calc(100 - ((stats.era - 2.5) / 3) * 100),                   raw: stats.era.toFixed(2) },
     { label: 'xERA',         value: real?.xera       ?? (stats.xfip > 0 ? calc(100 - ((stats.xfip - 2.5) / 3) * 100) : 50), raw: stats.xfip > 0 ? stats.xfip.toFixed(2) : '—' },
+    { label: 'FIP',          value: real?.fip        ?? (stats.fip  > 0 ? calc(100 - ((stats.fip  - 2.5) / 3) * 100) : 50), raw: stats.fip  > 0 ? stats.fip.toFixed(2)  : '—' },
     { label: 'GB%',          value: real?.gbPct      ?? calc(((stats.gbPct - 30) / 25) * 100),                       raw: stats.gbPct > 0 ? `${stats.gbPct.toFixed(1)}%` : '—' },
     { label: 'Avg Velocity', value: real?.velocity   ?? (stats.avgVelocity > 0 ? calc(((stats.avgVelocity - 88) / 10) * 100) : 50), raw: stats.avgVelocity > 0 ? `${stats.avgVelocity.toFixed(1)} mph` : '—' },
     { label: 'Whiff%',       value: real?.whiffPct   ?? (stats.whiffPct > 0 ? calc(((stats.whiffPct - 15) / 15) * 100) : 50),      raw: stats.whiffPct > 0 ? `${stats.whiffPct.toFixed(1)}%` : '—' },
@@ -112,6 +113,7 @@ function buildHittingPercentiles(stats: HittingStats, real?: HittingPercentileRa
     { label: 'Exit Velocity', value: real?.exitVelo   ?? (stats.exitVelo > 0 ? calc(50 + (stats.exitVelo - 88.5) / 7 * 50) : 50),  raw: stats.exitVelo > 0 ? `${stats.exitVelo.toFixed(1)} mph` : '—' },
     { label: 'Barrel %',      value: real?.barrelPct  ?? (stats.barrelPct > 0 ? calc(50 + (stats.barrelPct - 7.5) / 12 * 50) : 1), raw: stats.barrelPct > 0 ? `${stats.barrelPct.toFixed(1)}%` : '—' },
     { label: 'Hard Hit %',    value: real?.hardHitPct ?? (stats.hardHitPct > 0 ? calc(50 + (stats.hardHitPct - 37) / 20 * 50) : 1),raw: stats.hardHitPct > 0 ? `${stats.hardHitPct.toFixed(1)}%` : '—' },
+    { label: 'wOBA',          value: real?.woba       ?? (stats.woba > 0 ? calc(50 + (stats.woba - 0.320) / 0.080 * 50) : 50),   raw: stats.woba > 0 ? stats.woba.toFixed(3) : '—' },
     { label: 'BB%',           value: real?.bbPct      ?? calc(50 + (stats.bbPct - 8.5) / 8 * 50),                                 raw: `${stats.bbPct.toFixed(1)}%` },
     { label: 'K%',            value: real?.kPct       ?? calc(50 + (22 - stats.kPct) / 12 * 50),                                  raw: `${stats.kPct.toFixed(1)}%` },
   ];

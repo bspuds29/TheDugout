@@ -67,6 +67,7 @@ import {
   fetchFanGraphsBatterById,
   computeWrcPlusPercentile,
   computeERAPercentile,
+  computeFIPPercentile,
   computeOAAPercentile,
 } from '../data/api/fangraphs';
 import {
@@ -562,6 +563,7 @@ export interface HittingPercentileRanks {
   exitVelo?:    number;
   barrelPct?:   number;
   hardHitPct?:  number;
+  woba?:        number;
   bbPct?:       number;
   kPct?:        number;
   sprintSpeed?: number;
@@ -573,6 +575,7 @@ export interface PitchingPercentileRanks {
   bbPct?:     number;
   era?:       number;
   xera?:      number;
+  fip?:       number;
   gbPct?:     number;
   velocity?:  number;
   whiffPct?:  number;
@@ -597,6 +600,7 @@ export function useHittingPercentileRanks(mlbId: number | null) {
         exitVelo:    s?.exitVelo,
         barrelPct:   s?.barrelPct,
         hardHitPct:  s?.hardHitPct,
+        woba:        s?.woba,
         bbPct:       s?.bbPct,
         kPct:        s?.kPct,
         sprintSpeed: s?.sprintSpeed,
@@ -614,17 +618,20 @@ export function usePitchingPercentileRanks(mlbId: number | null) {
   return useQuery<PitchingPercentileRanks>({
     queryKey: ['pitchingPercentiles', mlbId, YEAR],
     queryFn: async () => {
-      const [savantRes, eraRes] = await Promise.allSettled([
+      const [savantRes, eraRes, fipRes] = await Promise.allSettled([
         computePitcherSavantPercentiles(mlbId!, YEAR),
         computeERAPercentile(mlbId!, YEAR),
+        computeFIPPercentile(mlbId!, YEAR),
       ]);
       const s = savantRes.status === 'fulfilled' ? savantRes.value : null;
       const e = eraRes.status === 'fulfilled' ? eraRes.value : null;
+      const f = fipRes.status === 'fulfilled' ? fipRes.value : null;
       return {
         kPct:      s?.kPct,
         bbPct:     s?.bbPct,
         era:       e  ?? undefined,
         xera:      s?.xera,
+        fip:       f  ?? undefined,
         gbPct:     s?.gbPct,
         velocity:  s?.velocity,
         whiffPct:  s?.whiffPct,

@@ -639,6 +639,30 @@ export async function computeERAPercentile(
   }
 }
 
+export async function computeFIPPercentile(
+  mlbId: number,
+  year: number,
+): Promise<number | null> {
+  try {
+    const rows = await getPitchingLeaderboard8(year);
+    const player = rows.find(r =>
+      Number(r['xMLBAMID']) === mlbId || Number(r['MLBAMID']) === mlbId,
+    );
+    if (!player) return null;
+    const playerFip = Number(player['FIP'] ?? 0);
+    if (!playerFip) return null;
+
+    const pool = rows
+      .filter(r => Number(r['IP'] ?? 0) >= 20)
+      .map(r => Number(r['FIP'] ?? 0))
+      .filter(v => v > 0);
+
+    return pool.length >= 20 ? rankInLeague(pool, playerFip, false) : null;
+  } catch {
+    return null;
+  }
+}
+
 // ─── Pitcher discipline ───────────────────────────────────────────────
 
 export async function fetchFanGraphsPitcherById(

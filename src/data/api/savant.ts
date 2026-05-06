@@ -325,6 +325,7 @@ export interface SavantBatterPercentiles {
   exitVelo:    number;  // 1-99 — higher = better
   barrelPct:   number;
   hardHitPct:  number;
+  woba:        number;
   bbPct:       number;
   kPct:        number;  // inverse: lower K% → higher rank
   xwoba:       number;
@@ -378,6 +379,7 @@ export async function computeBatterSavantPercentiles(
       exitVelo:    rankInLeague(col('exit_velocity_avg'),  pv('exit_velocity_avg'),  true),
       barrelPct:   rankInLeague(col('barrel_batted_rate'), pv('barrel_batted_rate'), true),
       hardHitPct:  rankInLeague(col('hard_hit_percent'),   pv('hard_hit_percent'),   true),
+      woba:        rankInLeague(col('woba'),               pv('woba'),               true),
       bbPct:       rankInLeague(col('bb_percent'),         pv('bb_percent'),         true),
       kPct:        rankInLeague(col('k_percent'),          pv('k_percent'),          false),
       xwoba:       rankInLeague(col('xwoba'),              pv('xwoba'),              true),
