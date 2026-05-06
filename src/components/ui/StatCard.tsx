@@ -13,6 +13,7 @@ interface StatCardProps {
   size?: 'sm' | 'md' | 'lg';
   color?: 'default' | 'accent' | 'green' | 'red' | 'amber' | 'teal' | 'purple';
   tooltip?: string;
+  icon?: React.ReactNode;
 }
 
 const TREND_ICONS = {

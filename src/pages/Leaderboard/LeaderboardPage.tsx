@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import StatCard from '../../components/ui/StatCard';
 import Badge from '../../components/ui/Badge';
-import SortableTable from '../../components/ui/SortableTable';
+import SortableTable, { type SortMeta } from '../../components/ui/SortableTable';
 import PlayerAvatar from '../../components/ui/PlayerAvatar';
 import TeamLogo, { ABBR_TO_MLB_ID } from '../../components/ui/TeamLogo';
 import {
@@ -459,7 +459,7 @@ function BattingLeaderboardWithFilters() {
       sortable: false,
       align: 'right' as const,
       width: '36px',
-      render: (_v: unknown, _row: MergedBatterRow, rowIndex: number, meta) => (
+      render: (_v: unknown, _row: MergedBatterRow, rowIndex: number, meta: SortMeta) => (
         <RankCell rank={meta.reversed ? meta.total - rowIndex : rowIndex + 1} />
       ),
     },
@@ -726,12 +726,12 @@ function BattingLeaderboardWithFilters() {
 
       <Card>
         <SortableTable
-          data={mergedRows}
+          data={mergedRows as any}
           columns={columns as any}
           rowKey="mlbId"
           defaultSort="war"
           defaultDir="desc"
-          onRowClick={(row) => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name)}`)}
+          onRowClick={(row: any) => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name as string)}`)}
         />
       </Card>
     </div>
@@ -808,7 +808,7 @@ function PitchingLeaderboardWithFilters() {
       sortable: false,
       align: 'right' as const,
       width: '36px',
-      render: (_v: unknown, _row: MergedPitcherRow, rowIndex: number, meta) => (
+      render: (_v: unknown, _row: MergedPitcherRow, rowIndex: number, meta: SortMeta) => (
         <RankCell rank={meta.reversed ? meta.total - rowIndex : rowIndex + 1} />
       ),
     },
@@ -1062,12 +1062,12 @@ function PitchingLeaderboardWithFilters() {
 
       <Card>
         <SortableTable
-          data={mergedRows}
+          data={mergedRows as any}
           columns={columns as any}
           rowKey="mlbId"
           defaultSort="war"
           defaultDir="desc"
-          onRowClick={(row) => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name)}`)}
+          onRowClick={(row: any) => navigate(`/player?mlbId=${row.mlbId}&name=${encodeURIComponent(row.name as string)}`)}
         />
       </Card>
     </div>

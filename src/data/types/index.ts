@@ -150,6 +150,8 @@ export interface HittingStats {
   re24: number;
   sprint: number;
   outs: number;
+  whiffPct: number;
+  chasePct: number;
 }
 
 // ─── Clutch Analytics ────────────────────────────────────────────────
