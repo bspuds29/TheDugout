@@ -623,3 +623,38 @@ https://thedugoutapi.com/player?mlbId=645277&name=Ozzie+Albies
 2026-05-05 17:12:43,813  INFO      poster — Tweet posted (text only) — id: 2051711703360889304
 2026-05-05 17:12:43,815  INFO      tracker — Marked as used: weekly_2026_2026w19_hit_645277_hislast3games
 2026-05-05 17:12:43,815  INFO      __main__ — Done. Tweet ID: 2051711703360889304
+2026-05-06 06:24:05,299  INFO      __main__ — ============================================================
+2026-05-06 06:24:05,299  INFO      __main__ — TheDugout tweet bot starting — 2026-05-06T06:24:05.299476+00:00
+2026-05-06 06:24:05,299  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-06 06:24:05,299  INFO      __main__ — Collecting stat candidates…
+2026-05-06 06:24:05,300  INFO      collector — Fetching schedule for 2026-05-05
+2026-05-06 06:24:05,502  INFO      collector — Collected 54 game candidates
+2026-05-06 06:24:06,415  INFO      collector — Collected 11 weekly hitter candidates
+2026-05-06 06:24:06,578  INFO      collector — FanGraphs batting leaderboard: 179 rows
+2026-05-06 06:24:06,810  INFO      collector — FanGraphs pitching leaderboard: 73 rows
+2026-05-06 06:24:07,011  INFO      collector — Collected 30 season leader candidates
+2026-05-06 06:24:07,017  INFO      collector — Collected 4 team game candidates
+2026-05-06 06:24:07,067  INFO      collector — Collected 6 team streak candidates
+2026-05-06 06:24:07,067  INFO      collector — Built 3 combined hitting candidates
+2026-05-06 06:24:07,068  INFO      collector — Total candidates: 108 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-06 06:24:07,068  INFO      __main__ — 107 fresh candidates after dedup (of 108 total)
+2026-05-06 06:24:07,068  INFO      __main__ — 102 candidates after player-repeat filter
+2026-05-06 06:24:07,068  INFO      __main__ — Selected candidate: 'Matt Olson' — Matt Olson last night: 2-for-3, 1 HR, 1 RBI
+Last 3 games: 5-for-10, 2 HRs, 3 RBI, 1.915 OPS (score=103.7, type=combined_hitting)
+2026-05-06 06:24:07,068  INFO      __main__ — Generating tweet via Claude…
+2026-05-06 06:24:08,819  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-06 06:24:08,842  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-06 06:24:08,842  INFO      __main__ — TWEET PREVIEW:
+Matt Olson last night: 2-for-3, 1 HR, 1 RBI
+Last 3 games: 5-for-10, 2 HRs, 3 RBI, 1.915 OPS
+
+Matt Olson remembered who he was
+
+https://thedugoutapi.com/player?mlbId=621566&name=Matt+Olson
+2026-05-06 06:24:08,842  INFO      __main__ — Length: 125 chars (body) + 23 (t.co URL) = 149 total
+2026-05-06 06:24:08,842  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-06 06:24:08,842  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-06 06:24:08,842  INFO      __main__ — Posting tweet…
+2026-05-06 06:24:09,128  INFO      poster — Tweet posted (text only) — id: 2051910870976901506
+2026-05-06 06:24:09,130  INFO      tracker — Marked as used: combined_621566_2026-05-05
+2026-05-06 06:24:09,130  INFO      __main__ — Done. Tweet ID: 2051910870976901506

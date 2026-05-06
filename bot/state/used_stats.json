@@ -16,7 +16,8 @@
     "combined_592450_2026-05-03",
     "weekly_2026_2026w19_hit_677594_hislast3games",
     "combined_686948_2026-05-04",
-    "weekly_2026_2026w19_hit_645277_hislast3games"
+    "weekly_2026_2026w19_hit_645277_hislast3games",
+    "combined_621566_2026-05-05"
   ],
   "tweet_log": [
     {
@@ -154,7 +155,15 @@
       "player": "Ozzie Albies",
       "stat": "Ozzie Albies is 5-for-11 (.455) over his last 3 games, 1 HR, 3 RBI",
       "timestamp": "2026-05-05T17:12:43.815151+00:00"
+    },
+    {
+      "id": "combined_621566_2026-05-05",
+      "tweet_text": "Matt Olson last night: 2-for-3, 1 HR, 1 RBI\nLast 3 games: 5-for-10, 2 HRs, 3 RBI, 1.915 OPS\n\nMatt Olson remembered who he was\n\nhttps://thedugoutapi.com/player?mlbId=621566&name=Matt+Olson",
+      "tweet_id": "2051910870976901506",
+      "player": "Matt Olson",
+      "stat": "Matt Olson last night: 2-for-3, 1 HR, 1 RBI\nLast 3 games: 5-for-10, 2 HRs, 3 RBI, 1.915 OPS",
+      "timestamp": "2026-05-06T06:24:09.129880+00:00"
     }
   ],
-  "last_run": "2026-05-05T17:12:43.815163+00:00"
+  "last_run": "2026-05-06T06:24:09.129892+00:00"
 }
