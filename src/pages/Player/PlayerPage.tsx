@@ -774,14 +774,6 @@ export default function PlayerPage() {
     }
   }, [mlbId, playerName, person, addRecent]);
 
-  // Default pitchers to pitching mode. NL starters who bat have hitting.games > 0
-  // which makes them appear "two-way" and would land on the hitting tab showing zeros.
-  React.useEffect(() => {
-    if (person?.position && PITCHER_POS.includes(person.position)) {
-      setTwoWayRole('pitching');
-    }
-  }, [person?.position]);
-
   const { stats: pitching, isLoading: pitchLoading }    = usePitchingStats(mlbId);
   const { stats: hitting,  isLoading: hitLoading }      = useHittingStats(mlbId);
   const { data: gameLog = [] }                          = useGameLog(mlbId);
@@ -836,9 +828,11 @@ export default function PlayerPage() {
   })();
   const { showPitching, showHitting } = resolveRoles(rawPosition);
 
-  // Once person loads, decide which sections to show based on actual data presence too
+  // Once person loads, decide which sections to show based on actual data presence too.
+  // Use plateAppearances (not games) for hasHitting — pitchers have games > 0 since
+  // the universal DH era but 0 PA, and we don't want them flagged as two-way.
   const hasPitching = showPitching || (pitching !== null && pitching !== undefined && pitching.games > 0);
-  const hasHitting  = showHitting  || (hitting  !== null && hitting  !== undefined && hitting.games  > 0);
+  const hasHitting  = showHitting  || (hitting  !== null && hitting  !== undefined && (hitting.plateAppearances ?? 0) > 0);
 
   // Two-way players (Ohtani etc.) get a toggle — only one role shown at a time
   const isTwoWay       = hasPitching && hasHitting;
