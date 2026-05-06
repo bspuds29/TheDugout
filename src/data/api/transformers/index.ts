@@ -142,7 +142,7 @@ export function transformPitchingStats(
     iffbPct: 0,
     hrFbPct: 0,
     avgVelocity: savant?.fastballVelo ?? 0,
-    maxVelocity: 0,
+    maxVelocity: savant?.maxVelocity ?? 0,
     whiffPct: savant?.whiffPct ?? 0,
     chasePct: savant?.chasePct ?? 0,
     war:  saber?.war  ? Math.round(saber.war  * 10) / 10 : 0,

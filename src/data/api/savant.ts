@@ -51,9 +51,10 @@ export interface SavantPitcherStats {
   xwoba:             number;
   xera:              number;
   fastballVelo:      number;
+  maxVelocity:       number;
   fastballSpin:      number;
-  whiffPct: number;
-  chasePct: number;
+  whiffPct:          number;
+  chasePct:          number;
   gbPct:             number;
   ldPct:             number;
   fbPct:             number;
@@ -78,7 +79,7 @@ const PITCHER_COLS = [
   'exit_velocity_avg', 'launch_angle_avg',
   'barrel_batted_rate', 'hard_hit_percent',
   'xwoba', 'xera',
-  'fastball_avg_speed', 'fastball_avg_spin',
+  'fastball_avg_speed', 'max_speed', 'fastball_avg_spin',
   'whiff_percent', 'o_swing_percent', 'chase_percent',
   'k_percent', 'bb_percent',
   'groundballs_percent', 'flyballs_percent', 'linedrives_percent',
@@ -236,9 +237,10 @@ export async function fetchSavantPitcherById(
       xwoba:             num(r['xwoba']),
       xera:              num(r['xera']),
       fastballVelo:      num(r['fastball_avg_speed']),
+      maxVelocity:       num(r['max_speed']),
       fastballSpin:      num(r['fastball_avg_spin']),
-      whiffPct: num(r['whiff_percent']),
-      chasePct: num(r['chase_percent'] || r['o_swing_percent'] || r['oz_swing_percent']),
+      whiffPct:          num(r['whiff_percent']),
+      chasePct:          num(r['o_swing_percent'] || r['chase_percent']),
       gbPct:             num(r['groundballs_percent']),
       ldPct:             num(r['linedrives_percent']),
       fbPct:             num(r['flyballs_percent']),
@@ -412,6 +414,9 @@ export async function computePitcherSavantPercentiles(
     const col = (c: string) => qualified.map(r => num(r[c])).filter(v => v > 0);
     const pv  = (c: string) => num(player[c]);
 
+    // Use o_swing_percent (the correct Savant column for chase rate) with chase_percent fallback
+    const chaseCol = qualified.some(r => num(r['o_swing_percent']) > 0) ? 'o_swing_percent' : 'chase_percent';
+
     return {
       kPct:      rankInLeague(col('k_percent'),            pv('k_percent'),            true),
       bbPct:     rankInLeague(col('bb_percent'),           pv('bb_percent'),            false),
@@ -419,7 +424,7 @@ export async function computePitcherSavantPercentiles(
       xera:      rankInLeague(col('xera'),                 pv('xera'),                  false),
       velocity:  rankInLeague(col('fastball_avg_speed'),   pv('fastball_avg_speed'),    true),
       whiffPct:  rankInLeague(col('whiff_percent'),        pv('whiff_percent'),         true),
-      chasePct:  rankInLeague(col('chase_percent'),        pv('chase_percent'),         true),
+      chasePct:  rankInLeague(col(chaseCol),               pv(chaseCol),                true),
     };
   } catch {
     return null;

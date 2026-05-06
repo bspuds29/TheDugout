@@ -667,24 +667,18 @@ export async function computeFIPPercentile(
   }
 }
 
-/** Look up a single pitcher's full FanGraphs stats (FIP, BABIP, LOB%, IFFB%, HR/FB). */
+/**
+ * Look up a single pitcher's full FanGraphs stats.
+ * Reuses fetchFanGraphsPitchingLeaderboard so the leaderboard cache is shared
+ * and column mapping is consistent with what the leaderboard page uses.
+ */
 export async function fetchFanGraphsPitcherFullById(
   mlbId: number,
   year: number,
-): Promise<Pick<FanGraphsPitcherRow, 'fip' | 'babip' | 'lobPct' | 'iffbPct' | 'hrFbPct'> | null> {
+): Promise<FanGraphsPitcherRow | null> {
   try {
-    const rows = await getPitchingLeaderboard8(year);
-    const r = rows.find(row =>
-      Number(row['xMLBAMID']) === mlbId || Number(row['MLBAMID']) === mlbId,
-    );
-    if (!r) return null;
-    return {
-      fip:     asNum(r['FIP'],    2),
-      babip:   asNum(r['BABIP'],  3),
-      lobPct:  asPct(r['LOB%']),
-      iffbPct: asPct(r['IFFB%']),
-      hrFbPct: asPct(r['HR/FB']),
-    };
+    const rows = await fetchFanGraphsPitchingLeaderboard(year);
+    return rows.find(r => r.mlbId === mlbId) ?? null;
   } catch {
     return null;
   }

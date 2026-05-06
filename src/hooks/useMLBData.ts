@@ -202,11 +202,13 @@ export function usePitchingStats(mlbId: number | null): {
       return {
         stats: fgFull ? {
           ...base,
-          fip:        fgFull.fip     || base.fip,
-          babip:      fgFull.babip   || base.babip,
-          lobPct:     fgFull.lobPct  || base.lobPct,
-          iffbPct:    fgFull.iffbPct || base.iffbPct,
-          hrFbPct:    fgFull.hrFbPct || base.hrFbPct,
+          fip:     fgFull.fip     > 0   ? fgFull.fip     : base.fip,
+          babip:   fgFull.babip   > 0   ? fgFull.babip   : base.babip,
+          lobPct:  fgFull.lobPct  > 0   ? fgFull.lobPct  : base.lobPct,
+          iffbPct: fgFull.iffbPct > 0   ? fgFull.iffbPct : base.iffbPct,
+          hrFbPct: fgFull.hrFbPct > 0   ? fgFull.hrFbPct : base.hrFbPct,
+          wpa:     fgFull.wpa  !== 0    ? fgFull.wpa     : base.wpa,
+          re24:    fgFull.re24 !== 0    ? fgFull.re24    : base.re24,
         } : base,
         savantLoaded: savant !== null,
       };
