@@ -198,23 +198,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Stats strip ───────────────────────────────────────────────── */}
-      <div style={{ ...cardStyle, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', padding: 'var(--space-5) var(--space-6)' }}>
-        {[
-          { label: 'Qualified Batters',  value: batLoading ? '…' : String(qualBat.length),  icon: <Users size={18} />,    color: 'var(--color-accent)',  bg: 'var(--color-accent-dim)'  },
-          { label: 'Qualified Pitchers', value: batLoading ? '…' : String(qualPit.length),  icon: <Activity size={18} />, color: 'var(--color-green)',   bg: 'var(--color-green-dim)'   },
-          { label: 'MLB Teams',          value: String(totalTeams),                          icon: <Shield size={18} />,   color: 'var(--color-purple)',  bg: 'var(--color-purple-dim)'  },
-          { label: 'Analytics Tools',    value: '6',                                         icon: <Trophy size={18} />,   color: 'var(--color-amber)',   bg: 'var(--color-amber-dim)'   },
-        ].map(s => (
-          <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-            <div style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', background: s.bg, color: s.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{s.icon}</div>
-            <div>
-              <div style={{ fontSize: 22, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--color-text-primary)', lineHeight: 1.1 }}>{s.value}</div>
-              <div style={{ fontSize: 11, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: 2 }}>{s.label}</div>
-            </div>
-          </div>
-        ))}
-      </div>
 
       {/* ── Analytics Suite ───────────────────────────────────────────── */}
       <section>
