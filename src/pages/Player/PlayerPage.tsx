@@ -720,7 +720,7 @@ const ALLSTATS_TT: Record<string, string> = {
   'ERA': 'ERA', 'FIP': 'FIP', 'xFIP': 'xERA', 'WHIP': 'WHIP',
   'K-BB%': 'K-BB%', 'K/9': 'K/9', 'BB/9': 'BB/9', 'HR/9': 'HR/9',
   'Whiff%': 'Whiff%', 'Chase%': 'Chase%',
-  'Avg Velo': 'Avg Velo', 'Max Velo': 'Max Velo',
+  'Avg Velo': 'Avg Velo',
   // Value
   'WAR': 'fWAR', 'WPA': 'WPA', 'RE24': 'RE24', 'Clutch': 'Clutch',
   // Defense
@@ -1662,7 +1662,6 @@ export default function PlayerPage() {
                   <div className="allstats-grid">
                     {[
                       { l: 'Avg Velo',  v: pitching.avgVelocity > 0 ? `${pitching.avgVelocity.toFixed(1)} mph` : '—', c: pitching.avgVelocity >= 96 ? 'var(--color-teal)' : pitching.avgVelocity > 0 && pitching.avgVelocity < 90 ? '#ef4444' : undefined },
-                      { l: 'Max Velo',  v: pitching.maxVelocity > 0 ? `${pitching.maxVelocity.toFixed(1)} mph` : '—' },
                       { l: 'Whiff%',   v: pitching.whiffPct > 0 ? `${pitching.whiffPct.toFixed(1)}%` : '—', c: pitching.whiffPct >= 27 ? 'var(--color-teal)' : pitching.whiffPct > 0 && pitching.whiffPct < 18 ? '#ef4444' : undefined },
                       { l: 'Chase%',   v: pitching.chasePct > 0 ? `${pitching.chasePct.toFixed(1)}%` : '—', c: pitching.chasePct >= 32 ? 'var(--color-teal)' : undefined },
                     ].map(s => (

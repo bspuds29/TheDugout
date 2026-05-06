@@ -142,8 +142,7 @@ export function transformPitchingStats(
     iffbPct: 0,
     hrFbPct: 0,
     avgVelocity: savant?.fastballVelo ?? 0,
-    // max_speed from Savant = fastest pitch thrown all season; fall back to avg if absent
-    maxVelocity: savant?.maxVelocity || savant?.fastballVelo || 0,
+    maxVelocity: 0,
     whiffPct: savant?.whiffPct ?? 0,
     chasePct: savant?.chasePct ?? 0,
     war:  saber?.war  ? Math.round(saber.war  * 10) / 10 : 0,

@@ -51,7 +51,6 @@ export interface SavantPitcherStats {
   xwoba:             number;
   xera:              number;
   fastballVelo:      number;
-  maxVelocity:       number;
   fastballSpin:      number;
   whiffPct:          number;
   chasePct:          number;
@@ -79,7 +78,7 @@ const PITCHER_COLS = [
   'exit_velocity_avg', 'launch_angle_avg',
   'barrel_batted_rate', 'hard_hit_percent',
   'xwoba', 'xera',
-  'fastball_avg_speed', 'max_speed', 'fastball_avg_spin',
+  'fastball_avg_speed', 'fastball_avg_spin',
   'whiff_percent', 'o_swing_percent', 'chase_percent',
   'k_percent', 'bb_percent',
   'groundballs_percent', 'flyballs_percent', 'linedrives_percent',
@@ -237,7 +236,6 @@ export async function fetchSavantPitcherById(
       xwoba:             num(r['xwoba']),
       xera:              num(r['xera']),
       fastballVelo:      num(r['fastball_avg_speed']),
-      maxVelocity:       num(r['max_speed']),
       fastballSpin:      num(r['fastball_avg_spin']),
       whiffPct:          num(r['whiff_percent']),
       chasePct:          num(r['o_swing_percent'] || r['chase_percent']),

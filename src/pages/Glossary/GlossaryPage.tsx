@@ -32,7 +32,7 @@ const CATEGORIES: { label: string; keys: string[] }[] = [
   },
   {
     label: 'Pitching',
-    keys: ['ERA', 'xERA', 'WHIP', 'FIP', 'K/9', 'BB/9', 'HR/9', 'K-BB%', 'Avg FB', 'Avg Velo', 'Max Velo'],
+    keys: ['ERA', 'xERA', 'WHIP', 'FIP', 'K/9', 'BB/9', 'HR/9', 'K-BB%', 'Avg FB', 'Avg Velo'],
   },
   {
     label: 'Defense',
