@@ -1587,7 +1587,7 @@ export default function PlayerPage() {
                       { l: 'Whiff%',  v: hitting.whiffPct > 0 ? `${hitting.whiffPct.toFixed(1)}%` : scNum(scBat, 'whiff_percent') !== '—' ? `${scNum(scBat, 'whiff_percent')}%` : '—',
                         c: hitting.whiffPct < 18 ? 'var(--color-teal)' : hitting.whiffPct > 28 ? '#ef4444' : undefined },
                       { l: 'Chase%',  v: hitting.chasePct > 0 ? `${hitting.chasePct.toFixed(1)}%` : scNum(scBat, 'chase_percent') !== '—' ? `${scNum(scBat, 'chase_percent')}%` : '—',
-                        c: hitting.chasePct < 26 ? 'var(--color-teal)' : hitting.chasePct > 35 ? '#ef4444' : undefined },
+                        c: hitting.chasePct < 20 ? 'var(--color-teal)' : hitting.chasePct > 33 ? '#ef4444' : undefined },
                       { l: 'K%',      v: hitting.kPct > 0  ? `${hitting.kPct.toFixed(1)}%`  : '—', c: hitting.kPct > 28 ? '#ef4444' : hitting.kPct < 15 ? 'var(--color-teal)' : undefined },
                       { l: 'BB%',     v: hitting.bbPct > 0 ? `${hitting.bbPct.toFixed(1)}%` : '—', c: hitting.bbPct > 12 ? 'var(--color-teal)' : undefined },
                       { l: 'BABIP',   v: hitting.babip > 0 ? hitting.babip.toFixed(3).replace('0.','.') : '—' },
