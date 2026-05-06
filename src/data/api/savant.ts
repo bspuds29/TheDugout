@@ -80,6 +80,7 @@ const PITCHER_COLS = [
   'xwoba', 'xera',
   'fastball_avg_speed', 'fastball_avg_spin',
   'whiff_percent', 'o_swing_percent', 'chase_percent',
+  'k_percent', 'bb_percent',
   'groundballs_percent', 'flyballs_percent', 'linedrives_percent',
 ].join(',');
 
