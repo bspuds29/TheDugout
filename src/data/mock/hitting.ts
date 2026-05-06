@@ -44,6 +44,8 @@ export const HITTING_STATS: HittingStats[] = [
     re24: 48.4,
     sprint: 28.8,
     outs: 380,
+    whiffPct: 0,
+    chasePct: 0,
   },
   {
     playerId: 'h002',
@@ -88,6 +90,8 @@ export const HITTING_STATS: HittingStats[] = [
     re24: 38.2,
     sprint: 26.2,
     outs: 357,
+    whiffPct: 0,
+    chasePct: 0,
   },
   {
     playerId: 'h004',
@@ -132,6 +136,8 @@ export const HITTING_STATS: HittingStats[] = [
     re24: 34.8,
     sprint: 30.4,
     outs: 347,
+    whiffPct: 0,
+    chasePct: 0,
   },
   {
     playerId: 'h003',
@@ -176,6 +182,8 @@ export const HITTING_STATS: HittingStats[] = [
     re24: 31.4,
     sprint: 26.8,
     outs: 390,
+    whiffPct: 0,
+    chasePct: 0,
   },
 ];
 
