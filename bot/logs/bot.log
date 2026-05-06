@@ -658,3 +658,36 @@ https://thedugoutapi.com/player?mlbId=621566&name=Matt+Olson
 2026-05-06 06:24:09,128  INFO      poster — Tweet posted (text only) — id: 2051910870976901506
 2026-05-06 06:24:09,130  INFO      tracker — Marked as used: combined_621566_2026-05-05
 2026-05-06 06:24:09,130  INFO      __main__ — Done. Tweet ID: 2051910870976901506
+2026-05-06 17:20:58,116  INFO      __main__ — ============================================================
+2026-05-06 17:20:58,116  INFO      __main__ — TheDugout tweet bot starting — 2026-05-06T17:20:58.116655+00:00
+2026-05-06 17:20:58,116  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-06 17:20:58,116  INFO      __main__ — Collecting stat candidates…
+2026-05-06 17:20:58,117  INFO      collector — Fetching schedule for 2026-05-05
+2026-05-06 17:20:58,337  INFO      collector — Collected 54 game candidates
+2026-05-06 17:20:59,356  INFO      collector — Collected 12 weekly hitter candidates
+2026-05-06 17:20:59,573  INFO      collector — FanGraphs batting leaderboard: 178 rows
+2026-05-06 17:20:59,833  INFO      collector — FanGraphs pitching leaderboard: 77 rows
+2026-05-06 17:20:59,957  INFO      collector — Collected 30 season leader candidates
+2026-05-06 17:20:59,964  INFO      collector — Collected 4 team game candidates
+2026-05-06 17:20:59,996  INFO      collector — Collected 6 team streak candidates
+2026-05-06 17:20:59,996  INFO      collector — Built 3 combined hitting candidates
+2026-05-06 17:20:59,996  INFO      collector — Total candidates: 109 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-06 17:20:59,996  INFO      __main__ — 107 fresh candidates after dedup (of 109 total)
+2026-05-06 17:20:59,996  INFO      __main__ — 97 candidates after player-repeat filter
+2026-05-06 17:20:59,997  INFO      __main__ — Selected candidate: 'Bryce Harper' — Bryce Harper went 3/4 with 2 HRs, 3-for-4, 3 RBI, 9 total bases (score=65.3, type=game_hitting)
+2026-05-06 17:20:59,997  INFO      __main__ — Generating tweet via Claude…
+2026-05-06 17:21:01,890  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-06 17:21:01,909  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-06 17:21:01,909  INFO      __main__ — TWEET PREVIEW:
+Bryce Harper last night: 3-for-4, 2 HRs, 3 RBI, 9 total bases
+
+how do you pitch to this guy
+
+https://thedugoutapi.com/player?mlbId=547180&name=Bryce+Harper
+2026-05-06 17:21:01,909  INFO      __main__ — Length: 91 chars (body) + 23 (t.co URL) = 115 total
+2026-05-06 17:21:01,909  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-06 17:21:01,909  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-06 17:21:01,909  INFO      __main__ — Posting tweet…
+2026-05-06 17:21:02,156  INFO      poster — Tweet posted (text only) — id: 2052076181457899756
+2026-05-06 17:21:02,158  INFO      tracker — Marked as used: game_823469_hit_547180
+2026-05-06 17:21:02,158  INFO      __main__ — Done. Tweet ID: 2052076181457899756
