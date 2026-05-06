@@ -65,6 +65,7 @@ import {
   fetchFanGraphsBattingLeaderboard,
   fetchFanGraphsPitchingLeaderboard,
   fetchFanGraphsBatterById,
+  fetchFanGraphsBatterDisciplineById,
   computeWrcPlusPercentile,
   computeERAPercentile,
   computeFIPPercentile,
@@ -235,12 +236,13 @@ export function useHittingStats(mlbId: number | null): {
   const { data, isLoading, error } = useQuery({
     queryKey: ['hittingStats', mlbId, SEASON],
     queryFn: async () => {
-      const [raw, savant, saber, advanced, fg] = await Promise.all([
+      const [raw, savant, saber, advanced, fg, fgDisc] = await Promise.all([
         fetchHittingStats(mlbId!, SEASON),
         fetchSavantBatterWithFallback(mlbId!, SEASON),
         fetchSabermetrics(mlbId!, SEASON),
         fetchAdvancedHitting(mlbId!, SEASON),
         fetchFanGraphsBatterById(mlbId!, SEASON).catch(() => null),
+        fetchFanGraphsBatterDisciplineById(mlbId!, SEASON).catch(() => null),
       ]);
       if (!raw) return { stats: null, savantLoaded: false };
       // Merge advanced MLB hitting into savant-shaped object if Savant failed
@@ -264,6 +266,12 @@ export function useHittingStats(mlbId: number | null): {
         stats.re24   = fg.re24;
         stats.clutch = fg.clutch;
         if (!stats.war && fg.war) stats.war = fg.war;
+      }
+      // Overlay FanGraphs discipline stats — batter Chase% from O-Swing% (type=6)
+      // Savant's batter leaderboard CSV doesn't reliably expose this column.
+      if (fgDisc) {
+        if (fgDisc.chasePct > 0) stats.chasePct = fgDisc.chasePct;
+        if (fgDisc.whiffPct > 0 && stats.whiffPct === 0) stats.whiffPct = fgDisc.whiffPct;
       }
       return {
         stats,

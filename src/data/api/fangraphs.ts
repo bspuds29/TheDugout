@@ -100,6 +100,62 @@ export interface FanGraphsPitcherStats {
   fStrikePct: number;   // First-pitch strike rate
 }
 
+// ─── Batter discipline leaderboard (type=6) ─────────────────────────
+// Contains O-Swing%, Z-Swing%, SwStr%, Contact%, etc. for batters.
+
+async function getBatterDisciplineLeaderboard(year: number): Promise<Record<string, unknown>[]> {
+  const key = `fg-bat-disc-${year}`;
+  if (!_cache.has(key)) {
+    const url =
+      `${FG_BASE}/api/leaders/major-league/data` +
+      `?pos=all&stats=bat&lg=all&qual=0` +
+      `&season=${year}&season1=${year}` +
+      `&startdate=&enddate=&month=0&hand=&team=0` +
+      `&pageitems=100000&pagenum=1&ind=0&rost=0&players=0` +
+      `&type=6&postseason=&sortdir=default&sortstat=WAR`;
+
+    const promise = fetch(url)
+      .then(r => {
+        if (!r.ok) throw new Error(`FanGraphs batter discipline ${r.status}`);
+        return r.json() as Promise<{ data?: Record<string, unknown>[] } | Record<string, unknown>[]>;
+      })
+      .then(json => {
+        const rows = (json as { data?: Record<string, unknown>[] }).data ?? (json as Record<string, unknown>[]);
+        markReachable();
+        console.info(`[FanGraphs] Batter discipline leaderboard: ${rows.length} rows for ${year}`);
+        return rows;
+      })
+      .catch(e => {
+        _cache.delete(key);
+        if (isCorsError(e)) markUnreachable();
+        console.warn('[FanGraphs] Batter discipline fetch failed:', e);
+        throw e;
+      });
+
+    _cache.set(key, promise);
+  }
+  return _cache.get(key)!;
+}
+
+export async function fetchFanGraphsBatterDisciplineById(
+  mlbId: number,
+  year: number,
+): Promise<{ chasePct: number; whiffPct: number } | null> {
+  try {
+    const rows = await getBatterDisciplineLeaderboard(year);
+    const r = rows.find(row =>
+      Number(row['xMLBAMID']) === mlbId || Number(row['MLBAMID']) === mlbId,
+    );
+    if (!r) return null;
+    return {
+      chasePct: pct(r['O-Swing%']),   // out-of-zone swing rate = chase rate
+      whiffPct: pct(r['SwStr%']),      // swinging strike rate ≈ whiff rate
+    };
+  } catch {
+    return null;
+  }
+}
+
 // ─── Fielding leaderboard ────────────────────────────────────────────
 
 async function fetchFldRows(year: number): Promise<Record<string, unknown>[]> {
