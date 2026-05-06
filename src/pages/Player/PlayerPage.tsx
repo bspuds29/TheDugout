@@ -639,7 +639,7 @@ function CareerStatsTab({
                     <td>{s.k9.toFixed(1)}</td>
                     <td>{s.bb9.toFixed(1)}</td>
                     <td>{s.k}</td><td>{s.bb}</td><td>{s.hr}</td>
-                    <td className="career-td-key">{s.war > 0 ? s.war.toFixed(1) : '—'}</td>
+                    <td className="career-td-key">{s.war !== 0 ? s.war.toFixed(1) : '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -673,7 +673,7 @@ function CareerStatsTab({
                     <td>{s.obp.toFixed(3)}</td>
                     <td>{s.slg.toFixed(3)}</td>
                     <td>{s.ops.toFixed(3)}</td>
-                    <td className="career-td-key">{s.war > 0 ? s.war.toFixed(1) : '—'}</td>
+                    <td className="career-td-key">{s.war !== 0 ? s.war.toFixed(1) : '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -995,7 +995,7 @@ export default function PlayerPage() {
                   const war = isTwoWay
                     ? (twoWayRole === 'pitching' ? pitching?.war : hitting?.war) ?? 0
                     : (pitching?.war ?? hitting?.war ?? 0);
-                  return war > 0 ? war.toFixed(1) : '—';
+                  return war !== 0 ? war.toFixed(1) : '—';
                 })()}
               </span>
               <span className="player-hero-war-label">fWAR · {YEAR}</span>
@@ -1601,7 +1601,7 @@ export default function PlayerPage() {
                   <div className="allstats-section-header" style={{ borderLeftColor: 'var(--color-purple)' }}>Win Probability & Value</div>
                   <div className="allstats-grid">
                     {[
-                      { l: 'WAR',    v: hitting.war > 0    ? hitting.war.toFixed(1)  : '—',   c: hitting.war >= 4 ? 'var(--color-teal)' : hitting.war < 0 ? '#ef4444' : undefined },
+                      { l: 'WAR',    v: hitting.war !== 0   ? hitting.war.toFixed(1)  : '—',   c: hitting.war >= 4 ? 'var(--color-teal)' : hitting.war < 0 ? '#ef4444' : undefined },
                       { l: 'WPA',    v: hitting.wpa !== 0  ? (hitting.wpa >= 0 ? '+' : '') + hitting.wpa.toFixed(2) : '—', c: hitting.wpa >= 0 ? 'var(--color-teal)' : '#ef4444' },
                       { l: 'RE24',   v: hitting.re24 !== 0 ? (hitting.re24 >= 0 ? '+' : '') + hitting.re24.toFixed(1) : '—', c: hitting.re24 >= 0 ? 'var(--color-teal)' : '#ef4444' },
                       { l: 'Clutch', v: hitting.clutch !== 0 ? (hitting.clutch >= 0 ? '+' : '') + hitting.clutch.toFixed(2) : '—', c: hitting.clutch >= 0.5 ? 'var(--color-teal)' : hitting.clutch <= -0.5 ? '#ef4444' : undefined },
@@ -1675,7 +1675,7 @@ export default function PlayerPage() {
                   <div className="allstats-section-header" style={{ borderLeftColor: 'var(--color-purple)' }}>Value</div>
                   <div className="allstats-grid">
                     {[
-                      { l: 'WAR',  v: pitching.war > 0   ? pitching.war.toFixed(1)  : '—',  c: pitching.war >= 3 ? 'var(--color-teal)' : pitching.war < 0 ? '#ef4444' : undefined },
+                      { l: 'WAR',  v: pitching.war !== 0  ? pitching.war.toFixed(1)  : '—',  c: pitching.war >= 3 ? 'var(--color-teal)' : pitching.war < 0 ? '#ef4444' : undefined },
                       { l: 'WPA',  v: pitching.wpa !== 0 ? (pitching.wpa >= 0 ? '+' : '') + pitching.wpa.toFixed(2) : '—', c: pitching.wpa >= 0 ? 'var(--color-teal)' : '#ef4444' },
                       { l: 'RE24', v: pitching.re24 !== 0 ? (pitching.re24 >= 0 ? '+' : '') + pitching.re24.toFixed(1) : '—', c: pitching.re24 >= 0 ? 'var(--color-teal)' : '#ef4444' },
                     ].map(s => (
