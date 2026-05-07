@@ -894,3 +894,149 @@ export async function fetchFanGraphsBatterById(
     return null;
   }
 }
+
+// ─── Weekly leaderboards (Trending / Falling players) ────────────────
+
+export interface WeeklyBatterRow {
+  mlbId: number;
+  name:  string;
+  team:  string;
+  pos:   string;
+  pa:    number;
+  ops:   number;
+  slg:   number;
+}
+
+export interface WeeklyPitcherRow {
+  mlbId: number;
+  name:  string;
+  team:  string;
+  pos:   string;
+  ip:    number;
+  kPct:  number;   // K% — higher is better
+  era:   number;
+}
+
+function weekDates(): { startdate: string; enddate: string } {
+  const now  = new Date();
+  const end  = now.toISOString().slice(0, 10);
+  const prev = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  return { startdate: prev.toISOString().slice(0, 10), enddate: end };
+}
+
+export async function fetchWeeklyBattingLeaders(): Promise<{
+  trending: WeeklyBatterRow[];
+  falling:  WeeklyBatterRow[];
+}> {
+  const { startdate, enddate } = weekDates();
+  const year = new Date().getFullYear();
+  const key  = `fg-bat-weekly-${startdate}`;
+
+  if (!_cache.has(key)) {
+    const url =
+      `${FG_BASE}/api/leaders/major-league/data` +
+      `?pos=all&stats=bat&lg=all&qual=0` +
+      `&season=${year}&season1=${year}` +
+      `&startdate=${startdate}&enddate=${enddate}&month=0&hand=&team=0` +
+      `&pageitems=100000&pagenum=1&ind=0&rost=0&players=0` +
+      `&type=8&postseason=&sortdir=default&sortstat=OPS`;
+
+    const promise = fetch(url)
+      .then(r => {
+        if (!r.ok) throw new Error(`FanGraphs weekly batting ${r.status}`);
+        return r.json() as Promise<{ data?: Record<string, unknown>[] } | Record<string, unknown>[]>;
+      })
+      .then(json => {
+        const rows = (json as { data?: Record<string, unknown>[] }).data ?? (json as Record<string, unknown>[]);
+        markReachable();
+        console.info(`[FanGraphs] Weekly batting: ${rows.length} rows (${startdate}→${enddate})`);
+        return rows;
+      })
+      .catch(e => {
+        _cache.delete(key);
+        if (isCorsError(e)) markUnreachable();
+        console.warn('[FanGraphs] Weekly batting fetch failed:', e);
+        throw e;
+      });
+
+    _cache.set(key, promise);
+  }
+
+  try {
+    const rows = await _cache.get(key)!;
+    const mapped: WeeklyBatterRow[] = rows
+      .filter(r => Number(r['xMLBAMID']) > 0 && !isMultiTeamRow(r) && Number(r['PA'] ?? 0) >= 10)
+      .map(r => ({
+        mlbId: Number(r['xMLBAMID']),
+        name:  String(r['PlayerName'] ?? ''),
+        team:  String(r['TeamNameAbb'] ?? r['TeamName'] ?? ''),
+        pos:   String(r['positionDB'] ?? r['Pos'] ?? ''),
+        pa:    Number(r['PA'] ?? 0),
+        ops:   asNum(r['OPS'], 3),
+        slg:   asNum(r['SLG'], 3),
+      }));
+
+    const byOps = [...mapped].sort((a, b) => b.ops - a.ops);
+    return {
+      trending: byOps.slice(0, 5),
+      falling:  [...byOps].reverse().slice(0, 5),
+    };
+  } catch {
+    return { trending: [], falling: [] };
+  }
+}
+
+export async function fetchWeeklyPitchingLeaders(): Promise<WeeklyPitcherRow[]> {
+  const { startdate, enddate } = weekDates();
+  const year = new Date().getFullYear();
+  const key  = `fg-pit-weekly-${startdate}`;
+
+  if (!_cache.has(key)) {
+    const url =
+      `${FG_BASE}/api/leaders/major-league/data` +
+      `?pos=all&stats=pit&lg=all&qual=0` +
+      `&season=${year}&season1=${year}` +
+      `&startdate=${startdate}&enddate=${enddate}&month=0&hand=&team=0` +
+      `&pageitems=100000&pagenum=1&ind=0&rost=0&players=0` +
+      `&type=8&postseason=&sortdir=default&sortstat=K%25`;
+
+    const promise = fetch(url)
+      .then(r => {
+        if (!r.ok) throw new Error(`FanGraphs weekly pitching ${r.status}`);
+        return r.json() as Promise<{ data?: Record<string, unknown>[] } | Record<string, unknown>[]>;
+      })
+      .then(json => {
+        const rows = (json as { data?: Record<string, unknown>[] }).data ?? (json as Record<string, unknown>[]);
+        markReachable();
+        console.info(`[FanGraphs] Weekly pitching: ${rows.length} rows (${startdate}→${enddate})`);
+        return rows;
+      })
+      .catch(e => {
+        _cache.delete(key);
+        if (isCorsError(e)) markUnreachable();
+        console.warn('[FanGraphs] Weekly pitching fetch failed:', e);
+        throw e;
+      });
+
+    _cache.set(key, promise);
+  }
+
+  try {
+    const rows = await _cache.get(key)!;
+    return rows
+      .filter(r => Number(r['xMLBAMID']) > 0 && !isMultiTeamRow(r) && Number(r['IP'] ?? 0) >= 3)
+      .map(r => ({
+        mlbId: Number(r['xMLBAMID']),
+        name:  String(r['PlayerName'] ?? ''),
+        team:  String(r['TeamNameAbb'] ?? r['TeamName'] ?? ''),
+        pos:   Number(r['GS'] ?? 0) > 0 ? 'SP' : 'RP',
+        ip:    asNum(r['IP'],   1),
+        kPct:  asPct(r['K%']),
+        era:   asNum(r['ERA'],  2),
+      }))
+      .sort((a, b) => b.kPct - a.kPct)   // highest K% first
+      .slice(0, 5);
+  } catch {
+    return [];
+  }
+}

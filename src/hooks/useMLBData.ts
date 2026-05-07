@@ -71,6 +71,8 @@ import {
   computeFIPPercentile,
   fetchFanGraphsPitcherFullById,
   computeOAAPercentile,
+  fetchWeeklyBattingLeaders,
+  fetchWeeklyPitchingLeaders,
 } from '../data/api/fangraphs';
 import {
   transformPerson,
@@ -452,6 +454,24 @@ export function usePitchingLeaderboard() {
     queryKey: ['pitchingLeaderboard', SEASON],
     queryFn: () => fetchFanGraphsPitchingLeaderboard(SEASON),
     staleTime: 60 * 60 * 1000,
+  });
+}
+
+// ─── Weekly Trending / Falling players ────────────────────────────────
+
+export function useWeeklyLeaders() {
+  const today = new Date().toISOString().slice(0, 10);
+  return useQuery({
+    queryKey: ['weeklyLeaders', today],
+    queryFn: async () => {
+      const [batters, pitchers] = await Promise.all([
+        fetchWeeklyBattingLeaders(),
+        fetchWeeklyPitchingLeaders(),
+      ]);
+      return { batters, pitchers };
+    },
+    staleTime: 60 * 60 * 1000,  // 1 hour — weekly data doesn't change by the minute
+    placeholderData: { batters: { trending: [], falling: [] }, pitchers: [] },
   });
 }
 

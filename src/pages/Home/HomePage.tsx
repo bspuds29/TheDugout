@@ -5,7 +5,7 @@ import {
   ArrowLeftRight, Target, BarChart3, Trophy, Users, Activity,
 } from 'lucide-react';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
-import { useBattingLeaderboard, usePitchingLeaderboard, useTeamStandings } from '../../hooks/useMLBData';
+import { useBattingLeaderboard, usePitchingLeaderboard, useTeamStandings, useWeeklyLeaders } from '../../hooks/useMLBData';
 import PlayerHeadshot from '../../components/ui/PlayerHeadshot';
 
 const YEAR = new Date().getFullYear();
@@ -102,10 +102,19 @@ const cardStyle: React.CSSProperties = {
 
 // ─── Main page ────────────────────────────────────────────────────────
 
+function fmtDate(d: Date) {
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+const now      = new Date();
+const weekAgo  = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+const WEEK_LABEL = `${fmtDate(weekAgo)} – ${fmtDate(now)}`;
+
 export default function HomePage() {
   const { data: batters = [], isLoading: batLoading } = useBattingLeaderboard();
   const { data: pitchers = [] }                       = usePitchingLeaderboard();
   const { data: standings }                           = useTeamStandings(YEAR);
+  const { data: weekly, isLoading: weeklyLoading }   = useWeeklyLeaders();
 
   const qualBat = useMemo(() => batters.filter(r => r.pa  >= 50), [batters]);
   const qualPit = useMemo(() => pitchers.filter(r => r.ip >= 20), [pitchers]);
@@ -231,6 +240,87 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* ── Trending / Falling Players ───────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-5)' }}>
+        {/* Hot Bats — top wOBA last 7 days */}
+        <div style={cardStyle}>
+          <div style={{ padding: 'var(--space-4)', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text-primary)' }}>Hot Bats 🔥</h3>
+              <p style={{ fontSize: 11, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Highest OPS · {WEEK_LABEL} · min 10 PA</p>
+            </div>
+            <Link to="/leaderboard" style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: 4 }}>See all <ArrowRight size={11} /></Link>
+          </div>
+          <div style={{ padding: 'var(--space-2)' }}>
+            {weeklyLoading ? (
+              <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>Loading…</div>
+            ) : !weekly?.batters?.trending?.length ? (
+              <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>No data available</div>
+            ) : weekly.batters.trending.map((r, i) => (
+              <Link key={r.mlbId} to={`/player?mlbId=${r.mlbId}&name=${encodeURIComponent(r.name)}`}
+                style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-2)', borderRadius: 'var(--radius-md)', textDecoration: 'none', transition: 'background var(--transition-fast)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-bg-elevated)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                <RankBadge rank={i + 1} />
+                <div style={{ width: 32, height: 32, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'var(--color-bg-elevated)' }}>
+                  <PlayerHeadshot mlbId={r.mlbId} size={32} alt={r.name} />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</div>
+                  <div style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>{r.pos} · {r.team} · {r.pa} PA</div>
+                </div>
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--color-green)' }}>{r.ops.toFixed(3)}</div>
+                  <div style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>OPS</div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-mono)', background: 'var(--color-green-dim)', color: 'var(--color-green)', borderRadius: 'var(--radius-full)', padding: '2px 7px', marginLeft: 4 }}>
+                  <TrendingUp size={9} />{r.slg.toFixed(3)}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Sharp Arms — best FIP last 7 days */}
+        <div style={cardStyle}>
+          <div style={{ padding: 'var(--space-4)', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text-primary)' }}>Sharp Arms 🎯</h3>
+              <p style={{ fontSize: 11, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Highest K% · {WEEK_LABEL} · min 3 IP</p>
+            </div>
+            <Link to="/leaderboard" style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: 4 }}>See all <ArrowRight size={11} /></Link>
+          </div>
+          <div style={{ padding: 'var(--space-2)' }}>
+            {weeklyLoading ? (
+              <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>Loading…</div>
+            ) : !weekly?.pitchers?.length ? (
+              <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>No data available</div>
+            ) : weekly.pitchers.map((r, i) => (
+              <Link key={r.mlbId} to={`/player?mlbId=${r.mlbId}&name=${encodeURIComponent(r.name)}`}
+                style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-2)', borderRadius: 'var(--radius-md)', textDecoration: 'none', transition: 'background var(--transition-fast)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-bg-elevated)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                <RankBadge rank={i + 1} />
+                <div style={{ width: 32, height: 32, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'var(--color-bg-elevated)' }}>
+                  <PlayerHeadshot mlbId={r.mlbId} size={32} alt={r.name} />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</div>
+                  <div style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>{r.pos} · {r.team} · {r.ip} IP</div>
+                </div>
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--color-teal)' }}>{r.kPct.toFixed(1)}%</div>
+                  <div style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>K%</div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-mono)', background: 'rgba(0,212,170,0.12)', color: 'var(--color-teal)', borderRadius: 'var(--radius-full)', padding: '2px 7px', marginLeft: 4 }}>
+                  {r.era.toFixed(2)} ERA
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* ── WPA Risers / Watchers ─────────────────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-5)' }}>
