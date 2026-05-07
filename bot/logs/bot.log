@@ -726,3 +726,37 @@ https://thedugoutapi.com/player?mlbId=694973&name=Paul+Skenes
 2026-05-07 06:29:27,478  INFO      poster — Tweet posted (text only) — id: 2052274594380181840
 2026-05-07 06:29:27,480  INFO      tracker — Marked as used: game_825091_pit_694973
 2026-05-07 06:29:27,480  INFO      __main__ — Done. Tweet ID: 2052274594380181840
+2026-05-07 17:31:25,707  INFO      __main__ — ============================================================
+2026-05-07 17:31:25,707  INFO      __main__ — TheDugout tweet bot starting — 2026-05-07T17:31:25.707496+00:00
+2026-05-07 17:31:25,707  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-07 17:31:25,707  INFO      __main__ — Collecting stat candidates…
+2026-05-07 17:31:25,708  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 0
+2026-05-07 17:31:25,708  INFO      collector — Fetching schedule for 2026-05-06
+2026-05-07 17:31:25,901  INFO      collector — Collected 50 game candidates
+2026-05-07 17:31:28,805  INFO      collector — Collected 14 weekly hitter candidates
+2026-05-07 17:31:29,011  INFO      collector — FanGraphs batting leaderboard: 178 rows
+2026-05-07 17:31:29,538  INFO      collector — FanGraphs pitching leaderboard: 80 rows
+2026-05-07 17:31:29,752  INFO      collector — Collected 30 season leader candidates
+2026-05-07 17:31:29,760  INFO      collector — Collected 6 team game candidates
+2026-05-07 17:31:29,793  INFO      collector — Collected 4 team streak candidates
+2026-05-07 17:31:29,794  INFO      collector — Built 4 combined hitting candidates
+2026-05-07 17:31:29,794  INFO      collector — Total candidates: 108 (last_tweet=pitching, last_stat=game_pitching)
+2026-05-07 17:31:29,794  INFO      __main__ — 105 fresh candidates after dedup (of 108 total)
+2026-05-07 17:31:29,794  INFO      __main__ — 92 candidates after player-repeat filter
+2026-05-07 17:31:29,794  INFO      __main__ — Selected candidate: 'Andy Pages' — Andy Pages went 3/5 with 3 HRs, 3-for-5, 6 RBI, 12 total bases (score=147.6, type=game_hitting)
+2026-05-07 17:31:29,795  INFO      __main__ — Generating tweet via Claude…
+2026-05-07 17:31:32,111  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-07 17:31:32,133  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-07 17:31:32,133  INFO      __main__ — TWEET PREVIEW:
+Andy Pages last night: 3-for-5, 3 HRs, 6 RBI, 12 total bases
+
+extend him
+
+https://thedugoutapi.com/player?mlbId=681624&name=Andy+Pages
+2026-05-07 17:31:32,133  INFO      __main__ — Length: 72 chars (body) + 23 (t.co URL) = 96 total
+2026-05-07 17:31:32,133  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-07 17:31:32,133  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-07 17:31:32,133  INFO      __main__ — Posting tweet…
+2026-05-07 17:31:32,376  INFO      poster — Tweet posted (text only) — id: 2052441212620099689
+2026-05-07 17:31:32,378  INFO      tracker — Marked as used: game_824198_hit_681624
+2026-05-07 17:31:32,378  INFO      __main__ — Done. Tweet ID: 2052441212620099689

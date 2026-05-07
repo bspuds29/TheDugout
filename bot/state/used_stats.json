@@ -19,7 +19,8 @@
     "weekly_2026_2026w19_hit_645277_hislast3games",
     "combined_621566_2026-05-05",
     "game_823469_hit_547180",
-    "game_825091_pit_694973"
+    "game_825091_pit_694973",
+    "game_824198_hit_681624"
   ],
   "tweet_log": [
     {
@@ -181,7 +182,15 @@
       "player": "Paul Skenes",
       "stat": "Paul Skenes tossed 8.0 scoreless innings with 7 Ks",
       "timestamp": "2026-05-07T06:29:27.479959+00:00"
+    },
+    {
+      "id": "game_824198_hit_681624",
+      "tweet_text": "Andy Pages last night: 3-for-5, 3 HRs, 6 RBI, 12 total bases\n\nextend him\n\nhttps://thedugoutapi.com/player?mlbId=681624&name=Andy+Pages",
+      "tweet_id": "2052441212620099689",
+      "player": "Andy Pages",
+      "stat": "Andy Pages went 3/5 with 3 HRs, 3-for-5, 6 RBI, 12 total bases",
+      "timestamp": "2026-05-07T17:31:32.377836+00:00"
     }
   ],
-  "last_run": "2026-05-07T06:29:27.479973+00:00"
+  "last_run": "2026-05-07T17:31:32.377849+00:00"
 }
