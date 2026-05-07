@@ -691,3 +691,38 @@ https://thedugoutapi.com/player?mlbId=547180&name=Bryce+Harper
 2026-05-06 17:21:02,156  INFO      poster — Tweet posted (text only) — id: 2052076181457899756
 2026-05-06 17:21:02,158  INFO      tracker — Marked as used: game_823469_hit_547180
 2026-05-06 17:21:02,158  INFO      __main__ — Done. Tweet ID: 2052076181457899756
+2026-05-07 06:29:23,450  INFO      __main__ — ============================================================
+2026-05-07 06:29:23,450  INFO      __main__ — TheDugout tweet bot starting — 2026-05-07T06:29:23.450747+00:00
+2026-05-07 06:29:23,450  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-07 06:29:23,450  INFO      __main__ — Collecting stat candidates…
+2026-05-07 06:29:23,451  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 17
+2026-05-07 06:29:23,451  INFO      collector — Fetching schedule for 2026-05-06
+2026-05-07 06:29:23,909  INFO      collector — Collected 50 game candidates
+2026-05-07 06:29:24,741  INFO      collector — Collected 15 weekly hitter candidates
+2026-05-07 06:29:24,938  INFO      collector — FanGraphs batting leaderboard: 178 rows
+2026-05-07 06:29:25,129  INFO      collector — FanGraphs pitching leaderboard: 77 rows
+2026-05-07 06:29:25,279  INFO      collector — Collected 30 season leader candidates
+2026-05-07 06:29:25,301  INFO      collector — Collected 6 team game candidates
+2026-05-07 06:29:25,359  INFO      collector — Collected 4 team streak candidates
+2026-05-07 06:29:25,359  INFO      collector — Built 3 combined hitting candidates
+2026-05-07 06:29:25,359  INFO      collector — Pitching drought=17 → applying ×3.55 boost to pitching candidates
+2026-05-07 06:29:25,359  INFO      collector — Total candidates: 108 (last_tweet=hitting, last_stat=game_hitting)
+2026-05-07 06:29:25,360  INFO      __main__ — 106 fresh candidates after dedup (of 108 total)
+2026-05-07 06:29:25,360  INFO      __main__ — 93 candidates after player-repeat filter
+2026-05-07 06:29:25,360  INFO      __main__ — Selected candidate: 'Paul Skenes' — Paul Skenes tossed 8.0 scoreless innings with 7 Ks (score=134.6, type=game_pitching)
+2026-05-07 06:29:25,360  INFO      __main__ — Generating tweet via Claude…
+2026-05-07 06:29:27,177  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-07 06:29:27,196  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-07 06:29:27,196  INFO      __main__ — TWEET PREVIEW:
+Paul Skenes last night: 8.0 IP, 2 H, 7 K, 0 BB, 0 ER
+
+someone call his agent
+
+https://thedugoutapi.com/player?mlbId=694973&name=Paul+Skenes
+2026-05-07 06:29:27,196  INFO      __main__ — Length: 76 chars (body) + 23 (t.co URL) = 100 total
+2026-05-07 06:29:27,196  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-07 06:29:27,196  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-07 06:29:27,196  INFO      __main__ — Posting tweet…
+2026-05-07 06:29:27,478  INFO      poster — Tweet posted (text only) — id: 2052274594380181840
+2026-05-07 06:29:27,480  INFO      tracker — Marked as used: game_825091_pit_694973
+2026-05-07 06:29:27,480  INFO      __main__ — Done. Tweet ID: 2052274594380181840
