@@ -7,6 +7,7 @@ import {
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 import { useBattingLeaderboard, usePitchingLeaderboard, useTeamStandings, useWeeklyLeaders } from '../../hooks/useMLBData';
 import PlayerHeadshot from '../../components/ui/PlayerHeadshot';
+import TeamLogo from '../../components/ui/TeamLogo';
 
 const YEAR = new Date().getFullYear();
 
@@ -241,86 +242,111 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Trending / Falling Players ───────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-5)' }}>
-        {/* Hot Bats — top wOBA last 7 days */}
-        <div style={cardStyle}>
-          <div style={{ padding: 'var(--space-4)', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text-primary)' }}>Hot Bats 🔥</h3>
-              <p style={{ fontSize: 11, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Highest OPS · {WEEK_LABEL} · min 10 PA</p>
-            </div>
-            <Link to="/leaderboard" style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: 4 }}>See all <ArrowRight size={11} /></Link>
-          </div>
-          <div style={{ padding: 'var(--space-2)' }}>
-            {weeklyLoading ? (
-              <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>Loading…</div>
-            ) : !weekly?.batters?.trending?.length ? (
-              <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>No data available</div>
-            ) : weekly.batters.trending.map((r, i) => (
-              <Link key={r.mlbId} to={`/player?mlbId=${r.mlbId}&name=${encodeURIComponent(r.name)}`}
-                style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-2)', borderRadius: 'var(--radius-md)', textDecoration: 'none', transition: 'background var(--transition-fast)' }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-bg-elevated)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                <RankBadge rank={i + 1} />
-                <div style={{ width: 32, height: 32, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'var(--color-bg-elevated)' }}>
-                  <PlayerHeadshot mlbId={r.mlbId} size={32} alt={r.name} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</div>
-                  <div style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>{r.pos} · {r.team} · {r.pa} PA</div>
-                </div>
-                <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--color-green)' }}>{r.ops.toFixed(3)}</div>
-                  <div style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>OPS</div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-mono)', background: 'var(--color-green-dim)', color: 'var(--color-green)', borderRadius: 'var(--radius-full)', padding: '2px 7px', marginLeft: 4 }}>
-                  <TrendingUp size={9} />{r.slg.toFixed(3)}
-                </div>
-              </Link>
-            ))}
-          </div>
+      {/* ── Weekly Spotlight ──────────────────────────────────────────── */}
+      <section>
+        <div style={{ marginBottom: 'var(--space-4)' }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-text-primary)' }}>Weekly Spotlight ⚡</h2>
+          <p style={{ fontSize: 13, color: 'var(--color-text-tertiary)', marginTop: 3 }}>{WEEK_LABEL} · Last 7 days of performance</p>
         </div>
 
-        {/* Sharp Arms — best FIP last 7 days */}
-        <div style={cardStyle}>
-          <div style={{ padding: 'var(--space-4)', borderBottom: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text-primary)' }}>Sharp Arms 🎯</h3>
-              <p style={{ fontSize: 11, color: 'var(--color-text-tertiary)', marginTop: 2 }}>Highest K% · {WEEK_LABEL} · min 3 IP</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-5)' }}>
+
+          {/* Hot Bats */}
+          <div style={{ ...cardStyle, overflow: 'hidden', position: 'relative' }}>
+            {/* Amber top accent */}
+            <div style={{ height: 3, background: 'linear-gradient(90deg, #f59e0b, #f97316)' }} />
+            <div style={{ padding: 'var(--space-4) var(--space-4) var(--space-2)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--color-text-primary)' }}>Hot Bats</span>
+                    <span style={{ fontSize: 13 }}>🔥</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', background: 'rgba(245,158,11,0.15)', color: '#f59e0b', borderRadius: 'var(--radius-full)', padding: '2px 8px' }}>OPS</span>
+                  </div>
+                  <p style={{ fontSize: 11, color: 'var(--color-text-tertiary)', marginTop: 3 }}>min 10 PA this week</p>
+                </div>
+                <Link to="/leaderboard" style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 3 }}>See all <ArrowRight size={11} /></Link>
+              </div>
             </div>
-            <Link to="/leaderboard" style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: 4 }}>See all <ArrowRight size={11} /></Link>
+            <div style={{ padding: '0 var(--space-3) var(--space-3)' }}>
+              {weeklyLoading ? (
+                <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>Loading…</div>
+              ) : !weekly?.batters?.trending?.length ? (
+                <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>No data available</div>
+              ) : weekly.batters.trending.map((r, i) => (
+                <Link key={r.mlbId} to={`/player?mlbId=${r.mlbId}&name=${encodeURIComponent(r.name)}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 6px', borderRadius: 'var(--radius-md)', textDecoration: 'none', transition: 'background var(--transition-fast)' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-bg-elevated)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                  <span style={{ width: 16, fontSize: 11, fontWeight: 700, color: i === 0 ? '#f59e0b' : 'var(--color-text-muted)', textAlign: 'center', flexShrink: 0 }}>{i + 1}</span>
+                  <div style={{ width: 34, height: 34, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'var(--color-bg-elevated)', border: i === 0 ? '2px solid #f59e0b' : '2px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <PlayerHeadshot mlbId={r.mlbId} size={34} alt={r.name} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--color-text-tertiary)' }}>
+                      <TeamLogo abbr={r.team} size={13} />
+                      {r.pos} · {r.team} · {r.pa} PA
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontSize: 18, fontWeight: 800, fontFamily: 'var(--font-mono)', color: '#f59e0b', lineHeight: 1 }}>{r.ops.toFixed(3)}</div>
+                    <div style={{ fontSize: 10, color: 'var(--color-text-muted)', marginTop: 1 }}>SLG {r.slg.toFixed(3)}</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-          <div style={{ padding: 'var(--space-2)' }}>
-            {weeklyLoading ? (
-              <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>Loading…</div>
-            ) : !weekly?.pitchers?.length ? (
-              <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>No data available</div>
-            ) : weekly.pitchers.map((r, i) => (
-              <Link key={r.mlbId} to={`/player?mlbId=${r.mlbId}&name=${encodeURIComponent(r.name)}`}
-                style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-2)', borderRadius: 'var(--radius-md)', textDecoration: 'none', transition: 'background var(--transition-fast)' }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-bg-elevated)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                <RankBadge rank={i + 1} />
-                <div style={{ width: 32, height: 32, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'var(--color-bg-elevated)' }}>
-                  <PlayerHeadshot mlbId={r.mlbId} size={32} alt={r.name} />
+
+          {/* Sharp Arms */}
+          <div style={{ ...cardStyle, overflow: 'hidden', position: 'relative' }}>
+            {/* Teal top accent */}
+            <div style={{ height: 3, background: 'linear-gradient(90deg, var(--color-teal), #6366f1)' }} />
+            <div style={{ padding: 'var(--space-4) var(--space-4) var(--space-2)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--color-text-primary)' }}>Sharp Arms</span>
+                    <span style={{ fontSize: 13 }}>🎯</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', background: 'rgba(0,212,170,0.12)', color: 'var(--color-teal)', borderRadius: 'var(--radius-full)', padding: '2px 8px' }}>K%</span>
+                  </div>
+                  <p style={{ fontSize: 11, color: 'var(--color-text-tertiary)', marginTop: 3 }}>min 3 IP this week</p>
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</div>
-                  <div style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>{r.pos} · {r.team} · {r.ip} IP</div>
-                </div>
-                <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--color-teal)' }}>{r.kPct.toFixed(1)}%</div>
-                  <div style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>K%</div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-mono)', background: 'rgba(0,212,170,0.12)', color: 'var(--color-teal)', borderRadius: 'var(--radius-full)', padding: '2px 7px', marginLeft: 4 }}>
-                  {r.era.toFixed(2)} ERA
-                </div>
-              </Link>
-            ))}
+                <Link to="/leaderboard" style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: 3 }}>See all <ArrowRight size={11} /></Link>
+              </div>
+            </div>
+            <div style={{ padding: '0 var(--space-3) var(--space-3)' }}>
+              {weeklyLoading ? (
+                <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>Loading…</div>
+              ) : !weekly?.pitchers?.length ? (
+                <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--color-text-muted)', fontSize: 13 }}>No data available</div>
+              ) : weekly.pitchers.map((r, i) => (
+                <Link key={r.mlbId} to={`/player?mlbId=${r.mlbId}&name=${encodeURIComponent(r.name)}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 6px', borderRadius: 'var(--radius-md)', textDecoration: 'none', transition: 'background var(--transition-fast)' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-bg-elevated)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                  <span style={{ width: 16, fontSize: 11, fontWeight: 700, color: i === 0 ? 'var(--color-teal)' : 'var(--color-text-muted)', textAlign: 'center', flexShrink: 0 }}>{i + 1}</span>
+                  <div style={{ width: 34, height: 34, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'var(--color-bg-elevated)', border: i === 0 ? '2px solid var(--color-teal)' : '2px solid transparent' }}>
+                    <PlayerHeadshot mlbId={r.mlbId} size={34} alt={r.name} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--color-text-tertiary)' }}>
+                      <TeamLogo abbr={r.team} size={13} />
+                      {r.pos} · {r.team} · {r.ip} IP
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontSize: 18, fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--color-teal)', lineHeight: 1 }}>{r.kPct.toFixed(1)}%</div>
+                    <div style={{ fontSize: 10, color: 'var(--color-text-muted)', marginTop: 1 }}>{r.era.toFixed(2)} ERA</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
+
         </div>
-      </div>
+      </section>
 
       {/* ── WPA Risers / Watchers ─────────────────────────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-5)' }}>
@@ -350,7 +376,10 @@ export default function HomePage() {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</div>
-                    <div style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>{r.pos} · {r.team}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--color-text-tertiary)' }}>
+                      <TeamLogo abbr={r.team} size={13} />
+                      {r.pos} · {r.team}
+                    </div>
                   </div>
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-mono)', color: up ? 'var(--color-green)' : 'var(--color-red)' }}>{up ? '+' : ''}{r.wpa.toFixed(2)}</div>
@@ -391,7 +420,10 @@ export default function HomePage() {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</div>
-                    <div style={{ fontSize: 11, color: 'var(--color-text-tertiary)' }}>{p.pos} · {p.team}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--color-text-tertiary)' }}>
+                      <TeamLogo abbr={p.team} size={13} />
+                      {p.pos} · {p.team}
+                    </div>
                     <div style={{ marginTop: 6, height: 3, background: 'var(--color-bg-elevated)', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${Math.min((p.war / (warLeaders[0]?.war ?? 8)) * 100, 100)}%`, background: 'linear-gradient(90deg, var(--color-accent), var(--color-teal))', borderRadius: 'var(--radius-full)', transition: 'width 600ms ease' }} />
                     </div>
