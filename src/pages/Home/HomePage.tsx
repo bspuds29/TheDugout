@@ -326,7 +326,7 @@ export default function HomePage() {
                   onMouseEnter={e => (e.currentTarget.style.background = 'var(--color-bg-elevated)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                   <span style={{ width: 16, fontSize: 11, fontWeight: 700, color: i === 0 ? 'var(--color-teal)' : 'var(--color-text-muted)', textAlign: 'center', flexShrink: 0 }}>{i + 1}</span>
-                  <div style={{ width: 34, height: 34, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'var(--color-bg-elevated)', border: i === 0 ? '2px solid var(--color-teal)' : '2px solid transparent' }}>
+                  <div style={{ width: 34, height: 34, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'var(--color-bg-elevated)', border: i === 0 ? '2px solid var(--color-teal)' : '2px solid transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <PlayerHeadshot mlbId={r.mlbId} size={34} alt={r.name} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
