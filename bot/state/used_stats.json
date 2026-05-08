@@ -21,7 +21,8 @@
     "game_823469_hit_547180",
     "game_825091_pit_694973",
     "game_824198_hit_681624",
-    "combined_677951_2026-05-07"
+    "combined_677951_2026-05-07",
+    "weekly_2026_2026w19_hit_683737_hislast3games"
   ],
   "tweet_log": [
     {
@@ -199,7 +200,15 @@
       "player": "Bobby Witt Jr.",
       "stat": "Bobby Witt Jr. last night: 4-for-4, 1 HR, 1 RBI\nLast 3 games: 6-for-12, 1 HR, 1 RBI, 1 SB, 1.371 OPS",
       "timestamp": "2026-05-08T05:51:15.243131+00:00"
+    },
+    {
+      "id": "weekly_2026_2026w19_hit_683737_hislast3games",
+      "tweet_text": "Michael Busch: 5-for-11, 1 HR, 3 BB, 1.298 OPS over his last 3 games.\n\nlocked in\n\nhttps://thedugoutapi.com/player?mlbId=683737&name=Michael+Busch",
+      "tweet_id": "2052795958883164404",
+      "player": "Michael Busch",
+      "stat": "Michael Busch is 5-for-11 (.455) over his last 3 games, 1 HR, 3 RBI",
+      "timestamp": "2026-05-08T17:01:10.490415+00:00"
     }
   ],
-  "last_run": "2026-05-08T05:51:15.243141+00:00"
+  "last_run": "2026-05-08T17:01:10.490430+00:00"
 }
