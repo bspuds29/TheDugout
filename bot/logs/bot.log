@@ -865,3 +865,38 @@ https://thedugoutapi.com/player?mlbId=670042&name=Luke+Raley
 2026-05-09 06:09:30,612  INFO      poster — Tweet posted (text only) — id: 2052994350070534174
 2026-05-09 06:09:30,614  INFO      tracker — Marked as used: game_824607_hit_670042
 2026-05-09 06:09:30,614  INFO      __main__ — Done. Tweet ID: 2052994350070534174
+2026-05-09 16:39:58,781  INFO      __main__ — ============================================================
+2026-05-09 16:39:58,781  INFO      __main__ — TheDugout tweet bot starting — 2026-05-09T16:39:58.781238+00:00
+2026-05-09 16:39:58,781  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-09 16:39:58,781  INFO      __main__ — Collecting stat candidates…
+2026-05-09 16:39:58,781  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 4
+2026-05-09 16:39:58,782  INFO      collector — Fetching schedule for 2026-05-08
+2026-05-09 16:39:59,949  INFO      collector — Collected 55 game candidates
+2026-05-09 16:40:02,024  INFO      collector — Collected 17 weekly hitter candidates
+2026-05-09 16:40:02,274  INFO      collector — FanGraphs batting leaderboard: 177 rows
+2026-05-09 16:40:02,546  INFO      collector — FanGraphs pitching leaderboard: 75 rows
+2026-05-09 16:40:03,011  INFO      collector — Collected 30 season leader candidates
+2026-05-09 16:40:03,021  INFO      collector — Collected 8 team game candidates
+2026-05-09 16:40:03,132  INFO      collector — Collected 2 team streak candidates
+2026-05-09 16:40:03,133  INFO      collector — Built 6 combined hitting candidates
+2026-05-09 16:40:03,133  INFO      collector — Pitching drought=4 → applying ×1.60 boost to pitching candidates
+2026-05-09 16:40:03,133  INFO      collector — Total candidates: 118 (last_tweet=hitting, last_stat=game_hitting)
+2026-05-09 16:40:03,133  INFO      __main__ — 115 fresh candidates after dedup (of 118 total)
+2026-05-09 16:40:03,133  INFO      __main__ — 107 candidates after player-repeat filter
+2026-05-09 16:40:03,133  INFO      __main__ — Selected candidate: 'Zach Neto' — Zach Neto is 4-for-10 (.400) over his last 3 games, 1 HR, 3 RBI (score=66.4, type=weekly_hitting)
+2026-05-09 16:40:03,133  INFO      __main__ — Generating tweet via Claude…
+2026-05-09 16:40:04,594  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-09 16:40:04,616  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-09 16:40:04,616  INFO      __main__ — TWEET PREVIEW:
+Zach Neto last 3 games: 4-for-10, 1 HR, 3 RBI, 1.400 OPS
+
+quietly on one
+
+https://thedugoutapi.com/player?mlbId=687263&name=Zach+Neto
+2026-05-09 16:40:04,616  INFO      __main__ — Length: 72 chars (body) + 23 (t.co URL) = 96 total
+2026-05-09 16:40:04,616  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-09 16:40:04,616  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-09 16:40:04,616  INFO      __main__ — Posting tweet…
+2026-05-09 16:40:04,826  INFO      poster — Tweet posted (text only) — id: 2053153038341427312
+2026-05-09 16:40:04,827  INFO      tracker — Marked as used: weekly_2026_2026w19_hit_687263_hislast3games
+2026-05-09 16:40:04,828  INFO      __main__ — Done. Tweet ID: 2053153038341427312
