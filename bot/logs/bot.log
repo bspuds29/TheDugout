@@ -830,3 +830,38 @@ https://thedugoutapi.com/player?mlbId=683737&name=Michael+Busch
 2026-05-08 17:01:10,489  INFO      poster — Tweet posted (text only) — id: 2052795958883164404
 2026-05-08 17:01:10,490  INFO      tracker — Marked as used: weekly_2026_2026w19_hit_683737_hislast3games
 2026-05-08 17:01:10,490  INFO      __main__ — Done. Tweet ID: 2052795958883164404
+2026-05-09 06:09:25,582  INFO      __main__ — ============================================================
+2026-05-09 06:09:25,582  INFO      __main__ — TheDugout tweet bot starting — 2026-05-09T06:09:25.582784+00:00
+2026-05-09 06:09:25,582  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-09 06:09:25,583  INFO      __main__ — Collecting stat candidates…
+2026-05-09 06:09:25,583  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 3
+2026-05-09 06:09:25,583  INFO      collector — Fetching schedule for 2026-05-08
+2026-05-09 06:09:26,302  INFO      collector — Collected 55 game candidates
+2026-05-09 06:09:27,993  INFO      collector — Collected 17 weekly hitter candidates
+2026-05-09 06:09:28,214  INFO      collector — FanGraphs batting leaderboard: 177 rows
+2026-05-09 06:09:28,425  INFO      collector — FanGraphs pitching leaderboard: 81 rows
+2026-05-09 06:09:28,762  INFO      collector — Collected 30 season leader candidates
+2026-05-09 06:09:28,788  INFO      collector — Collected 8 team game candidates
+2026-05-09 06:09:28,860  INFO      collector — Collected 2 team streak candidates
+2026-05-09 06:09:28,860  INFO      collector — Built 6 combined hitting candidates
+2026-05-09 06:09:28,861  INFO      collector — Pitching drought=3 → applying ×1.45 boost to pitching candidates
+2026-05-09 06:09:28,861  INFO      collector — Total candidates: 118 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-09 06:09:28,861  INFO      __main__ — 116 fresh candidates after dedup (of 118 total)
+2026-05-09 06:09:28,861  INFO      __main__ — 104 candidates after player-repeat filter
+2026-05-09 06:09:28,861  INFO      __main__ — Selected candidate: 'Luke Raley' — Luke Raley went 2/5 with 2 HRs, 7 RBI, 8 total bases (score=70.2, type=game_hitting)
+2026-05-09 06:09:28,861  INFO      __main__ — Generating tweet via Claude…
+2026-05-09 06:09:30,317  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-09 06:09:30,335  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-09 06:09:30,336  INFO      __main__ — TWEET PREVIEW:
+Luke Raley last night: 2-5, 2 HR, 7 RBI, 8 total bases
+
+go look him up
+
+https://thedugoutapi.com/player?mlbId=670042&name=Luke+Raley
+2026-05-09 06:09:30,336  INFO      __main__ — Length: 70 chars (body) + 23 (t.co URL) = 94 total
+2026-05-09 06:09:30,336  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-09 06:09:30,336  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-09 06:09:30,336  INFO      __main__ — Posting tweet…
+2026-05-09 06:09:30,612  INFO      poster — Tweet posted (text only) — id: 2052994350070534174
+2026-05-09 06:09:30,614  INFO      tracker — Marked as used: game_824607_hit_670042
+2026-05-09 06:09:30,614  INFO      __main__ — Done. Tweet ID: 2052994350070534174
