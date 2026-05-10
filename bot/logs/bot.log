@@ -900,3 +900,38 @@ https://thedugoutapi.com/player?mlbId=687263&name=Zach+Neto
 2026-05-09 16:40:04,826  INFO      poster — Tweet posted (text only) — id: 2053153038341427312
 2026-05-09 16:40:04,827  INFO      tracker — Marked as used: weekly_2026_2026w19_hit_687263_hislast3games
 2026-05-09 16:40:04,828  INFO      __main__ — Done. Tweet ID: 2053153038341427312
+2026-05-10 06:28:24,359  INFO      __main__ — ============================================================
+2026-05-10 06:28:24,359  INFO      __main__ — TheDugout tweet bot starting — 2026-05-10T06:28:24.359495+00:00
+2026-05-10 06:28:24,359  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-10 06:28:24,359  INFO      __main__ — Collecting stat candidates…
+2026-05-10 06:28:24,360  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 5
+2026-05-10 06:28:24,360  INFO      collector — Fetching schedule for 2026-05-09
+2026-05-10 06:28:24,712  INFO      collector — Collected 52 game candidates
+2026-05-10 06:28:25,598  INFO      collector — Collected 15 weekly hitter candidates
+2026-05-10 06:28:25,782  INFO      collector — FanGraphs batting leaderboard: 177 rows
+2026-05-10 06:28:25,996  INFO      collector — FanGraphs pitching leaderboard: 75 rows
+2026-05-10 06:28:26,161  INFO      collector — Collected 30 season leader candidates
+2026-05-10 06:28:26,171  INFO      collector — Collected 3 team game candidates
+2026-05-10 06:28:26,207  INFO      collector — Collected 1 team streak candidates
+2026-05-10 06:28:26,207  INFO      collector — Built 4 combined hitting candidates
+2026-05-10 06:28:26,207  INFO      collector — Pitching drought=5 → applying ×1.75 boost to pitching candidates
+2026-05-10 06:28:26,207  INFO      collector — Total candidates: 105 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-10 06:28:26,208  INFO      __main__ — 103 fresh candidates after dedup (of 105 total)
+2026-05-10 06:28:26,208  INFO      __main__ — 94 candidates after player-repeat filter
+2026-05-10 06:28:26,208  INFO      __main__ — Selected candidate: 'Alec Bohm' — Alec Bohm went 3/4 with 2 HRs, 3-for-4, 4 RBI, 10 total bases (score=69.4, type=game_hitting)
+2026-05-10 06:28:26,208  INFO      __main__ — Generating tweet via Claude…
+2026-05-10 06:28:27,862  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-10 06:28:27,884  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-10 06:28:27,884  INFO      __main__ — TWEET PREVIEW:
+Alec Bohm last night: 3-for-4, 2 HRs, 4 RBI, 10 total bases
+
+put some respect on it
+
+https://thedugoutapi.com/player?mlbId=664761&name=Alec+Bohm
+2026-05-10 06:28:27,884  INFO      __main__ — Length: 83 chars (body) + 23 (t.co URL) = 107 total
+2026-05-10 06:28:27,884  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-10 06:28:27,884  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-10 06:28:27,884  INFO      __main__ — Posting tweet…
+2026-05-10 06:28:28,108  INFO      poster — Tweet posted (text only) — id: 2053361508935962842
+2026-05-10 06:28:28,109  INFO      tracker — Marked as used: game_823468_hit_664761
+2026-05-10 06:28:28,110  INFO      __main__ — Done. Tweet ID: 2053361508935962842
