@@ -935,3 +935,58 @@ https://thedugoutapi.com/player?mlbId=664761&name=Alec+Bohm
 2026-05-10 06:28:28,108  INFO      poster — Tweet posted (text only) — id: 2053361508935962842
 2026-05-10 06:28:28,109  INFO      tracker — Marked as used: game_823468_hit_664761
 2026-05-10 06:28:28,110  INFO      __main__ — Done. Tweet ID: 2053361508935962842
+2026-05-10 16:40:48,392  INFO      __main__ — ============================================================
+2026-05-10 16:40:48,392  INFO      __main__ — TheDugout tweet bot starting — 2026-05-10T16:40:48.392458+00:00
+2026-05-10 16:40:48,392  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-10 16:40:48,392  INFO      __main__ — Collecting stat candidates…
+2026-05-10 16:40:48,393  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 6
+2026-05-10 16:40:48,393  INFO      collector — Fetching schedule for 2026-05-09
+2026-05-10 16:40:48,731  INFO      collector — Collected 52 game candidates
+2026-05-10 16:40:50,343  INFO      collector — Collected 14 weekly hitter candidates
+2026-05-10 16:40:50,536  INFO      collector — FanGraphs batting leaderboard: 178 rows
+2026-05-10 16:40:50,758  INFO      collector — FanGraphs pitching leaderboard: 75 rows
+2026-05-10 16:40:51,028  INFO      collector — Collected 30 season leader candidates
+2026-05-10 16:40:51,036  INFO      collector — Collected 3 team game candidates
+2026-05-10 16:40:51,124  INFO      collector — Collected 1 team streak candidates
+2026-05-10 16:40:51,124  INFO      collector — Built 4 combined hitting candidates
+2026-05-10 16:40:51,124  INFO      collector — Pitching drought=6 → applying ×1.90 boost to pitching candidates
+2026-05-10 16:40:51,125  INFO      collector — Total candidates: 104 (last_tweet=hitting, last_stat=game_hitting)
+2026-05-10 16:40:51,125  INFO      __main__ — 101 fresh candidates after dedup (of 104 total)
+2026-05-10 16:40:51,125  INFO      __main__ — 92 candidates after player-repeat filter
+2026-05-10 16:40:51,125  INFO      __main__ — Selected candidate: 'Byron Buxton' — Byron Buxton last night: 2-for-5, 1 HR, 2 RBI
+Last 3 games: 6-for-15, 2 HRs, 4 RBI, 1.333 OPS (score=77.7, type=combined_hitting)
+2026-05-10 16:40:51,125  INFO      __main__ — Generating tweet via Claude…
+2026-05-10 16:40:55,583  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-10 16:40:55,605  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-10 16:40:55,605  INFO      __main__ — TWEET PREVIEW:
+Byron Buxton last night: 2-for-5, 1 HR, 2 RBI
+Last 3 games: 6-for-15, 2 HRs, 4 RBI, 1.333 OPS
+
+when Buxton is healthy he's a different problem
+
+https://thedugoutapi.com/player?mlbId=621439&name=Byron+Buxton
+2026-05-10 16:40:55,605  INFO      __main__ — Length: 142 chars (body) + 23 (t.co URL) = 166 total
+2026-05-10 16:40:55,605  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-10 16:40:55,605  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-10 16:40:55,605  INFO      __main__ — Posting tweet…
+2026-05-10 16:40:55,733  ERROR     poster — Failed to post tweet: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+2026-05-10 16:40:55,733  ERROR     __main__ — Tweet posting failed: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+Traceback (most recent call last):
+  File "/home/runner/work/TheDugout/TheDugout/bot/main.py", line 204, in run
+    tweet_id = poster.post_tweet(full_tweet, image_bytes)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/TheDugout/TheDugout/bot/poster.py", line 95, in post_tweet
+    response = client.create_tweet(
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 845, in create_tweet
+    return self._make_request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 129, in _make_request
+    response = self.request(method, route, params=request_params,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 119, in request
+    raise HTTPException(response)
+tweepy.errors.HTTPException: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
