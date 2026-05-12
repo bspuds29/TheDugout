@@ -1082,3 +1082,38 @@ https://thedugoutapi.com/player?mlbId=656941&name=Kyle+Schwarber
 2026-05-12 00:23:53,433  INFO      poster — Tweet posted (text only) — id: 2053994535571882372
 2026-05-12 00:23:53,435  INFO      tracker — Marked as used: combined_656941_2026-05-10
 2026-05-12 00:23:53,435  INFO      __main__ — Done. Tweet ID: 2053994535571882372
+2026-05-12 06:31:39,102  INFO      __main__ — ============================================================
+2026-05-12 06:31:39,102  INFO      __main__ — TheDugout tweet bot starting — 2026-05-12T06:31:39.102603+00:00
+2026-05-12 06:31:39,102  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-12 06:31:39,102  INFO      __main__ — Collecting stat candidates…
+2026-05-12 06:31:39,103  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 7
+2026-05-12 06:31:39,103  INFO      collector — Fetching schedule for 2026-05-11
+2026-05-12 06:31:39,646  INFO      collector — Collected 22 game candidates
+2026-05-12 06:31:41,460  INFO      collector — Collected 16 weekly hitter candidates
+2026-05-12 06:31:41,695  INFO      collector — FanGraphs batting leaderboard: 177 rows
+2026-05-12 06:31:41,904  INFO      collector — FanGraphs pitching leaderboard: 73 rows
+2026-05-12 06:31:42,325  INFO      collector — Collected 30 season leader candidates
+2026-05-12 06:31:42,347  INFO      collector — Collected 1 team game candidates
+2026-05-12 06:31:42,446  INFO      collector — Collected 0 team streak candidates
+2026-05-12 06:31:42,446  INFO      collector — Built 1 combined hitting candidates
+2026-05-12 06:31:42,446  INFO      collector — Pitching drought=7 → applying ×2.05 boost to pitching candidates
+2026-05-12 06:31:42,446  INFO      collector — Total candidates: 70 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-12 06:31:42,446  INFO      __main__ — 70 fresh candidates after dedup (of 70 total)
+2026-05-12 06:31:42,447  INFO      __main__ — 60 candidates after player-repeat filter
+2026-05-12 06:31:42,447  INFO      __main__ — Selected candidate: 'Byron Buxton' — Byron Buxton is 6-for-14 (.429) over his last 3 games, 2 HRs, 4 RBI (score=90.3, type=weekly_hitting)
+2026-05-12 06:31:42,447  INFO      __main__ — Generating tweet via Claude…
+2026-05-12 06:31:44,125  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-12 06:31:44,146  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-12 06:31:44,146  INFO      __main__ — TWEET PREVIEW:
+Byron Buxton: 6-for-14, 2 HRs, 4 RBI, 1.467 OPS over his last 3 games.
+
+the old Buxton is back
+
+https://thedugoutapi.com/player?mlbId=621439&name=Byron+Buxton
+2026-05-12 06:31:44,146  INFO      __main__ — Length: 94 chars (body) + 23 (t.co URL) = 118 total
+2026-05-12 06:31:44,147  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-12 06:31:44,147  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-12 06:31:44,147  INFO      __main__ — Posting tweet…
+2026-05-12 06:31:44,474  INFO      poster — Tweet posted (text only) — id: 2054087108252328091
+2026-05-12 06:31:44,476  INFO      tracker — Marked as used: weekly_2026_2026w20_hit_621439_hislast3games
+2026-05-12 06:31:44,476  INFO      __main__ — Done. Tweet ID: 2054087108252328091
