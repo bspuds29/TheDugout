@@ -1117,3 +1117,40 @@ https://thedugoutapi.com/player?mlbId=621439&name=Byron+Buxton
 2026-05-12 06:31:44,474  INFO      poster — Tweet posted (text only) — id: 2054087108252328091
 2026-05-12 06:31:44,476  INFO      tracker — Marked as used: weekly_2026_2026w20_hit_621439_hislast3games
 2026-05-12 06:31:44,476  INFO      __main__ — Done. Tweet ID: 2054087108252328091
+2026-05-12 17:52:21,142  INFO      __main__ — ============================================================
+2026-05-12 17:52:21,142  INFO      __main__ — TheDugout tweet bot starting — 2026-05-12T17:52:21.142965+00:00
+2026-05-12 17:52:21,143  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-12 17:52:21,143  INFO      __main__ — Collecting stat candidates…
+2026-05-12 17:52:21,143  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 8
+2026-05-12 17:52:21,143  INFO      collector — Fetching schedule for 2026-05-11
+2026-05-12 17:52:21,710  INFO      collector — Collected 22 game candidates
+2026-05-12 17:52:23,315  INFO      collector — Collected 13 weekly hitter candidates
+2026-05-12 17:52:23,538  INFO      collector — FanGraphs batting leaderboard: 177 rows
+2026-05-12 17:52:23,816  INFO      collector — FanGraphs pitching leaderboard: 74 rows
+2026-05-12 17:52:24,218  INFO      collector — Collected 30 season leader candidates
+2026-05-12 17:52:24,261  INFO      collector — Collected 1 team game candidates
+2026-05-12 17:52:24,355  INFO      collector — Collected 0 team streak candidates
+2026-05-12 17:52:24,355  INFO      collector — Built 1 combined hitting candidates
+2026-05-12 17:52:24,355  INFO      collector — Pitching drought=8 → applying ×2.20 boost to pitching candidates
+2026-05-12 17:52:24,355  INFO      collector — Total candidates: 67 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-12 17:52:24,356  INFO      __main__ — 67 fresh candidates after dedup (of 67 total)
+2026-05-12 17:52:24,356  INFO      __main__ — 63 candidates after player-repeat filter
+2026-05-12 17:52:24,356  INFO      __main__ — Selected candidate: 'Julio Rodríguez' — Julio Rodríguez last night: 2-for-4, 1 HR, 1 RBI
+Last 3 games: 5-for-11, 1 HR, 1 RBI, 1.318 OPS (score=70.3, type=combined_hitting)
+2026-05-12 17:52:24,356  INFO      __main__ — Generating tweet via Claude…
+2026-05-12 17:52:26,179  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-12 17:52:26,201  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-12 17:52:26,201  INFO      __main__ — TWEET PREVIEW:
+Julio Rodríguez last night: 2-for-4, 1 HR, 1 RBI
+Last 3 games: 5-for-11, 1 HR, 1 RBI, 1.318 OPS
+
+locked in
+
+https://thedugoutapi.com/player?mlbId=677594&name=Julio+Rodríguez
+2026-05-12 17:52:26,201  INFO      __main__ — Length: 106 chars (body) + 23 (t.co URL) = 130 total
+2026-05-12 17:52:26,201  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-12 17:52:26,201  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-12 17:52:26,201  INFO      __main__ — Posting tweet…
+2026-05-12 17:52:26,496  INFO      poster — Tweet posted (text only) — id: 2054258412154683729
+2026-05-12 17:52:26,497  INFO      tracker — Marked as used: combined_677594_2026-05-11
+2026-05-12 17:52:26,497  INFO      __main__ — Done. Tweet ID: 2054258412154683729

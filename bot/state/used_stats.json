@@ -27,7 +27,8 @@
     "weekly_2026_2026w19_hit_687263_hislast3games",
     "game_823468_hit_664761",
     "combined_656941_2026-05-10",
-    "weekly_2026_2026w20_hit_621439_hislast3games"
+    "weekly_2026_2026w20_hit_621439_hislast3games",
+    "combined_677594_2026-05-11"
   ],
   "tweet_log": [
     {
@@ -253,7 +254,15 @@
       "player": "Byron Buxton",
       "stat": "Byron Buxton is 6-for-14 (.429) over his last 3 games, 2 HRs, 4 RBI",
       "timestamp": "2026-05-12T06:31:44.475763+00:00"
+    },
+    {
+      "id": "combined_677594_2026-05-11",
+      "tweet_text": "Julio Rodr\u00edguez last night: 2-for-4, 1 HR, 1 RBI\nLast 3 games: 5-for-11, 1 HR, 1 RBI, 1.318 OPS\n\nlocked in\n\nhttps://thedugoutapi.com/player?mlbId=677594&name=Julio+Rodr\u00edguez",
+      "tweet_id": "2054258412154683729",
+      "player": "Julio Rodr\u00edguez",
+      "stat": "Julio Rodr\u00edguez last night: 2-for-4, 1 HR, 1 RBI\nLast 3 games: 5-for-11, 1 HR, 1 RBI, 1.318 OPS",
+      "timestamp": "2026-05-12T17:52:26.497468+00:00"
     }
   ],
-  "last_run": "2026-05-12T06:31:44.475773+00:00"
+  "last_run": "2026-05-12T17:52:26.497479+00:00"
 }
