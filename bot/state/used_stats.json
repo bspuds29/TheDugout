@@ -25,7 +25,8 @@
     "weekly_2026_2026w19_hit_683737_hislast3games",
     "game_824607_hit_670042",
     "weekly_2026_2026w19_hit_687263_hislast3games",
-    "game_823468_hit_664761"
+    "game_823468_hit_664761",
+    "combined_656941_2026-05-10"
   ],
   "tweet_log": [
     {
@@ -235,7 +236,15 @@
       "player": "Alec Bohm",
       "stat": "Alec Bohm went 3/4 with 2 HRs, 3-for-4, 4 RBI, 10 total bases",
       "timestamp": "2026-05-10T06:28:28.109524+00:00"
+    },
+    {
+      "id": "combined_656941_2026-05-10",
+      "tweet_text": "Kyle Schwarber last night: 3-for-4, 2 HRs, 2 RBI\nLast 3 games: 5-for-15, 4 HRs, 6 RBI, 1.466 OPS\n\nthe Schwarber we know is back\n\nhttps://thedugoutapi.com/player?mlbId=656941&name=Kyle+Schwarber",
+      "tweet_id": "2053994535571882372",
+      "player": "Kyle Schwarber",
+      "stat": "Kyle Schwarber last night: 3-for-4, 2 HRs, 2 RBI\nLast 3 games: 5-for-15, 4 HRs, 6 RBI, 1.466 OPS",
+      "timestamp": "2026-05-12T00:23:53.434617+00:00"
     }
   ],
-  "last_run": "2026-05-10T06:28:28.109536+00:00"
+  "last_run": "2026-05-12T00:23:53.434629+00:00"
 }
