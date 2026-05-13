@@ -1189,3 +1189,39 @@ https://thedugoutapi.com/player?mlbId=641927&name=Bailey+Ober
 2026-05-13 06:41:58,340  INFO      poster — Tweet posted (text only) — id: 2054452070921445587
 2026-05-13 06:41:58,342  INFO      tracker — Marked as used: game_823712_pit_641927
 2026-05-13 06:41:58,342  INFO      __main__ — Done. Tweet ID: 2054452070921445587
+2026-05-13 17:54:04,033  INFO      __main__ — ============================================================
+2026-05-13 17:54:04,033  INFO      __main__ — TheDugout tweet bot starting — 2026-05-13T17:54:04.033256+00:00
+2026-05-13 17:54:04,033  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-13 17:54:04,033  INFO      __main__ — Collecting stat candidates…
+2026-05-13 17:54:04,033  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 0
+2026-05-13 17:54:04,033  INFO      collector — Fetching schedule for 2026-05-12
+2026-05-13 17:54:04,974  INFO      collector — Collected 56 game candidates
+2026-05-13 17:54:06,536  INFO      collector — Collected 18 weekly hitter candidates
+2026-05-13 17:54:06,761  INFO      collector — FanGraphs batting leaderboard: 176 rows
+2026-05-13 17:54:07,127  INFO      collector — FanGraphs pitching leaderboard: 83 rows
+2026-05-13 17:54:07,480  INFO      collector — Collected 30 season leader candidates
+2026-05-13 17:54:07,505  INFO      collector — Collected 4 team game candidates
+2026-05-13 17:54:07,587  INFO      collector — Collected 1 team streak candidates
+2026-05-13 17:54:07,587  INFO      collector — Built 8 combined hitting candidates
+2026-05-13 17:54:07,587  INFO      collector — Total candidates: 117 (last_tweet=pitching, last_stat=game_pitching)
+2026-05-13 17:54:07,587  INFO      __main__ — 116 fresh candidates after dedup (of 117 total)
+2026-05-13 17:54:07,588  INFO      __main__ — 107 candidates after player-repeat filter
+2026-05-13 17:54:07,588  INFO      __main__ — Selected candidate: 'Daylen Lile' — Daylen Lile last night: 3-for-5, 2 HRs, 4 RBI
+Last 3 games: 6-for-12, 2 HRs, 5 RBI, 1.667 OPS (score=165.2, type=combined_hitting)
+2026-05-13 17:54:07,588  INFO      __main__ — Generating tweet via Claude…
+2026-05-13 17:54:09,601  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-13 17:54:09,616  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-13 17:54:09,616  INFO      __main__ — TWEET PREVIEW:
+Daylen Lile last night: 3-for-5, 2 HRs, 4 RBI
+Last 3 games: 6-for-12, 2 HRs, 5 RBI, 1.667 OPS
+
+extend him
+
+https://thedugoutapi.com/player?mlbId=695734&name=Daylen+Lile
+2026-05-13 17:54:09,616  INFO      __main__ — Length: 105 chars (body) + 23 (t.co URL) = 129 total
+2026-05-13 17:54:09,616  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-13 17:54:09,616  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-13 17:54:09,616  INFO      __main__ — Posting tweet…
+2026-05-13 17:54:09,957  INFO      poster — Tweet posted (text only) — id: 2054621233929388532
+2026-05-13 17:54:09,959  INFO      tracker — Marked as used: combined_695734_2026-05-12
+2026-05-13 17:54:09,959  INFO      __main__ — Done. Tweet ID: 2054621233929388532

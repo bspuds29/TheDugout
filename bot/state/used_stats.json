@@ -29,7 +29,8 @@
     "combined_656941_2026-05-10",
     "weekly_2026_2026w20_hit_621439_hislast3games",
     "combined_677594_2026-05-11",
-    "game_823712_pit_641927"
+    "game_823712_pit_641927",
+    "combined_695734_2026-05-12"
   ],
   "tweet_log": [
     {
@@ -271,7 +272,15 @@
       "player": "Bailey Ober",
       "stat": "Bailey Ober tossed 9.0 scoreless innings with 7 Ks",
       "timestamp": "2026-05-13T06:41:58.341598+00:00"
+    },
+    {
+      "id": "combined_695734_2026-05-12",
+      "tweet_text": "Daylen Lile last night: 3-for-5, 2 HRs, 4 RBI\nLast 3 games: 6-for-12, 2 HRs, 5 RBI, 1.667 OPS\n\nextend him\n\nhttps://thedugoutapi.com/player?mlbId=695734&name=Daylen+Lile",
+      "tweet_id": "2054621233929388532",
+      "player": "Daylen Lile",
+      "stat": "Daylen Lile last night: 3-for-5, 2 HRs, 4 RBI\nLast 3 games: 6-for-12, 2 HRs, 5 RBI, 1.667 OPS",
+      "timestamp": "2026-05-13T17:54:09.958749+00:00"
     }
   ],
-  "last_run": "2026-05-13T06:41:58.341613+00:00"
+  "last_run": "2026-05-13T17:54:09.958761+00:00"
 }
