@@ -1154,3 +1154,38 @@ https://thedugoutapi.com/player?mlbId=677594&name=Julio+Rodríguez
 2026-05-12 17:52:26,496  INFO      poster — Tweet posted (text only) — id: 2054258412154683729
 2026-05-12 17:52:26,497  INFO      tracker — Marked as used: combined_677594_2026-05-11
 2026-05-12 17:52:26,497  INFO      __main__ — Done. Tweet ID: 2054258412154683729
+2026-05-13 06:41:54,484  INFO      __main__ — ============================================================
+2026-05-13 06:41:54,484  INFO      __main__ — TheDugout tweet bot starting — 2026-05-13T06:41:54.484271+00:00
+2026-05-13 06:41:54,484  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-13 06:41:54,484  INFO      __main__ — Collecting stat candidates…
+2026-05-13 06:41:54,484  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 9
+2026-05-13 06:41:54,485  INFO      collector — Fetching schedule for 2026-05-12
+2026-05-13 06:41:54,849  INFO      collector — Collected 56 game candidates
+2026-05-13 06:41:55,795  INFO      collector — Collected 16 weekly hitter candidates
+2026-05-13 06:41:55,982  INFO      collector — FanGraphs batting leaderboard: 177 rows
+2026-05-13 06:41:56,184  INFO      collector — FanGraphs pitching leaderboard: 74 rows
+2026-05-13 06:41:56,366  INFO      collector — Collected 30 season leader candidates
+2026-05-13 06:41:56,377  INFO      collector — Collected 4 team game candidates
+2026-05-13 06:41:56,416  INFO      collector — Collected 1 team streak candidates
+2026-05-13 06:41:56,416  INFO      collector — Built 7 combined hitting candidates
+2026-05-13 06:41:56,417  INFO      collector — Pitching drought=9 → applying ×2.35 boost to pitching candidates
+2026-05-13 06:41:56,417  INFO      collector — Total candidates: 114 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-13 06:41:56,417  INFO      __main__ — 114 fresh candidates after dedup (of 114 total)
+2026-05-13 06:41:56,417  INFO      __main__ — 104 candidates after player-repeat filter
+2026-05-13 06:41:56,417  INFO      __main__ — Selected candidate: 'Bailey Ober' — Bailey Ober tossed 9.0 scoreless innings with 7 Ks (score=90.2, type=game_pitching)
+2026-05-13 06:41:56,417  INFO      __main__ — Generating tweet via Claude…
+2026-05-13 06:41:58,094  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-13 06:41:58,113  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-13 06:41:58,113  INFO      __main__ — TWEET PREVIEW:
+Bailey Ober last night: 9.0 IP, 2 H, 7 K, 0 BB, 0 ER
+
+go look him up
+
+https://thedugoutapi.com/player?mlbId=641927&name=Bailey+Ober
+2026-05-13 06:41:58,113  INFO      __main__ — Length: 68 chars (body) + 23 (t.co URL) = 92 total
+2026-05-13 06:41:58,113  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-13 06:41:58,113  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-13 06:41:58,113  INFO      __main__ — Posting tweet…
+2026-05-13 06:41:58,340  INFO      poster — Tweet posted (text only) — id: 2054452070921445587
+2026-05-13 06:41:58,342  INFO      tracker — Marked as used: game_823712_pit_641927
+2026-05-13 06:41:58,342  INFO      __main__ — Done. Tweet ID: 2054452070921445587
