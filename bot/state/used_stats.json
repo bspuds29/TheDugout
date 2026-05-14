@@ -30,7 +30,8 @@
     "weekly_2026_2026w20_hit_621439_hislast3games",
     "combined_677594_2026-05-11",
     "game_823712_pit_641927",
-    "combined_695734_2026-05-12"
+    "combined_695734_2026-05-12",
+    "weekly_2026_2026w20_hit_682829_hislast3games"
   ],
   "tweet_log": [
     {
@@ -280,7 +281,15 @@
       "player": "Daylen Lile",
       "stat": "Daylen Lile last night: 3-for-5, 2 HRs, 4 RBI\nLast 3 games: 6-for-12, 2 HRs, 5 RBI, 1.667 OPS",
       "timestamp": "2026-05-13T17:54:09.958749+00:00"
+    },
+    {
+      "id": "weekly_2026_2026w20_hit_682829_hislast3games",
+      "tweet_text": "Elly De La Cruz: 7-for-14, 1.071 OPS over his last 3 games.\n\nnot bad i suppose\n\nhttps://thedugoutapi.com/player?mlbId=682829&name=Elly+De+La+Cruz",
+      "tweet_id": "2054814105056182479",
+      "player": "Elly De La Cruz",
+      "stat": "Elly De La Cruz is 7-for-14 (.500) over his last 3 games",
+      "timestamp": "2026-05-14T06:40:34.000086+00:00"
     }
   ],
-  "last_run": "2026-05-13T17:54:09.958761+00:00"
+  "last_run": "2026-05-14T06:40:34.000100+00:00"
 }

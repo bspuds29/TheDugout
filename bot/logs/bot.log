@@ -1225,3 +1225,37 @@ https://thedugoutapi.com/player?mlbId=695734&name=Daylen+Lile
 2026-05-13 17:54:09,957  INFO      poster — Tweet posted (text only) — id: 2054621233929388532
 2026-05-13 17:54:09,959  INFO      tracker — Marked as used: combined_695734_2026-05-12
 2026-05-13 17:54:09,959  INFO      __main__ — Done. Tweet ID: 2054621233929388532
+2026-05-14 06:40:30,242  INFO      __main__ — ============================================================
+2026-05-14 06:40:30,242  INFO      __main__ — TheDugout tweet bot starting — 2026-05-14T06:40:30.242868+00:00
+2026-05-14 06:40:30,243  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-14 06:40:30,243  INFO      __main__ — Collecting stat candidates…
+2026-05-14 06:40:30,243  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 1
+2026-05-14 06:40:30,243  INFO      collector — Fetching schedule for 2026-05-13
+2026-05-14 06:40:30,571  INFO      collector — Collected 56 game candidates
+2026-05-14 06:40:31,631  INFO      collector — Collected 15 weekly hitter candidates
+2026-05-14 06:40:31,819  INFO      collector — FanGraphs batting leaderboard: 176 rows
+2026-05-14 06:40:32,018  INFO      collector — FanGraphs pitching leaderboard: 83 rows
+2026-05-14 06:40:32,193  INFO      collector — Collected 30 season leader candidates
+2026-05-14 06:40:32,199  INFO      collector — Collected 3 team game candidates
+2026-05-14 06:40:32,237  INFO      collector — Collected 0 team streak candidates
+2026-05-14 06:40:32,237  INFO      collector — Built 5 combined hitting candidates
+2026-05-14 06:40:32,238  INFO      collector — Total candidates: 109 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-14 06:40:32,238  INFO      __main__ — 109 fresh candidates after dedup (of 109 total)
+2026-05-14 06:40:32,238  INFO      __main__ — 94 candidates after player-repeat filter
+2026-05-14 06:40:32,238  INFO      __main__ — Selected candidate: 'Elly De La Cruz' — Elly De La Cruz is 7-for-14 (.500) over his last 3 games (score=58.3, type=weekly_hitting)
+2026-05-14 06:40:32,238  INFO      __main__ — Generating tweet via Claude…
+2026-05-14 06:40:33,766  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-14 06:40:33,785  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-14 06:40:33,785  INFO      __main__ — TWEET PREVIEW:
+Elly De La Cruz: 7-for-14, 1.071 OPS over his last 3 games.
+
+not bad i suppose
+
+https://thedugoutapi.com/player?mlbId=682829&name=Elly+De+La+Cruz
+2026-05-14 06:40:33,785  INFO      __main__ — Length: 78 chars (body) + 23 (t.co URL) = 102 total
+2026-05-14 06:40:33,785  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-14 06:40:33,785  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-14 06:40:33,785  INFO      __main__ — Posting tweet…
+2026-05-14 06:40:33,998  INFO      poster — Tweet posted (text only) — id: 2054814105056182479
+2026-05-14 06:40:34,000  INFO      tracker — Marked as used: weekly_2026_2026w20_hit_682829_hislast3games
+2026-05-14 06:40:34,000  INFO      __main__ — Done. Tweet ID: 2054814105056182479
