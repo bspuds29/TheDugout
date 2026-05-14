@@ -1259,3 +1259,39 @@ https://thedugoutapi.com/player?mlbId=682829&name=Elly+De+La+Cruz
 2026-05-14 06:40:33,998  INFO      poster — Tweet posted (text only) — id: 2054814105056182479
 2026-05-14 06:40:34,000  INFO      tracker — Marked as used: weekly_2026_2026w20_hit_682829_hislast3games
 2026-05-14 06:40:34,000  INFO      __main__ — Done. Tweet ID: 2054814105056182479
+2026-05-14 17:30:04,278  INFO      __main__ — ============================================================
+2026-05-14 17:30:04,278  INFO      __main__ — TheDugout tweet bot starting — 2026-05-14T17:30:04.278784+00:00
+2026-05-14 17:30:04,278  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-14 17:30:04,279  INFO      __main__ — Collecting stat candidates…
+2026-05-14 17:30:04,279  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 2
+2026-05-14 17:30:04,279  INFO      collector — Fetching schedule for 2026-05-13
+2026-05-14 17:30:04,614  INFO      collector — Collected 56 game candidates
+2026-05-14 17:30:05,660  INFO      collector — Collected 16 weekly hitter candidates
+2026-05-14 17:30:05,861  INFO      collector — FanGraphs batting leaderboard: 173 rows
+2026-05-14 17:30:06,059  INFO      collector — FanGraphs pitching leaderboard: 80 rows
+2026-05-14 17:30:06,235  INFO      collector — Collected 30 season leader candidates
+2026-05-14 17:30:06,243  INFO      collector — Collected 3 team game candidates
+2026-05-14 17:30:06,285  INFO      collector — Collected 0 team streak candidates
+2026-05-14 17:30:06,286  INFO      collector — Built 6 combined hitting candidates
+2026-05-14 17:30:06,286  INFO      collector — Total candidates: 111 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-14 17:30:06,286  INFO      __main__ — 110 fresh candidates after dedup (of 111 total)
+2026-05-14 17:30:06,286  INFO      __main__ — 96 candidates after player-repeat filter
+2026-05-14 17:30:06,287  INFO      __main__ — Selected candidate: 'Bobby Witt Jr.' — Bobby Witt Jr. last night: 1-for-3, 1 HR, 2 RBI
+Last 3 games: 5-for-12, 2 HRs, 3 RBI, 1.417 OPS (score=78.7, type=combined_hitting)
+2026-05-14 17:30:06,287  INFO      __main__ — Generating tweet via Claude…
+2026-05-14 17:30:08,279  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-14 17:30:08,298  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-14 17:30:08,298  INFO      __main__ — TWEET PREVIEW:
+Bobby Witt Jr. last night: 1-for-3, 1 HR, 2 RBI
+Last 3 games: 5-for-12, 2 HRs, 3 RBI, 1.417 OPS
+
+how do you pitch to this guy
+
+https://thedugoutapi.com/player?mlbId=677951&name=Bobby+Witt+Jr.
+2026-05-14 17:30:08,298  INFO      __main__ — Length: 125 chars (body) + 23 (t.co URL) = 149 total
+2026-05-14 17:30:08,298  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-14 17:30:08,298  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-14 17:30:08,298  INFO      __main__ — Posting tweet…
+2026-05-14 17:30:08,513  INFO      poster — Tweet posted (text only) — id: 2054977575919779868
+2026-05-14 17:30:08,515  INFO      tracker — Marked as used: combined_677951_2026-05-13
+2026-05-14 17:30:08,515  INFO      __main__ — Done. Tweet ID: 2054977575919779868
