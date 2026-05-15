@@ -1331,3 +1331,40 @@ https://thedugoutapi.com/player?mlbId=701762&name=Nick+Kurtz
 2026-05-15 06:50:13,720  INFO      poster — Tweet posted (text only) — id: 2055178924401754328
 2026-05-15 06:50:13,722  INFO      tracker — Marked as used: weekly_2026_2026w20_hit_701762_hislast3games
 2026-05-15 06:50:13,722  INFO      __main__ — Done. Tweet ID: 2055178924401754328
+2026-05-15 17:20:46,203  INFO      __main__ — ============================================================
+2026-05-15 17:20:46,203  INFO      __main__ — TheDugout tweet bot starting — 2026-05-15T17:20:46.203172+00:00
+2026-05-15 17:20:46,203  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-15 17:20:46,203  INFO      __main__ — Collecting stat candidates…
+2026-05-15 17:20:46,203  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 4
+2026-05-15 17:20:46,204  INFO      collector — Fetching schedule for 2026-05-14
+2026-05-15 17:20:46,792  INFO      collector — Collected 42 game candidates
+2026-05-15 17:20:48,616  INFO      collector — Collected 14 weekly hitter candidates
+2026-05-15 17:20:48,792  INFO      collector — FanGraphs batting leaderboard: 171 rows
+2026-05-15 17:20:49,026  INFO      collector — FanGraphs pitching leaderboard: 79 rows
+2026-05-15 17:20:49,619  INFO      collector — Collected 30 season leader candidates
+2026-05-15 17:20:49,624  INFO      collector — Collected 2 team game candidates
+2026-05-15 17:20:49,718  INFO      collector — Collected 1 team streak candidates
+2026-05-15 17:20:49,718  INFO      collector — Built 4 combined hitting candidates
+2026-05-15 17:20:49,718  INFO      collector — Pitching drought=4 → applying ×1.60 boost to pitching candidates
+2026-05-15 17:20:49,718  INFO      collector — Total candidates: 93 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-15 17:20:49,718  INFO      __main__ — 91 fresh candidates after dedup (of 93 total)
+2026-05-15 17:20:49,719  INFO      __main__ — 79 candidates after player-repeat filter
+2026-05-15 17:20:49,719  INFO      __main__ — Selected candidate: 'Yordan Alvarez' — Yordan Alvarez last night: 3-for-3, 1 HR, 1 RBI
+Last 3 games: 4-for-9, 1 HR, 1 RBI, 1.504 OPS (score=83.2, type=combined_hitting)
+2026-05-15 17:20:49,719  INFO      __main__ — Generating tweet via Claude…
+2026-05-15 17:20:51,476  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-15 17:20:51,498  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-15 17:20:51,499  INFO      __main__ — TWEET PREVIEW:
+Yordan Alvarez last night: 3-for-3, 1 HR, 1 RBI
+Last 3 games: 4-for-9, 1 HR, 1 RBI, 1.504 OPS
+
+the old Yordan is back
+
+https://thedugoutapi.com/player?mlbId=670541&name=Yordan+Alvarez
+2026-05-15 17:20:51,499  INFO      __main__ — Length: 117 chars (body) + 23 (t.co URL) = 141 total
+2026-05-15 17:20:51,499  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-15 17:20:51,499  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-15 17:20:51,499  INFO      __main__ — Posting tweet…
+2026-05-15 17:20:51,706  INFO      poster — Tweet posted (text only) — id: 2055337628380393647
+2026-05-15 17:20:51,707  INFO      tracker — Marked as used: combined_670541_2026-05-14
+2026-05-15 17:20:51,707  INFO      __main__ — Done. Tweet ID: 2055337628380393647
