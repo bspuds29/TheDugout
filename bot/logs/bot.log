@@ -1295,3 +1295,39 @@ https://thedugoutapi.com/player?mlbId=677951&name=Bobby+Witt+Jr.
 2026-05-14 17:30:08,513  INFO      poster — Tweet posted (text only) — id: 2054977575919779868
 2026-05-14 17:30:08,515  INFO      tracker — Marked as used: combined_677951_2026-05-13
 2026-05-14 17:30:08,515  INFO      __main__ — Done. Tweet ID: 2054977575919779868
+2026-05-15 06:50:09,249  INFO      __main__ — ============================================================
+2026-05-15 06:50:09,249  INFO      __main__ — TheDugout tweet bot starting — 2026-05-15T06:50:09.249243+00:00
+2026-05-15 06:50:09,249  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-15 06:50:09,249  INFO      __main__ — Collecting stat candidates…
+2026-05-15 06:50:09,249  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 3
+2026-05-15 06:50:09,250  INFO      collector — Fetching schedule for 2026-05-14
+2026-05-15 06:50:09,482  INFO      collector — Collected 42 game candidates
+2026-05-15 06:50:10,665  INFO      collector — Collected 16 weekly hitter candidates
+2026-05-15 06:50:10,839  INFO      collector — FanGraphs batting leaderboard: 173 rows
+2026-05-15 06:50:11,022  INFO      collector — FanGraphs pitching leaderboard: 80 rows
+2026-05-15 06:50:11,201  INFO      collector — Collected 30 season leader candidates
+2026-05-15 06:50:11,211  INFO      collector — Collected 2 team game candidates
+2026-05-15 06:50:11,252  INFO      collector — Collected 1 team streak candidates
+2026-05-15 06:50:11,253  INFO      collector — Built 4 combined hitting candidates
+2026-05-15 06:50:11,253  INFO      collector — Pitching drought=3 → applying ×1.45 boost to pitching candidates
+2026-05-15 06:50:11,253  INFO      collector — Total candidates: 95 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-15 06:50:11,253  INFO      __main__ — 93 fresh candidates after dedup (of 95 total)
+2026-05-15 06:50:11,253  INFO      __main__ — 82 candidates after player-repeat filter
+2026-05-15 06:50:11,253  INFO      __main__ — Selected candidate: 'Nick Kurtz' — Nick Kurtz is 5-for-10 (.500) over his last 3 games, 2 HRs, 6 RBI (score=117.2, type=weekly_hitting)
+2026-05-15 06:50:11,253  INFO      __main__ — Generating tweet via Claude…
+2026-05-15 06:50:13,470  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-15 06:50:13,489  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-15 06:50:13,489  INFO      __main__ — TWEET PREVIEW:
+Nick Kurtz last night: 5-for-10, 2 HRs, 6 RBI over his last 3 games
+1.783 OPS in that stretch
+
+yeah that'll do
+
+https://thedugoutapi.com/player?mlbId=701762&name=Nick+Kurtz
+2026-05-15 06:50:13,489  INFO      __main__ — Length: 110 chars (body) + 23 (t.co URL) = 134 total
+2026-05-15 06:50:13,489  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-15 06:50:13,489  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-15 06:50:13,489  INFO      __main__ — Posting tweet…
+2026-05-15 06:50:13,720  INFO      poster — Tweet posted (text only) — id: 2055178924401754328
+2026-05-15 06:50:13,722  INFO      tracker — Marked as used: weekly_2026_2026w20_hit_701762_hislast3games
+2026-05-15 06:50:13,722  INFO      __main__ — Done. Tweet ID: 2055178924401754328
