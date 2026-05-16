@@ -1403,3 +1403,38 @@ https://thedugoutapi.com/player?mlbId=664023&name=Ian+Happ
 2026-05-16 06:15:04,261  INFO      poster — Tweet posted (text only) — id: 2055532464592822755
 2026-05-16 06:15:04,262  INFO      tracker — Marked as used: weekly_2026_2026w20_hit_664023_hislast3games
 2026-05-16 06:15:04,262  INFO      __main__ — Done. Tweet ID: 2055532464592822755
+2026-05-16 16:43:54,044  INFO      __main__ — ============================================================
+2026-05-16 16:43:54,044  INFO      __main__ — TheDugout tweet bot starting — 2026-05-16T16:43:54.044859+00:00
+2026-05-16 16:43:54,045  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-16 16:43:54,045  INFO      __main__ — Collecting stat candidates…
+2026-05-16 16:43:54,045  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 6
+2026-05-16 16:43:54,045  INFO      collector — Fetching schedule for 2026-05-15
+2026-05-16 16:43:54,338  INFO      collector — Collected 53 game candidates
+2026-05-16 16:43:55,332  INFO      collector — Collected 16 weekly hitter candidates
+2026-05-16 16:43:55,540  INFO      collector — FanGraphs batting leaderboard: 171 rows
+2026-05-16 16:43:55,728  INFO      collector — FanGraphs pitching leaderboard: 75 rows
+2026-05-16 16:43:55,991  INFO      collector — Collected 30 season leader candidates
+2026-05-16 16:43:55,998  INFO      collector — Collected 6 team game candidates
+2026-05-16 16:43:56,033  INFO      collector — Collected 1 team streak candidates
+2026-05-16 16:43:56,034  INFO      collector — Built 6 combined hitting candidates
+2026-05-16 16:43:56,034  INFO      collector — Pitching drought=6 → applying ×1.90 boost to pitching candidates
+2026-05-16 16:43:56,034  INFO      collector — Total candidates: 112 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-16 16:43:56,034  INFO      __main__ — 109 fresh candidates after dedup (of 112 total)
+2026-05-16 16:43:56,035  INFO      __main__ — 93 candidates after player-repeat filter
+2026-05-16 16:43:56,035  INFO      __main__ — Selected candidate: 'Brandon Lowe' — Brandon Lowe went 2/5 with 2 HRs, 3 RBI, 8 total bases (score=59.8, type=game_hitting)
+2026-05-16 16:43:56,035  INFO      __main__ — Generating tweet via Claude…
+2026-05-16 16:43:57,413  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-16 16:43:57,435  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-16 16:43:57,435  INFO      __main__ — TWEET PREVIEW:
+Brandon Lowe last night: 2-for-5, 2 HRs, 3 RBI, 8 total bases
+
+go look him up
+
+https://thedugoutapi.com/player?mlbId=664040&name=Brandon+Lowe
+2026-05-16 16:43:57,435  INFO      __main__ — Length: 77 chars (body) + 23 (t.co URL) = 101 total
+2026-05-16 16:43:57,435  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-16 16:43:57,435  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-16 16:43:57,435  INFO      __main__ — Posting tweet…
+2026-05-16 16:43:57,763  INFO      poster — Tweet posted (text only) — id: 2055690729972793510
+2026-05-16 16:43:57,765  INFO      tracker — Marked as used: game_823384_hit_664040
+2026-05-16 16:43:57,765  INFO      __main__ — Done. Tweet ID: 2055690729972793510
