@@ -34,7 +34,8 @@
     "weekly_2026_2026w20_hit_682829_hislast3games",
     "combined_677951_2026-05-13",
     "weekly_2026_2026w20_hit_701762_hislast3games",
-    "combined_670541_2026-05-14"
+    "combined_670541_2026-05-14",
+    "weekly_2026_2026w20_hit_664023_hislast3games"
   ],
   "tweet_log": [
     {
@@ -316,7 +317,15 @@
       "player": "Yordan Alvarez",
       "stat": "Yordan Alvarez last night: 3-for-3, 1 HR, 1 RBI\nLast 3 games: 4-for-9, 1 HR, 1 RBI, 1.504 OPS",
       "timestamp": "2026-05-15T17:20:51.707372+00:00"
+    },
+    {
+      "id": "weekly_2026_2026w20_hit_664023_hislast3games",
+      "tweet_text": "Ian Happ is 4-for-9 (.444) over his last 3 games, 1 HR\n\nquietly on one\n\nhttps://thedugoutapi.com/player?mlbId=664023&name=Ian+Happ",
+      "tweet_id": "2055532464592822755",
+      "player": "Ian Happ",
+      "stat": "Ian Happ is 4-for-9 (.444) over his last 3 games, 1 HR",
+      "timestamp": "2026-05-16T06:15:04.262288+00:00"
     }
   ],
-  "last_run": "2026-05-15T17:20:51.707384+00:00"
+  "last_run": "2026-05-16T06:15:04.262303+00:00"
 }

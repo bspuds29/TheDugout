@@ -1368,3 +1368,38 @@ https://thedugoutapi.com/player?mlbId=670541&name=Yordan+Alvarez
 2026-05-15 17:20:51,706  INFO      poster — Tweet posted (text only) — id: 2055337628380393647
 2026-05-15 17:20:51,707  INFO      tracker — Marked as used: combined_670541_2026-05-14
 2026-05-15 17:20:51,707  INFO      __main__ — Done. Tweet ID: 2055337628380393647
+2026-05-16 06:15:00,624  INFO      __main__ — ============================================================
+2026-05-16 06:15:00,624  INFO      __main__ — TheDugout tweet bot starting — 2026-05-16T06:15:00.624733+00:00
+2026-05-16 06:15:00,624  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-16 06:15:00,624  INFO      __main__ — Collecting stat candidates…
+2026-05-16 06:15:00,625  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 5
+2026-05-16 06:15:00,625  INFO      collector — Fetching schedule for 2026-05-15
+2026-05-16 06:15:01,024  INFO      collector — Collected 53 game candidates
+2026-05-16 06:15:01,993  INFO      collector — Collected 16 weekly hitter candidates
+2026-05-16 06:15:02,172  INFO      collector — FanGraphs batting leaderboard: 171 rows
+2026-05-16 06:15:02,423  INFO      collector — FanGraphs pitching leaderboard: 79 rows
+2026-05-16 06:15:02,702  INFO      collector — Collected 30 season leader candidates
+2026-05-16 06:15:02,709  INFO      collector — Collected 6 team game candidates
+2026-05-16 06:15:02,745  INFO      collector — Collected 1 team streak candidates
+2026-05-16 06:15:02,746  INFO      collector — Built 6 combined hitting candidates
+2026-05-16 06:15:02,746  INFO      collector — Pitching drought=5 → applying ×1.75 boost to pitching candidates
+2026-05-16 06:15:02,746  INFO      collector — Total candidates: 112 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-16 06:15:02,746  INFO      __main__ — 110 fresh candidates after dedup (of 112 total)
+2026-05-16 06:15:02,747  INFO      __main__ — 95 candidates after player-repeat filter
+2026-05-16 06:15:02,747  INFO      __main__ — Selected candidate: 'Ian Happ' — Ian Happ is 4-for-9 (.444) over his last 3 games, 1 HR (score=71.7, type=weekly_hitting)
+2026-05-16 06:15:02,747  INFO      __main__ — Generating tweet via Claude…
+2026-05-16 06:15:04,030  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-16 06:15:04,048  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-16 06:15:04,048  INFO      __main__ — TWEET PREVIEW:
+Ian Happ is 4-for-9 (.444) over his last 3 games, 1 HR
+
+quietly on one
+
+https://thedugoutapi.com/player?mlbId=664023&name=Ian+Happ
+2026-05-16 06:15:04,048  INFO      __main__ — Length: 70 chars (body) + 23 (t.co URL) = 94 total
+2026-05-16 06:15:04,048  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-16 06:15:04,048  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-16 06:15:04,048  INFO      __main__ — Posting tweet…
+2026-05-16 06:15:04,261  INFO      poster — Tweet posted (text only) — id: 2055532464592822755
+2026-05-16 06:15:04,262  INFO      tracker — Marked as used: weekly_2026_2026w20_hit_664023_hislast3games
+2026-05-16 06:15:04,262  INFO      __main__ — Done. Tweet ID: 2055532464592822755
