@@ -1473,3 +1473,37 @@ https://thedugoutapi.com/player?mlbId=650911&name=Cristopher+Sánchez
 2026-05-17 06:39:01,158  INFO      poster — Tweet posted (text only) — id: 2055900879216095374
 2026-05-17 06:39:01,159  INFO      tracker — Marked as used: game_823382_pit_650911
 2026-05-17 06:39:01,160  INFO      __main__ — Done. Tweet ID: 2055900879216095374
+2026-05-17 16:44:10,754  INFO      __main__ — ============================================================
+2026-05-17 16:44:10,754  INFO      __main__ — TheDugout tweet bot starting — 2026-05-17T16:44:10.754158+00:00
+2026-05-17 16:44:10,754  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-17 16:44:10,754  INFO      __main__ — Collecting stat candidates…
+2026-05-17 16:44:10,754  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 0
+2026-05-17 16:44:10,755  INFO      collector — Fetching schedule for 2026-05-16
+2026-05-17 16:44:11,884  INFO      collector — Collected 59 game candidates
+2026-05-17 16:44:13,295  INFO      collector — Collected 16 weekly hitter candidates
+2026-05-17 16:44:13,472  INFO      collector — FanGraphs batting leaderboard: 172 rows
+2026-05-17 16:44:13,806  INFO      collector — FanGraphs pitching leaderboard: 74 rows
+2026-05-17 16:44:14,436  INFO      collector — Collected 30 season leader candidates
+2026-05-17 16:44:14,442  INFO      collector — Collected 4 team game candidates
+2026-05-17 16:44:14,531  INFO      collector — Collected 2 team streak candidates
+2026-05-17 16:44:14,532  INFO      collector — Built 2 combined hitting candidates
+2026-05-17 16:44:14,532  INFO      collector — Total candidates: 113 (last_tweet=pitching, last_stat=game_pitching)
+2026-05-17 16:44:14,532  INFO      __main__ — 109 fresh candidates after dedup (of 113 total)
+2026-05-17 16:44:14,532  INFO      __main__ — 96 candidates after player-repeat filter
+2026-05-17 16:44:14,532  INFO      __main__ — Selected candidate: 'Jakob Marsee' — Jakob Marsee is 7-for-9 (.778) over his last 3 games, 1 HR (score=198.5, type=weekly_hitting)
+2026-05-17 16:44:14,532  INFO      __main__ — Generating tweet via Claude…
+2026-05-17 16:44:15,855  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-17 16:44:15,876  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-17 16:44:15,876  INFO      __main__ — TWEET PREVIEW:
+Jakob Marsee is 7-for-9 (.778) over his last 3 games, 1 HR
+
+put some respect on it
+
+https://thedugoutapi.com/player?mlbId=805300&name=Jakob+Marsee
+2026-05-17 16:44:15,876  INFO      __main__ — Length: 82 chars (body) + 23 (t.co URL) = 106 total
+2026-05-17 16:44:15,877  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-17 16:44:15,877  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-17 16:44:15,877  INFO      __main__ — Posting tweet…
+2026-05-17 16:44:16,085  INFO      poster — Tweet posted (text only) — id: 2056053195051504015
+2026-05-17 16:44:16,086  INFO      tracker — Marked as used: weekly_2026_2026w20_hit_805300_hislast3games
+2026-05-17 16:44:16,087  INFO      __main__ — Done. Tweet ID: 2056053195051504015
