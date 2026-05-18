@@ -1507,3 +1507,39 @@ https://thedugoutapi.com/player?mlbId=805300&name=Jakob+Marsee
 2026-05-17 16:44:16,085  INFO      poster — Tweet posted (text only) — id: 2056053195051504015
 2026-05-17 16:44:16,086  INFO      tracker — Marked as used: weekly_2026_2026w20_hit_805300_hislast3games
 2026-05-17 16:44:16,087  INFO      __main__ — Done. Tweet ID: 2056053195051504015
+2026-05-18 07:54:33,681  INFO      __main__ — ============================================================
+2026-05-18 07:54:33,681  INFO      __main__ — TheDugout tweet bot starting — 2026-05-18T07:54:33.681360+00:00
+2026-05-18 07:54:33,681  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-18 07:54:33,681  INFO      __main__ — Collecting stat candidates…
+2026-05-18 07:54:33,681  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 1
+2026-05-18 07:54:33,682  INFO      collector — Fetching schedule for 2026-05-17
+2026-05-18 07:54:34,040  INFO      collector — Collected 58 game candidates
+2026-05-18 07:54:35,025  INFO      collector — Collected 13 weekly hitter candidates
+2026-05-18 07:54:35,201  INFO      collector — FanGraphs batting leaderboard: 172 rows
+2026-05-18 07:54:35,401  INFO      collector — FanGraphs pitching leaderboard: 74 rows
+2026-05-18 07:54:35,704  INFO      collector — Collected 30 season leader candidates
+2026-05-18 07:54:35,716  INFO      collector — Collected 6 team game candidates
+2026-05-18 07:54:35,759  INFO      collector — Collected 2 team streak candidates
+2026-05-18 07:54:35,759  INFO      collector — Built 3 combined hitting candidates
+2026-05-18 07:54:35,760  INFO      collector — Total candidates: 112 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-18 07:54:35,760  INFO      __main__ — 112 fresh candidates after dedup (of 112 total)
+2026-05-18 07:54:35,760  INFO      __main__ — 98 candidates after player-repeat filter
+2026-05-18 07:54:35,760  INFO      __main__ — Selected candidate: 'Gunnar Henderson' — Gunnar Henderson last night: 4-for-5, 1 HR, 2 RBI, 1 SB
+Last 3 games: 6-for-13, 1 HR, 3 RBI, 1 SB, 1.346 OPS (score=97.7, type=combined_hitting)
+2026-05-18 07:54:35,760  INFO      __main__ — Generating tweet via Claude…
+2026-05-18 07:54:38,017  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-18 07:54:38,035  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-18 07:54:38,035  INFO      __main__ — TWEET PREVIEW:
+Gunnar Henderson last night: 4-for-5, 1 HR, 2 RBI, 1 SB
+Last 3 games: 6-for-13, 1 HR, 3 RBI, 1 SB, 1.346 OPS
+
+someone call his agent
+
+https://thedugoutapi.com/player?mlbId=683002&name=Gunnar+Henderson
+2026-05-18 07:54:38,035  INFO      __main__ — Length: 132 chars (body) + 23 (t.co URL) = 156 total
+2026-05-18 07:54:38,035  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-18 07:54:38,035  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-18 07:54:38,035  INFO      __main__ — Posting tweet…
+2026-05-18 07:54:38,276  INFO      poster — Tweet posted (text only) — id: 2056282297037390322
+2026-05-18 07:54:38,277  INFO      tracker — Marked as used: combined_683002_2026-05-17
+2026-05-18 07:54:38,278  INFO      __main__ — Done. Tweet ID: 2056282297037390322
