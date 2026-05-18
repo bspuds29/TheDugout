@@ -1543,3 +1543,37 @@ https://thedugoutapi.com/player?mlbId=683002&name=Gunnar+Henderson
 2026-05-18 07:54:38,276  INFO      poster — Tweet posted (text only) — id: 2056282297037390322
 2026-05-18 07:54:38,277  INFO      tracker — Marked as used: combined_683002_2026-05-17
 2026-05-18 07:54:38,278  INFO      __main__ — Done. Tweet ID: 2056282297037390322
+2026-05-18 17:51:13,754  INFO      __main__ — ============================================================
+2026-05-18 17:51:13,754  INFO      __main__ — TheDugout tweet bot starting — 2026-05-18T17:51:13.754547+00:00
+2026-05-18 17:51:13,754  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-18 17:51:13,754  INFO      __main__ — Collecting stat candidates…
+2026-05-18 17:51:13,755  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 2
+2026-05-18 17:51:13,755  INFO      collector — Fetching schedule for 2026-05-17
+2026-05-18 17:51:14,024  INFO      collector — Collected 58 game candidates
+2026-05-18 17:51:15,148  INFO      collector — Collected 13 weekly hitter candidates
+2026-05-18 17:51:15,327  INFO      collector — FanGraphs batting leaderboard: 173 rows
+2026-05-18 17:51:15,540  INFO      collector — FanGraphs pitching leaderboard: 79 rows
+2026-05-18 17:51:15,766  INFO      collector — Collected 30 season leader candidates
+2026-05-18 17:51:15,775  INFO      collector — Collected 6 team game candidates
+2026-05-18 17:51:15,812  INFO      collector — Collected 2 team streak candidates
+2026-05-18 17:51:15,813  INFO      collector — Built 3 combined hitting candidates
+2026-05-18 17:51:15,813  INFO      collector — Total candidates: 112 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-18 17:51:15,813  INFO      __main__ — 111 fresh candidates after dedup (of 112 total)
+2026-05-18 17:51:15,814  INFO      __main__ — 95 candidates after player-repeat filter
+2026-05-18 17:51:15,814  INFO      __main__ — Selected candidate: 'José Ramírez' — José Ramírez is 6-for-11 (.545) over his last 3 games, 1 HR, 3 RBI, 2 SB (score=108.2, type=weekly_hitting)
+2026-05-18 17:51:15,814  INFO      __main__ — Generating tweet via Claude…
+2026-05-18 17:51:17,381  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-18 17:51:17,403  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-18 17:51:17,403  INFO      __main__ — TWEET PREVIEW:
+José Ramírez is 6-for-11 (.545) over his last 3 games, 1 HR, 3 RBI, 2 SB
+
+locked in
+
+https://thedugoutapi.com/player?mlbId=608070&name=José+Ramírez
+2026-05-18 17:51:17,404  INFO      __main__ — Length: 83 chars (body) + 23 (t.co URL) = 107 total
+2026-05-18 17:51:17,404  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-18 17:51:17,404  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-18 17:51:17,404  INFO      __main__ — Posting tweet…
+2026-05-18 17:51:17,651  INFO      poster — Tweet posted (text only) — id: 2056432450583028023
+2026-05-18 17:51:17,652  INFO      tracker — Marked as used: weekly_2026_2026w21_hit_608070_hislast3games
+2026-05-18 17:51:17,652  INFO      __main__ — Done. Tweet ID: 2056432450583028023
