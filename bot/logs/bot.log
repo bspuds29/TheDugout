@@ -1577,3 +1577,40 @@ https://thedugoutapi.com/player?mlbId=608070&name=José+Ramírez
 2026-05-18 17:51:17,651  INFO      poster — Tweet posted (text only) — id: 2056432450583028023
 2026-05-18 17:51:17,652  INFO      tracker — Marked as used: weekly_2026_2026w21_hit_608070_hislast3games
 2026-05-18 17:51:17,652  INFO      __main__ — Done. Tweet ID: 2056432450583028023
+2026-05-19 07:36:06,618  INFO      __main__ — ============================================================
+2026-05-19 07:36:06,618  INFO      __main__ — TheDugout tweet bot starting — 2026-05-19T07:36:06.618313+00:00
+2026-05-19 07:36:06,618  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-19 07:36:06,618  INFO      __main__ — Collecting stat candidates…
+2026-05-19 07:36:06,618  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 3
+2026-05-19 07:36:06,619  INFO      collector — Fetching schedule for 2026-05-18
+2026-05-19 07:36:07,163  INFO      collector — Collected 54 game candidates
+2026-05-19 07:36:08,388  INFO      collector — Collected 15 weekly hitter candidates
+2026-05-19 07:36:08,582  INFO      collector — FanGraphs batting leaderboard: 173 rows
+2026-05-19 07:36:08,808  INFO      collector — FanGraphs pitching leaderboard: 79 rows
+2026-05-19 07:36:09,097  INFO      collector — Collected 30 season leader candidates
+2026-05-19 07:36:09,114  INFO      collector — Collected 8 team game candidates
+2026-05-19 07:36:09,164  INFO      collector — Collected 1 team streak candidates
+2026-05-19 07:36:09,164  INFO      collector — Built 6 combined hitting candidates
+2026-05-19 07:36:09,165  INFO      collector — Pitching drought=3 → applying ×1.45 boost to pitching candidates
+2026-05-19 07:36:09,165  INFO      collector — Total candidates: 114 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-19 07:36:09,165  INFO      __main__ — 113 fresh candidates after dedup (of 114 total)
+2026-05-19 07:36:09,165  INFO      __main__ — 100 candidates after player-repeat filter
+2026-05-19 07:36:09,165  INFO      __main__ — Selected candidate: 'Sal Stewart' — Sal Stewart last night: 2-for-4, 1 HR, 1 RBI
+Last 3 games: 4-for-9, 1 HR, 2 RBI, 1 SB, 1.361 OPS (score=74.9, type=combined_hitting)
+2026-05-19 07:36:09,165  INFO      __main__ — Generating tweet via Claude…
+2026-05-19 07:36:11,453  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-19 07:36:11,472  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-19 07:36:11,472  INFO      __main__ — TWEET PREVIEW:
+Sal Stewart last night: 2-for-4, 1 HR, 1 RBI
+Last 3 games: 4-for-9, 1 HR, 2 RBI, 1 SB, 1.361 OPS
+
+quietly on one
+
+https://thedugoutapi.com/player?mlbId=701398&name=Sal+Stewart
+2026-05-19 07:36:11,472  INFO      __main__ — Length: 112 chars (body) + 23 (t.co URL) = 136 total
+2026-05-19 07:36:11,472  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-19 07:36:11,472  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-19 07:36:11,472  INFO      __main__ — Posting tweet…
+2026-05-19 07:36:11,698  INFO      poster — Tweet posted (text only) — id: 2056640043641421940
+2026-05-19 07:36:11,700  INFO      tracker — Marked as used: combined_701398_2026-05-18
+2026-05-19 07:36:11,700  INFO      __main__ — Done. Tweet ID: 2056640043641421940

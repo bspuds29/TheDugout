@@ -40,7 +40,8 @@
     "game_823382_pit_650911",
     "weekly_2026_2026w20_hit_805300_hislast3games",
     "combined_683002_2026-05-17",
-    "weekly_2026_2026w21_hit_608070_hislast3games"
+    "weekly_2026_2026w21_hit_608070_hislast3games",
+    "combined_701398_2026-05-18"
   ],
   "tweet_log": [
     {
@@ -370,7 +371,15 @@
       "player": "Jos\u00e9 Ram\u00edrez",
       "stat": "Jos\u00e9 Ram\u00edrez is 6-for-11 (.545) over his last 3 games, 1 HR, 3 RBI, 2 SB",
       "timestamp": "2026-05-18T17:51:17.652273+00:00"
+    },
+    {
+      "id": "combined_701398_2026-05-18",
+      "tweet_text": "Sal Stewart last night: 2-for-4, 1 HR, 1 RBI\nLast 3 games: 4-for-9, 1 HR, 2 RBI, 1 SB, 1.361 OPS\n\nquietly on one\n\nhttps://thedugoutapi.com/player?mlbId=701398&name=Sal+Stewart",
+      "tweet_id": "2056640043641421940",
+      "player": "Sal Stewart",
+      "stat": "Sal Stewart last night: 2-for-4, 1 HR, 1 RBI\nLast 3 games: 4-for-9, 1 HR, 2 RBI, 1 SB, 1.361 OPS",
+      "timestamp": "2026-05-19T07:36:11.699498+00:00"
     }
   ],
-  "last_run": "2026-05-18T17:51:17.652286+00:00"
+  "last_run": "2026-05-19T07:36:11.699512+00:00"
 }
