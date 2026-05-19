@@ -1614,3 +1614,38 @@ https://thedugoutapi.com/player?mlbId=701398&name=Sal+Stewart
 2026-05-19 07:36:11,698  INFO      poster — Tweet posted (text only) — id: 2056640043641421940
 2026-05-19 07:36:11,700  INFO      tracker — Marked as used: combined_701398_2026-05-18
 2026-05-19 07:36:11,700  INFO      __main__ — Done. Tweet ID: 2056640043641421940
+2026-05-19 17:56:05,297  INFO      __main__ — ============================================================
+2026-05-19 17:56:05,297  INFO      __main__ — TheDugout tweet bot starting — 2026-05-19T17:56:05.297892+00:00
+2026-05-19 17:56:05,298  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-19 17:56:05,298  INFO      __main__ — Collecting stat candidates…
+2026-05-19 17:56:05,298  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 4
+2026-05-19 17:56:05,299  INFO      collector — Fetching schedule for 2026-05-18
+2026-05-19 17:56:05,766  INFO      collector — Collected 54 game candidates
+2026-05-19 17:56:06,950  INFO      collector — Collected 16 weekly hitter candidates
+2026-05-19 17:56:07,214  INFO      collector — FanGraphs batting leaderboard: 173 rows
+2026-05-19 17:56:07,444  INFO      collector — FanGraphs pitching leaderboard: 74 rows
+2026-05-19 17:56:07,725  INFO      collector — Collected 30 season leader candidates
+2026-05-19 17:56:07,737  INFO      collector — Collected 8 team game candidates
+2026-05-19 17:56:07,802  INFO      collector — Collected 1 team streak candidates
+2026-05-19 17:56:07,803  INFO      collector — Built 6 combined hitting candidates
+2026-05-19 17:56:07,803  INFO      collector — Pitching drought=4 → applying ×1.60 boost to pitching candidates
+2026-05-19 17:56:07,803  INFO      collector — Total candidates: 115 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-19 17:56:07,803  INFO      __main__ — 113 fresh candidates after dedup (of 115 total)
+2026-05-19 17:56:07,803  INFO      __main__ — 100 candidates after player-repeat filter
+2026-05-19 17:56:07,803  INFO      __main__ — Selected candidate: 'Shohei Ohtani' — Shohei Ohtani is 7-for-12 (.583) over his last 3 games, 7 RBI (score=108.2, type=weekly_hitting)
+2026-05-19 17:56:07,803  INFO      __main__ — Generating tweet via Claude…
+2026-05-19 17:56:09,771  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-19 17:56:09,793  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-19 17:56:09,793  INFO      __main__ — TWEET PREVIEW:
+Shohei Ohtani is 7-for-12 (.583) over his last 3 games, 7 RBI
+
+how do you pitch to this guy
+
+https://thedugoutapi.com/player?mlbId=660271&name=Shohei+Ohtani
+2026-05-19 17:56:09,793  INFO      __main__ — Length: 91 chars (body) + 23 (t.co URL) = 115 total
+2026-05-19 17:56:09,793  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-19 17:56:09,793  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-19 17:56:09,793  INFO      __main__ — Posting tweet…
+2026-05-19 17:56:09,983  INFO      poster — Tweet posted (text only) — id: 2056796064624132467
+2026-05-19 17:56:09,985  INFO      tracker — Marked as used: weekly_2026_2026w21_hit_660271_hislast3games
+2026-05-19 17:56:09,985  INFO      __main__ — Done. Tweet ID: 2056796064624132467
