@@ -1649,3 +1649,40 @@ https://thedugoutapi.com/player?mlbId=660271&name=Shohei+Ohtani
 2026-05-19 17:56:09,983  INFO      poster — Tweet posted (text only) — id: 2056796064624132467
 2026-05-19 17:56:09,985  INFO      tracker — Marked as used: weekly_2026_2026w21_hit_660271_hislast3games
 2026-05-19 17:56:09,985  INFO      __main__ — Done. Tweet ID: 2056796064624132467
+2026-05-20 07:35:17,360  INFO      __main__ — ============================================================
+2026-05-20 07:35:17,360  INFO      __main__ — TheDugout tweet bot starting — 2026-05-20T07:35:17.360653+00:00
+2026-05-20 07:35:17,360  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-20 07:35:17,360  INFO      __main__ — Collecting stat candidates…
+2026-05-20 07:35:17,361  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 5
+2026-05-20 07:35:17,361  INFO      collector — Fetching schedule for 2026-05-19
+2026-05-20 07:35:18,870  INFO      collector — Collected 57 game candidates
+2026-05-20 07:35:21,365  INFO      collector — Collected 21 weekly hitter candidates
+2026-05-20 07:35:21,560  INFO      collector — FanGraphs batting leaderboard: 173 rows
+2026-05-20 07:35:21,843  INFO      collector — FanGraphs pitching leaderboard: 74 rows
+2026-05-20 07:35:22,350  INFO      collector — Collected 30 season leader candidates
+2026-05-20 07:35:22,364  INFO      collector — Collected 4 team game candidates
+2026-05-20 07:35:22,490  INFO      collector — Collected 0 team streak candidates
+2026-05-20 07:35:22,491  INFO      collector — Built 7 combined hitting candidates
+2026-05-20 07:35:22,491  INFO      collector — Pitching drought=5 → applying ×1.75 boost to pitching candidates
+2026-05-20 07:35:22,491  INFO      collector — Total candidates: 119 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-20 07:35:22,491  INFO      __main__ — 117 fresh candidates after dedup (of 119 total)
+2026-05-20 07:35:22,491  INFO      __main__ — 108 candidates after player-repeat filter
+2026-05-20 07:35:22,491  INFO      __main__ — Selected candidate: 'Bo Bichette' — Bo Bichette last night: 2-for-4, 2 HRs, 4 RBI
+Last 3 games: 6-for-15, 3 HRs, 7 RBI, 1.505 OPS (score=118.5, type=combined_hitting)
+2026-05-20 07:35:22,491  INFO      __main__ — Generating tweet via Claude…
+2026-05-20 07:35:24,729  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-20 07:35:24,749  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-20 07:35:24,749  INFO      __main__ — TWEET PREVIEW:
+Bo Bichette last night: 2-for-4, 2 HRs, 4 RBI
+Last 3 games: 6-for-15, 3 HRs, 7 RBI, 1.505 OPS
+
+Bo's locked back in
+
+https://thedugoutapi.com/player?mlbId=666182&name=Bo+Bichette
+2026-05-20 07:35:24,749  INFO      __main__ — Length: 114 chars (body) + 23 (t.co URL) = 138 total
+2026-05-20 07:35:24,749  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-20 07:35:24,749  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-20 07:35:24,749  INFO      __main__ — Posting tweet…
+2026-05-20 07:35:25,002  INFO      poster — Tweet posted (text only) — id: 2057002235675156910
+2026-05-20 07:35:25,004  INFO      tracker — Marked as used: combined_666182_2026-05-19
+2026-05-20 07:35:25,004  INFO      __main__ — Done. Tweet ID: 2057002235675156910

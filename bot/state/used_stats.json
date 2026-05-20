@@ -42,7 +42,8 @@
     "combined_683002_2026-05-17",
     "weekly_2026_2026w21_hit_608070_hislast3games",
     "combined_701398_2026-05-18",
-    "weekly_2026_2026w21_hit_660271_hislast3games"
+    "weekly_2026_2026w21_hit_660271_hislast3games",
+    "combined_666182_2026-05-19"
   ],
   "tweet_log": [
     {
@@ -388,7 +389,15 @@
       "player": "Shohei Ohtani",
       "stat": "Shohei Ohtani is 7-for-12 (.583) over his last 3 games, 7 RBI",
       "timestamp": "2026-05-19T17:56:09.984765+00:00"
+    },
+    {
+      "id": "combined_666182_2026-05-19",
+      "tweet_text": "Bo Bichette last night: 2-for-4, 2 HRs, 4 RBI\nLast 3 games: 6-for-15, 3 HRs, 7 RBI, 1.505 OPS\n\nBo's locked back in\n\nhttps://thedugoutapi.com/player?mlbId=666182&name=Bo+Bichette",
+      "tweet_id": "2057002235675156910",
+      "player": "Bo Bichette",
+      "stat": "Bo Bichette last night: 2-for-4, 2 HRs, 4 RBI\nLast 3 games: 6-for-15, 3 HRs, 7 RBI, 1.505 OPS",
+      "timestamp": "2026-05-20T07:35:25.003573+00:00"
     }
   ],
-  "last_run": "2026-05-19T17:56:09.984778+00:00"
+  "last_run": "2026-05-20T07:35:25.003587+00:00"
 }
