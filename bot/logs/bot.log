@@ -1686,3 +1686,38 @@ https://thedugoutapi.com/player?mlbId=666182&name=Bo+Bichette
 2026-05-20 07:35:25,002  INFO      poster — Tweet posted (text only) — id: 2057002235675156910
 2026-05-20 07:35:25,004  INFO      tracker — Marked as used: combined_666182_2026-05-19
 2026-05-20 07:35:25,004  INFO      __main__ — Done. Tweet ID: 2057002235675156910
+2026-05-20 18:09:23,029  INFO      __main__ — ============================================================
+2026-05-20 18:09:23,029  INFO      __main__ — TheDugout tweet bot starting — 2026-05-20T18:09:23.029929+00:00
+2026-05-20 18:09:23,030  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-20 18:09:23,030  INFO      __main__ — Collecting stat candidates…
+2026-05-20 18:09:23,030  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 6
+2026-05-20 18:09:23,031  INFO      collector — Fetching schedule for 2026-05-19
+2026-05-20 18:09:23,612  INFO      collector — Collected 57 game candidates
+2026-05-20 18:09:24,806  INFO      collector — Collected 19 weekly hitter candidates
+2026-05-20 18:09:24,988  INFO      collector — FanGraphs batting leaderboard: 173 rows
+2026-05-20 18:09:25,205  INFO      collector — FanGraphs pitching leaderboard: 75 rows
+2026-05-20 18:09:25,435  INFO      collector — Collected 30 season leader candidates
+2026-05-20 18:09:25,453  INFO      collector — Collected 4 team game candidates
+2026-05-20 18:09:25,510  INFO      collector — Collected 0 team streak candidates
+2026-05-20 18:09:25,510  INFO      collector — Built 7 combined hitting candidates
+2026-05-20 18:09:25,511  INFO      collector — Pitching drought=6 → applying ×1.90 boost to pitching candidates
+2026-05-20 18:09:25,511  INFO      collector — Total candidates: 117 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-20 18:09:25,511  INFO      __main__ — 114 fresh candidates after dedup (of 117 total)
+2026-05-20 18:09:25,511  INFO      __main__ — 107 candidates after player-repeat filter
+2026-05-20 18:09:25,512  INFO      __main__ — Selected candidate: 'James Wood' — James Wood is 8-for-15 (.533) over his last 3 games, 1 HR, 5 RBI (score=94.2, type=weekly_hitting)
+2026-05-20 18:09:25,512  INFO      __main__ — Generating tweet via Claude…
+2026-05-20 18:09:27,383  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-20 18:09:27,405  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-20 18:09:27,405  INFO      __main__ — TWEET PREVIEW:
+James Wood is 8-for-15 (.533) over his last 3 games, 1 HR, 5 RBI
+
+lock him up
+
+https://thedugoutapi.com/player?mlbId=695578&name=James+Wood
+2026-05-20 18:09:27,405  INFO      __main__ — Length: 77 chars (body) + 23 (t.co URL) = 101 total
+2026-05-20 18:09:27,405  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-20 18:09:27,405  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-20 18:09:27,405  INFO      __main__ — Posting tweet…
+2026-05-20 18:09:27,697  INFO      poster — Tweet posted (text only) — id: 2057161798290145549
+2026-05-20 18:09:27,699  INFO      tracker — Marked as used: weekly_2026_2026w21_hit_695578_hislast3games
+2026-05-20 18:09:27,699  INFO      __main__ — Done. Tweet ID: 2057161798290145549
