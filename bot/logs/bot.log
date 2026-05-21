@@ -1721,3 +1721,38 @@ https://thedugoutapi.com/player?mlbId=695578&name=James+Wood
 2026-05-20 18:09:27,697  INFO      poster — Tweet posted (text only) — id: 2057161798290145549
 2026-05-20 18:09:27,699  INFO      tracker — Marked as used: weekly_2026_2026w21_hit_695578_hislast3games
 2026-05-20 18:09:27,699  INFO      __main__ — Done. Tweet ID: 2057161798290145549
+2026-05-21 07:41:13,692  INFO      __main__ — ============================================================
+2026-05-21 07:41:13,692  INFO      __main__ — TheDugout tweet bot starting — 2026-05-21T07:41:13.692344+00:00
+2026-05-21 07:41:13,692  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-21 07:41:13,692  INFO      __main__ — Collecting stat candidates…
+2026-05-21 07:41:13,692  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 7
+2026-05-21 07:41:13,693  INFO      collector — Fetching schedule for 2026-05-20
+2026-05-21 07:41:14,236  INFO      collector — Collected 60 game candidates
+2026-05-21 07:41:15,801  INFO      collector — Collected 19 weekly hitter candidates
+2026-05-21 07:41:15,988  INFO      collector — FanGraphs batting leaderboard: 173 rows
+2026-05-21 07:41:16,175  INFO      collector — FanGraphs pitching leaderboard: 75 rows
+2026-05-21 07:41:16,481  INFO      collector — Collected 30 season leader candidates
+2026-05-21 07:41:16,502  INFO      collector — Collected 3 team game candidates
+2026-05-21 07:41:16,568  INFO      collector — Collected 3 team streak candidates
+2026-05-21 07:41:16,569  INFO      collector — Built 4 combined hitting candidates
+2026-05-21 07:41:16,569  INFO      collector — Pitching drought=7 → applying ×2.05 boost to pitching candidates
+2026-05-21 07:41:16,569  INFO      collector — Total candidates: 119 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-21 07:41:16,569  INFO      __main__ — 116 fresh candidates after dedup (of 119 total)
+2026-05-21 07:41:16,570  INFO      __main__ — 107 candidates after player-repeat filter
+2026-05-21 07:41:16,570  INFO      __main__ — Selected candidate: 'Kyle Harrison' — Kyle Harrison tossed 7.0 scoreless innings with 11 Ks (score=76.3, type=game_pitching)
+2026-05-21 07:41:16,570  INFO      __main__ — Generating tweet via Claude…
+2026-05-21 07:41:18,221  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-21 07:41:18,240  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-21 07:41:18,240  INFO      __main__ — TWEET PREVIEW:
+Kyle Harrison last night: 7.0 IP, 2 H, 11 K, 1 BB, 0 ER
+
+go look him up
+
+https://thedugoutapi.com/player?mlbId=690986&name=Kyle+Harrison
+2026-05-21 07:41:18,240  INFO      __main__ — Length: 71 chars (body) + 23 (t.co URL) = 95 total
+2026-05-21 07:41:18,240  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-21 07:41:18,240  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-21 07:41:18,240  INFO      __main__ — Posting tweet…
+2026-05-21 07:41:18,486  INFO      poster — Tweet posted (text only) — id: 2057366106168267136
+2026-05-21 07:41:18,488  INFO      tracker — Marked as used: game_824678_pit_690986
+2026-05-21 07:41:18,488  INFO      __main__ — Done. Tweet ID: 2057366106168267136
