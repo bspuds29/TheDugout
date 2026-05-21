@@ -1756,3 +1756,37 @@ https://thedugoutapi.com/player?mlbId=690986&name=Kyle+Harrison
 2026-05-21 07:41:18,486  INFO      poster — Tweet posted (text only) — id: 2057366106168267136
 2026-05-21 07:41:18,488  INFO      tracker — Marked as used: game_824678_pit_690986
 2026-05-21 07:41:18,488  INFO      __main__ — Done. Tweet ID: 2057366106168267136
+2026-05-21 17:49:57,383  INFO      __main__ — ============================================================
+2026-05-21 17:49:57,383  INFO      __main__ — TheDugout tweet bot starting — 2026-05-21T17:49:57.383396+00:00
+2026-05-21 17:49:57,383  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-21 17:49:57,383  INFO      __main__ — Collecting stat candidates…
+2026-05-21 17:49:57,383  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 0
+2026-05-21 17:49:57,384  INFO      collector — Fetching schedule for 2026-05-20
+2026-05-21 17:49:58,319  INFO      collector — Collected 60 game candidates
+2026-05-21 17:49:59,904  INFO      collector — Collected 17 weekly hitter candidates
+2026-05-21 17:50:00,084  INFO      collector — FanGraphs batting leaderboard: 172 rows
+2026-05-21 17:50:04,330  INFO      collector — FanGraphs pitching leaderboard: 77 rows
+2026-05-21 17:50:04,842  INFO      collector — Collected 30 season leader candidates
+2026-05-21 17:50:04,849  INFO      collector — Collected 3 team game candidates
+2026-05-21 17:50:04,949  INFO      collector — Collected 3 team streak candidates
+2026-05-21 17:50:04,950  INFO      collector — Built 3 combined hitting candidates
+2026-05-21 17:50:04,950  INFO      collector — Total candidates: 116 (last_tweet=pitching, last_stat=game_pitching)
+2026-05-21 17:50:04,950  INFO      __main__ — 113 fresh candidates after dedup (of 116 total)
+2026-05-21 17:50:04,950  INFO      __main__ — 104 candidates after player-repeat filter
+2026-05-21 17:50:04,950  INFO      __main__ — Selected candidate: 'Drake Baldwin' — Drake Baldwin is 3-for-7 (.429) over his last 3 games, 1 HR, 4 RBI (score=90.0, type=weekly_hitting)
+2026-05-21 17:50:04,950  INFO      __main__ — Generating tweet via Claude…
+2026-05-21 17:50:06,752  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-21 17:50:06,766  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-21 17:50:06,766  INFO      __main__ — TWEET PREVIEW:
+Drake Baldwin is 3-for-7 (.429) over his last 3 games, 1 HR, 4 RBI
+
+someone call his agent
+
+https://thedugoutapi.com/player?mlbId=686948&name=Drake+Baldwin
+2026-05-21 17:50:06,766  INFO      __main__ — Length: 90 chars (body) + 23 (t.co URL) = 114 total
+2026-05-21 17:50:06,766  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-21 17:50:06,767  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-21 17:50:06,767  INFO      __main__ — Posting tweet…
+2026-05-21 17:50:07,028  INFO      poster — Tweet posted (text only) — id: 2057519317781238123
+2026-05-21 17:50:07,029  INFO      tracker — Marked as used: weekly_2026_2026w21_hit_686948_hislast3games
+2026-05-21 17:50:07,029  INFO      __main__ — Done. Tweet ID: 2057519317781238123
