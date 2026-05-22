@@ -1790,3 +1790,37 @@ https://thedugoutapi.com/player?mlbId=686948&name=Drake+Baldwin
 2026-05-21 17:50:07,028  INFO      poster — Tweet posted (text only) — id: 2057519317781238123
 2026-05-21 17:50:07,029  INFO      tracker — Marked as used: weekly_2026_2026w21_hit_686948_hislast3games
 2026-05-21 17:50:07,029  INFO      __main__ — Done. Tweet ID: 2057519317781238123
+2026-05-22 07:36:26,591  INFO      __main__ — ============================================================
+2026-05-22 07:36:26,591  INFO      __main__ — TheDugout tweet bot starting — 2026-05-22T07:36:26.591542+00:00
+2026-05-22 07:36:26,591  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-22 07:36:26,591  INFO      __main__ — Collecting stat candidates…
+2026-05-22 07:36:26,592  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 1
+2026-05-22 07:36:26,592  INFO      collector — Fetching schedule for 2026-05-21
+2026-05-22 07:36:26,893  INFO      collector — Collected 27 game candidates
+2026-05-22 07:36:27,910  INFO      collector — Collected 16 weekly hitter candidates
+2026-05-22 07:36:28,083  INFO      collector — FanGraphs batting leaderboard: 172 rows
+2026-05-22 07:36:28,251  INFO      collector — FanGraphs pitching leaderboard: 77 rows
+2026-05-22 07:36:28,497  INFO      collector — Collected 30 season leader candidates
+2026-05-22 07:36:28,507  INFO      collector — Collected 1 team game candidates
+2026-05-22 07:36:28,549  INFO      collector — Collected 4 team streak candidates
+2026-05-22 07:36:28,549  INFO      collector — Built 1 combined hitting candidates
+2026-05-22 07:36:28,549  INFO      collector — Total candidates: 79 (last_tweet=hitting, last_stat=weekly_hitting)
+2026-05-22 07:36:28,550  INFO      __main__ — 76 fresh candidates after dedup (of 79 total)
+2026-05-22 07:36:28,550  INFO      __main__ — 72 candidates after player-repeat filter
+2026-05-22 07:36:28,550  INFO      __main__ — Selected candidate: 'Michael Harris II' — Michael Harris II went 2/5 with 2 HRs, 3 RBI, 8 total bases (score=59.8, type=game_hitting)
+2026-05-22 07:36:28,550  INFO      __main__ — Generating tweet via Claude…
+2026-05-22 07:36:30,263  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-22 07:36:30,285  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-22 07:36:30,285  INFO      __main__ — TWEET PREVIEW:
+Michael Harris II last night: 2-for-5, 2 HRs, 3 RBI, 8 total bases
+
+not bad i suppose
+
+https://thedugoutapi.com/player?mlbId=671739&name=Michael+Harris+II
+2026-05-22 07:36:30,285  INFO      __main__ — Length: 85 chars (body) + 23 (t.co URL) = 109 total
+2026-05-22 07:36:30,285  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-22 07:36:30,285  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-22 07:36:30,285  INFO      __main__ — Posting tweet…
+2026-05-22 07:36:30,486  INFO      poster — Tweet posted (text only) — id: 2057727286053343610
+2026-05-22 07:36:30,488  INFO      tracker — Marked as used: game_823864_hit_671739
+2026-05-22 07:36:30,488  INFO      __main__ — Done. Tweet ID: 2057727286053343610

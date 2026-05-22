@@ -46,7 +46,8 @@
     "combined_666182_2026-05-19",
     "weekly_2026_2026w21_hit_695578_hislast3games",
     "game_824678_pit_690986",
-    "weekly_2026_2026w21_hit_686948_hislast3games"
+    "weekly_2026_2026w21_hit_686948_hislast3games",
+    "game_823864_hit_671739"
   ],
   "tweet_log": [
     {
@@ -424,7 +425,15 @@
       "player": "Drake Baldwin",
       "stat": "Drake Baldwin is 3-for-7 (.429) over his last 3 games, 1 HR, 4 RBI",
       "timestamp": "2026-05-21T17:50:07.029363+00:00"
+    },
+    {
+      "id": "game_823864_hit_671739",
+      "tweet_text": "Michael Harris II last night: 2-for-5, 2 HRs, 3 RBI, 8 total bases\n\nnot bad i suppose\n\nhttps://thedugoutapi.com/player?mlbId=671739&name=Michael+Harris+II",
+      "tweet_id": "2057727286053343610",
+      "player": "Michael Harris II",
+      "stat": "Michael Harris II went 2/5 with 2 HRs, 3 RBI, 8 total bases",
+      "timestamp": "2026-05-22T07:36:30.487974+00:00"
     }
   ],
-  "last_run": "2026-05-21T17:50:07.029377+00:00"
+  "last_run": "2026-05-22T07:36:30.487986+00:00"
 }
