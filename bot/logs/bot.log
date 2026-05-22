@@ -1824,3 +1824,37 @@ https://thedugoutapi.com/player?mlbId=671739&name=Michael+Harris+II
 2026-05-22 07:36:30,486  INFO      poster — Tweet posted (text only) — id: 2057727286053343610
 2026-05-22 07:36:30,488  INFO      tracker — Marked as used: game_823864_hit_671739
 2026-05-22 07:36:30,488  INFO      __main__ — Done. Tweet ID: 2057727286053343610
+2026-05-22 17:43:59,554  INFO      __main__ — ============================================================
+2026-05-22 17:43:59,554  INFO      __main__ — TheDugout tweet bot starting — 2026-05-22T17:43:59.554261+00:00
+2026-05-22 17:43:59,554  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-22 17:43:59,554  INFO      __main__ — Collecting stat candidates…
+2026-05-22 17:43:59,554  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 2
+2026-05-22 17:43:59,555  INFO      collector — Fetching schedule for 2026-05-21
+2026-05-22 17:44:00,454  INFO      collector — Collected 27 game candidates
+2026-05-22 17:44:02,506  INFO      collector — Collected 16 weekly hitter candidates
+2026-05-22 17:44:02,784  INFO      collector — FanGraphs batting leaderboard: 171 rows
+2026-05-22 17:44:03,032  INFO      collector — FanGraphs pitching leaderboard: 78 rows
+2026-05-22 17:44:03,695  INFO      collector — Collected 30 season leader candidates
+2026-05-22 17:44:03,708  INFO      collector — Collected 1 team game candidates
+2026-05-22 17:44:03,817  INFO      collector — Collected 4 team streak candidates
+2026-05-22 17:44:03,817  INFO      collector — Built 1 combined hitting candidates
+2026-05-22 17:44:03,817  INFO      collector — Total candidates: 79 (last_tweet=hitting, last_stat=game_hitting)
+2026-05-22 17:44:03,817  INFO      __main__ — 76 fresh candidates after dedup (of 79 total)
+2026-05-22 17:44:03,818  INFO      __main__ — 73 candidates after player-repeat filter
+2026-05-22 17:44:03,818  INFO      __main__ — Selected candidate: 'Nick Kurtz' — Nick Kurtz is 5-for-11 (.455) over his last 3 games, 7 RBI (score=69.3, type=weekly_hitting)
+2026-05-22 17:44:03,818  INFO      __main__ — Generating tweet via Claude…
+2026-05-22 17:44:05,547  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-22 17:44:05,569  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-22 17:44:05,569  INFO      __main__ — TWEET PREVIEW:
+Nick Kurtz is 5-for-11 (.455) over his last 3 games, 7 RBI
+
+extend him
+
+https://thedugoutapi.com/player?mlbId=701762&name=Nick+Kurtz
+2026-05-22 17:44:05,570  INFO      __main__ — Length: 70 chars (body) + 23 (t.co URL) = 94 total
+2026-05-22 17:44:05,570  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-22 17:44:05,570  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-22 17:44:05,570  INFO      __main__ — Posting tweet…
+2026-05-22 17:44:05,856  INFO      poster — Tweet posted (text only) — id: 2057880190941053039
+2026-05-22 17:44:05,858  INFO      tracker — Marked as used: weekly_2026_2026w21_hit_701762_hislast3games
+2026-05-22 17:44:05,858  INFO      __main__ — Done. Tweet ID: 2057880190941053039

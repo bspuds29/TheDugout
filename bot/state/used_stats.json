@@ -47,7 +47,8 @@
     "weekly_2026_2026w21_hit_695578_hislast3games",
     "game_824678_pit_690986",
     "weekly_2026_2026w21_hit_686948_hislast3games",
-    "game_823864_hit_671739"
+    "game_823864_hit_671739",
+    "weekly_2026_2026w21_hit_701762_hislast3games"
   ],
   "tweet_log": [
     {
@@ -433,7 +434,15 @@
       "player": "Michael Harris II",
       "stat": "Michael Harris II went 2/5 with 2 HRs, 3 RBI, 8 total bases",
       "timestamp": "2026-05-22T07:36:30.487974+00:00"
+    },
+    {
+      "id": "weekly_2026_2026w21_hit_701762_hislast3games",
+      "tweet_text": "Nick Kurtz is 5-for-11 (.455) over his last 3 games, 7 RBI\n\nextend him\n\nhttps://thedugoutapi.com/player?mlbId=701762&name=Nick+Kurtz",
+      "tweet_id": "2057880190941053039",
+      "player": "Nick Kurtz",
+      "stat": "Nick Kurtz is 5-for-11 (.455) over his last 3 games, 7 RBI",
+      "timestamp": "2026-05-22T17:44:05.858148+00:00"
     }
   ],
-  "last_run": "2026-05-22T07:36:30.487986+00:00"
+  "last_run": "2026-05-22T17:44:05.858161+00:00"
 }
