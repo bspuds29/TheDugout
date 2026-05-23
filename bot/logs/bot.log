@@ -1895,3 +1895,38 @@ https://thedugoutapi.com/player?mlbId=682928&name=CJ+Abrams
 2026-05-23 06:27:51,509  INFO      poster — Tweet posted (text only) — id: 2058072397685678235
 2026-05-23 06:27:51,511  INFO      tracker — Marked as used: combined_682928_2026-05-22
 2026-05-23 06:27:51,511  INFO      __main__ — Done. Tweet ID: 2058072397685678235
+2026-05-23 16:48:23,794  INFO      __main__ — ============================================================
+2026-05-23 16:48:23,794  INFO      __main__ — TheDugout tweet bot starting — 2026-05-23T16:48:23.794795+00:00
+2026-05-23 16:48:23,795  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-23 16:48:23,795  INFO      __main__ — Collecting stat candidates…
+2026-05-23 16:48:23,795  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 4
+2026-05-23 16:48:23,796  INFO      collector — Fetching schedule for 2026-05-22
+2026-05-23 16:48:24,115  INFO      collector — Collected 45 game candidates
+2026-05-23 16:48:25,135  INFO      collector — Collected 13 weekly hitter candidates
+2026-05-23 16:48:25,337  INFO      collector — FanGraphs batting leaderboard: 171 rows
+2026-05-23 16:48:25,509  INFO      collector — FanGraphs pitching leaderboard: 72 rows
+2026-05-23 16:48:26,083  INFO      collector — Collected 30 season leader candidates
+2026-05-23 16:48:26,100  INFO      collector — Collected 2 team game candidates
+2026-05-23 16:48:26,144  INFO      collector — Collected 4 team streak candidates
+2026-05-23 16:48:26,145  INFO      collector — Built 3 combined hitting candidates
+2026-05-23 16:48:26,145  INFO      collector — Pitching drought=4 → applying ×1.60 boost to pitching candidates
+2026-05-23 16:48:26,145  INFO      collector — Total candidates: 97 (last_tweet=hitting, last_stat=combined_hitting)
+2026-05-23 16:48:26,145  INFO      __main__ — 94 fresh candidates after dedup (of 97 total)
+2026-05-23 16:48:26,146  INFO      __main__ — 91 candidates after player-repeat filter
+2026-05-23 16:48:26,146  INFO      __main__ — Selected candidate: 'Gavin Williams' — Gavin Williams tossed 8.0 scoreless innings with 11 Ks (score=77.6, type=game_pitching)
+2026-05-23 16:48:26,146  INFO      __main__ — Generating tweet via Claude…
+2026-05-23 16:48:27,541  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-23 16:48:27,564  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-23 16:48:27,564  INFO      __main__ — TWEET PREVIEW:
+Gavin Williams last night: 8.0 IP, 4 H, 11 K, 0 BB, 0 ER
+
+put some respect on it
+
+https://thedugoutapi.com/player?mlbId=668909&name=Gavin+Williams
+2026-05-23 16:48:27,564  INFO      __main__ — Length: 80 chars (body) + 23 (t.co URL) = 104 total
+2026-05-23 16:48:27,564  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-23 16:48:27,564  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-23 16:48:27,564  INFO      __main__ — Posting tweet…
+2026-05-23 16:48:27,796  INFO      poster — Tweet posted (text only) — id: 2058228577972170936
+2026-05-23 16:48:27,798  INFO      tracker — Marked as used: game_823461_pit_668909
+2026-05-23 16:48:27,798  INFO      __main__ — Done. Tweet ID: 2058228577972170936
