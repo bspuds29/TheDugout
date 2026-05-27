@@ -1019,10 +1019,10 @@ export default function PlayerPage() {
                     {/* Labels */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
                       <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>
-                        Bat <strong style={{ color: 'var(--color-accent)' }}>{batWar.toFixed(1)}</strong>
+                        Batting <strong style={{ color: 'var(--color-accent)' }}>{batWar.toFixed(1)}</strong>
                       </span>
                       <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>
-                        Pit <strong style={{ color: 'var(--color-teal)' }}>{pitWar.toFixed(1)}</strong>
+                        Pitching <strong style={{ color: 'var(--color-teal)' }}>{pitWar.toFixed(1)}</strong>
                       </span>
                     </div>
                   </div>
