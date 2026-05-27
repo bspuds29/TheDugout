@@ -1018,18 +1018,12 @@ export default function PlayerPage() {
                     </div>
                     {/* Labels */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--color-accent)', display: 'inline-block', flexShrink: 0 }} />
-                        <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>
-                          Bat <strong style={{ color: 'var(--color-accent)' }}>{batWar.toFixed(1)}</strong>
-                        </span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>
-                          Pit <strong style={{ color: 'var(--color-teal)' }}>{pitWar.toFixed(1)}</strong>
-                        </span>
-                        <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--color-teal)', display: 'inline-block', flexShrink: 0 }} />
-                      </div>
+                      <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>
+                        Bat <strong style={{ color: 'var(--color-accent)' }}>{batWar.toFixed(1)}</strong>
+                      </span>
+                      <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>
+                        Pit <strong style={{ color: 'var(--color-teal)' }}>{pitWar.toFixed(1)}</strong>
+                      </span>
                     </div>
                   </div>
                 );
