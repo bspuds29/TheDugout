@@ -999,6 +999,41 @@ export default function PlayerPage() {
                 })()}
               </span>
               <span className="player-hero-war-label">{isTwoWay ? 'Combined fWAR' : 'fWAR'} · {YEAR}</span>
+
+              {/* Two-way WAR split bar — only shown for players with both roles */}
+              {isTwoWay && (() => {
+                const batWar = hitting?.war  ?? 0;
+                const pitWar = pitching?.war ?? 0;
+                const total  = batWar + pitWar;
+                if (total === 0) return null;
+                // Clamp each segment so negative values don't break the bar
+                const batPct = Math.max(0, Math.min(100, (batWar / total) * 100));
+                const pitPct = 100 - batPct;
+                return (
+                  <div style={{ marginTop: 8, width: '100%' }}>
+                    {/* Segmented bar */}
+                    <div style={{ display: 'flex', height: 6, borderRadius: 4, overflow: 'hidden', gap: 2 }}>
+                      <div style={{ width: `${batPct}%`, background: 'var(--color-accent)', borderRadius: 4, transition: 'width 600ms ease' }} />
+                      <div style={{ width: `${pitPct}%`, background: 'var(--color-teal)',   borderRadius: 4, transition: 'width 600ms ease' }} />
+                    </div>
+                    {/* Labels */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--color-accent)', display: 'inline-block', flexShrink: 0 }} />
+                        <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>
+                          Bat <strong style={{ color: 'var(--color-accent)' }}>{batWar.toFixed(1)}</strong>
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>
+                          Pit <strong style={{ color: 'var(--color-teal)' }}>{pitWar.toFixed(1)}</strong>
+                        </span>
+                        <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--color-teal)', display: 'inline-block', flexShrink: 0 }} />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
               <div className="player-hero-actions">
                 {mlbId && (
                   <FavoriteButton
