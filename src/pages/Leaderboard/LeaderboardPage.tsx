@@ -42,6 +42,24 @@ const PIT_ROLE_GROUPS = [
   { label: 'RP', values: ['RP'] },
 ];
 
+const AL_TEAMS = new Set([
+  'LAA','HOU','ATH','OAK','SEA','TEX',
+  'BAL','BOS','NYY','TB','TBR','TOR',
+  'CWS','CHW','CLE','DET','KC','KCR','MIN',
+]);
+const NL_TEAMS = new Set([
+  'ARI','COL','LAD','SD','SDP','SF','SFG',
+  'CHC','CIN','MIL','PIT','STL',
+  'ATL','MIA','NYM','PHI','WSH','WSN',
+]);
+
+function teamLeague(abbr: string): 'AL' | 'NL' | null {
+  const a = abbr.toUpperCase();
+  if (AL_TEAMS.has(a)) return 'AL';
+  if (NL_TEAMS.has(a)) return 'NL';
+  return null;
+}
+
 // ─── Formatters ───────────────────────────────────────────────────────────────
 
 const pct = (v: number | null) => (v != null ? `${v.toFixed(1)}%` : '—');
@@ -304,6 +322,8 @@ interface FilterBarProps {
   label?: string;
   teams?: string[];
   paOptionsList: number[];
+  leagueFilter: 'All' | 'AL' | 'NL';
+  onLeagueChange: (v: 'All' | 'AL' | 'NL') => void;
 }
 
 function FilterBar({
@@ -319,6 +339,8 @@ function FilterBar({
   label = 'Min PA',
   teams = [],
   paOptionsList,
+  leagueFilter,
+  onLeagueChange,
 }: FilterBarProps) {
   const isIP = label.includes('IP');
   const unit = isIP ? 'IP' : 'PA';
@@ -340,6 +362,18 @@ function FilterBar({
               onClick={() => onSelect(g.label)}
             >
               {g.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="lb-tabs" style={{ marginLeft: 8 }}>
+          {(['All', 'AL', 'NL'] as const).map((lg) => (
+            <button
+              key={lg}
+              className={`lb-tab${leagueFilter === lg ? ' lb-tab--active' : ''}`}
+              onClick={() => onLeagueChange(lg)}
+            >
+              {lg}
             </button>
           ))}
         </div>
@@ -398,6 +432,7 @@ function BattingLeaderboardWithFilters() {
   // Filter state — QUALIFIED sentinel means "≥ 3.1 × team games played"
   const [posGroup, setPosGroup] = useState('All');
   const [teamFilter, setTeamFilter] = useState('');
+  const [leagueFilter, setLeagueFilter] = useState<'All' | 'AL' | 'NL'>('All');
   const [minPA, setMinPA] = useState(QUALIFIED);
 
   // Dynamic qualified threshold: 3.1 PA per team game played
@@ -426,6 +461,7 @@ function BattingLeaderboardWithFilters() {
     return rawRows.filter((r) => {
       if (effectiveMinPA > 0 && r.pa < effectiveMinPA) return false;
       if (teamFilter && r.team !== teamFilter) return false;
+      if (leagueFilter !== 'All' && teamLeague(r.team) !== leagueFilter) return false;
       if (posGroupObj && posGroupObj.values.length > 0) {
         const pos = r.pos ?? '';
         const matches = posGroupObj.values.some((pv) => pos === pv || pos.includes(pv));
@@ -433,7 +469,7 @@ function BattingLeaderboardWithFilters() {
       }
       return true;
     });
-  }, [rawRows, effectiveMinPA, teamFilter, posGroupObj]);
+  }, [rawRows, effectiveMinPA, teamFilter, leagueFilter, posGroupObj]);
 
   const mergedRows = useMemo(
     () => mergeBatterRows(filteredRows, xStatsMap, scMapRaw),
@@ -687,6 +723,8 @@ function BattingLeaderboardWithFilters() {
         onSelect={setPosGroup}
         teamFilter={teamFilter}
         onTeamChange={setTeamFilter}
+        leagueFilter={leagueFilter}
+        onLeagueChange={setLeagueFilter}
         minPA={minPA}
         onMinPAChange={setMinPA}
         qualifiedThreshold={qualifiedPA ?? undefined}
@@ -749,6 +787,7 @@ function PitchingLeaderboardWithFilters() {
   // Filter state — QUALIFIED sentinel means "≥ 1.0 IP per team game played"
   const [roleGroup, setRoleGroup] = useState('All');
   const [teamFilter, setTeamFilter] = useState('');
+  const [leagueFilter, setLeagueFilter] = useState<'All' | 'AL' | 'NL'>('All');
   const [minIP, setMinIP] = useState(QUALIFIED);
 
   // Dynamic qualified threshold: 1.0 IP per team game played
@@ -777,12 +816,13 @@ function PitchingLeaderboardWithFilters() {
     return rawRows.filter((r) => {
       if (effectiveMinIP > 0 && (r.ip ?? 0) < effectiveMinIP) return false;
       if (teamFilter && r.team !== teamFilter) return false;
+      if (leagueFilter !== 'All' && teamLeague(r.team) !== leagueFilter) return false;
       if (roleGroupObj && roleGroupObj.values.length > 0) {
         if (!roleGroupObj.values.includes(r.pos ?? '')) return false;
       }
       return true;
     });
-  }, [rawRows, effectiveMinIP, teamFilter, roleGroupObj]);
+  }, [rawRows, effectiveMinIP, teamFilter, leagueFilter, roleGroupObj]);
 
   const mergedRows = useMemo(
     () => mergePitcherRows(filteredRows, xStatsMap, scMapRaw),
@@ -1023,6 +1063,8 @@ function PitchingLeaderboardWithFilters() {
         onSelect={setRoleGroup}
         teamFilter={teamFilter}
         onTeamChange={setTeamFilter}
+        leagueFilter={leagueFilter}
+        onLeagueChange={setLeagueFilter}
         minPA={minIP}
         onMinPAChange={setMinIP}
         qualifiedThreshold={qualifiedIP ?? undefined}
