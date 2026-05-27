@@ -1017,11 +1017,11 @@ export default function PlayerPage() {
                       <div style={{ width: `${pitPct}%`, background: 'var(--color-teal)',   borderRadius: 4, transition: 'width 600ms ease' }} />
                     </div>
                     {/* Labels */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
-                      <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5, gap: 8 }}>
+                      <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
                         Batting <strong style={{ color: 'var(--color-accent)' }}>{batWar.toFixed(1)}</strong>
                       </span>
-                      <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)' }}>
+                      <span style={{ fontSize: 10, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
                         Pitching <strong style={{ color: 'var(--color-teal)' }}>{pitWar.toFixed(1)}</strong>
                       </span>
                     </div>
