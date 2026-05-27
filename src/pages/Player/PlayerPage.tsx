@@ -988,17 +988,17 @@ export default function PlayerPage() {
                 </button>
               </div>
             )}
-            {/* WAR badge — reflect selected role for two-way players */}
+            {/* WAR badge — two-way players always show combined pitching + hitting WAR */}
             <div className="player-hero-war">
               <span className="player-hero-war-value">
                 {(() => {
                   const war = isTwoWay
-                    ? (twoWayRole === 'pitching' ? pitching?.war : hitting?.war) ?? 0
+                    ? (pitching?.war ?? 0) + (hitting?.war ?? 0)
                     : (pitching?.war ?? hitting?.war ?? 0);
                   return war !== 0 ? war.toFixed(1) : '—';
                 })()}
               </span>
-              <span className="player-hero-war-label">fWAR · {YEAR}</span>
+              <span className="player-hero-war-label">{isTwoWay ? 'Combined fWAR' : 'fWAR'} · {YEAR}</span>
               <div className="player-hero-actions">
                 {mlbId && (
                   <FavoriteButton
