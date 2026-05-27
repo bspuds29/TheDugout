@@ -248,6 +248,26 @@ function coloredSpan(
 
 // ─── RankCell ─────────────────────────────────────────────────────────────────
 
+/**
+ * Compute a tied rank for rowIndex given the current sort.
+ * e.g. if rows 1 and 2 share the same value → both show rank 2, next shows rank 4.
+ */
+function tiedRank(rowIndex: number, meta: SortMeta): number {
+  const { sortKey, sortedData, reversed } = meta;
+  if (!sortKey || !sortedData.length) {
+    return reversed ? meta.total - rowIndex : rowIndex + 1;
+  }
+  // Walk backwards from this row counting how many rows have a strictly better value
+  const rows = sortedData as Record<string, unknown>[];
+  const myVal = rows[rowIndex]?.[sortKey];
+  // rank = 1 + number of rows with a strictly different (better) value before us
+  let betterCount = 0;
+  for (let i = 0; i < rowIndex; i++) {
+    if (rows[i]?.[sortKey] !== myVal) betterCount++;
+  }
+  return betterCount + 1;
+}
+
 function RankCell({ rank }: { rank: number }) {
   return (
     <span
@@ -496,7 +516,7 @@ function BattingLeaderboardWithFilters() {
       align: 'right' as const,
       width: '36px',
       render: (_v: unknown, _row: MergedBatterRow, rowIndex: number, meta: SortMeta) => (
-        <RankCell rank={meta.reversed ? meta.total - rowIndex : rowIndex + 1} />
+        <RankCell rank={tiedRank(rowIndex, meta)} />
       ),
     },
     {

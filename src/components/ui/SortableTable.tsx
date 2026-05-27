@@ -8,6 +8,10 @@ export interface SortMeta {
   total: number;
   /** true when the table is currently sorted worst-first (opposite of the column's natural best direction) */
   reversed: boolean;
+  /** The key currently being sorted on — used for tie-rank computation */
+  sortKey: string | undefined;
+  /** The fully sorted data array — used for tie-rank computation */
+  sortedData: unknown[];
 }
 
 interface Column<T> {
@@ -146,7 +150,7 @@ export default function SortableTable<T extends Record<string, unknown>>({
   const activeCol = sortKey ? columns.find(c => String(c.key) === sortKey) : undefined;
   const naturalDir = activeCol?.firstClickDir ?? 'desc';
   const reversed = !!sortKey && sortDir !== naturalDir;
-  const meta: SortMeta = { sortDir, total: sorted.length, reversed };
+  const meta: SortMeta = { sortDir, total: sorted.length, reversed, sortKey, sortedData: sorted as unknown[] };
 
   return (
     <div className="stable-wrap">
