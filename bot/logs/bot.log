@@ -2404,3 +2404,57 @@ Traceback (most recent call last):
     raise HTTPException(response)
 tweepy.errors.HTTPException: 402 Payment Required
 Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+2026-05-28 18:28:51,395  INFO      __main__ — ============================================================
+2026-05-28 18:28:51,395  INFO      __main__ — TheDugout tweet bot starting — 2026-05-28T18:28:51.395609+00:00
+2026-05-28 18:28:51,395  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-05-28 18:28:51,395  INFO      __main__ — Collecting stat candidates…
+2026-05-28 18:28:51,396  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 0
+2026-05-28 18:28:51,396  INFO      collector — Fetching schedule for 2026-05-27
+2026-05-28 18:28:52,723  INFO      collector — Collected 50 game candidates
+2026-05-28 18:28:54,413  INFO      collector — Collected 18 weekly hitter candidates
+2026-05-28 18:28:54,630  INFO      collector — FanGraphs batting leaderboard: 168 rows
+2026-05-28 18:28:54,971  INFO      collector — FanGraphs pitching leaderboard: 71 rows
+2026-05-28 18:28:55,687  INFO      collector — Collected 30 season leader candidates
+2026-05-28 18:28:55,725  INFO      collector — Collected 7 team game candidates
+2026-05-28 18:28:55,800  INFO      collector — Collected 3 team streak candidates
+2026-05-28 18:28:55,801  INFO      collector — Built 7 combined hitting candidates
+2026-05-28 18:28:55,801  INFO      collector — Total candidates: 115 (last_tweet=pitching, last_stat=game_pitching)
+2026-05-28 18:28:55,801  INFO      __main__ — 115 fresh candidates after dedup (of 115 total)
+2026-05-28 18:28:55,802  INFO      __main__ — 107 candidates after player-repeat filter
+2026-05-28 18:28:55,802  INFO      __main__ — Selected candidate: 'Yordan Alvarez' — Yordan Alvarez last night: 3-for-4, 2 HRs, 2 RBI
+Last 3 games: 6-for-12, 5 HRs, 8 RBI, 2.321 OPS (score=215.9, type=combined_hitting)
+2026-05-28 18:28:55,802  INFO      __main__ — Generating tweet via Claude…
+2026-05-28 18:28:58,815  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-05-28 18:28:58,834  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-28 18:28:58,834  INFO      __main__ — TWEET PREVIEW:
+Yordan Alvarez last night: 3-for-4, 2 HRs, 2 RBI
+Last 3 games: 6-for-12, 5 HRs, 8 RBI, 2.321 OPS
+
+how do you pitch to this guy
+
+https://thedugoutapi.com/player?mlbId=670541&name=Yordan+Alvarez
+2026-05-28 18:28:58,834  INFO      __main__ — Length: 126 chars (body) + 23 (t.co URL) = 150 total
+2026-05-28 18:28:58,834  INFO      __main__ — ──────────────────────────────────────────────────
+2026-05-28 18:28:58,834  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-05-28 18:28:58,834  INFO      __main__ — Posting tweet…
+2026-05-28 18:28:59,016  ERROR     poster — Failed to post tweet: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+2026-05-28 18:28:59,016  ERROR     __main__ — Tweet posting failed: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+Traceback (most recent call last):
+  File "/home/runner/work/TheDugout/TheDugout/bot/main.py", line 204, in run
+    tweet_id = poster.post_tweet(full_tweet, image_bytes)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/TheDugout/TheDugout/bot/poster.py", line 95, in post_tweet
+    response = client.create_tweet(
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 845, in create_tweet
+    return self._make_request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 129, in _make_request
+    response = self.request(method, route, params=request_params,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 119, in request
+    raise HTTPException(response)
+tweepy.errors.HTTPException: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
