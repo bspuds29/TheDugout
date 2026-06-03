@@ -2981,3 +2981,57 @@ Traceback (most recent call last):
   File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 100, in request
     raise Forbidden(response)
 tweepy.errors.Forbidden: 403 Forbidden
+2026-06-03 08:47:06,563  INFO      __main__ — ============================================================
+2026-06-03 08:47:06,563  INFO      __main__ — TheDugout tweet bot starting — 2026-06-03T08:47:06.563302+00:00
+2026-06-03 08:47:06,563  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-06-03 08:47:06,563  INFO      __main__ — Collecting stat candidates…
+2026-06-03 08:47:06,563  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 0
+2026-06-03 08:47:06,564  INFO      collector — Fetching schedule for 2026-06-02
+2026-06-03 08:47:07,868  INFO      collector — Collected 60 game candidates
+2026-06-03 08:47:10,157  INFO      collector — Collected 18 weekly hitter candidates
+2026-06-03 08:47:10,372  INFO      collector — FanGraphs batting leaderboard: 160 rows
+2026-06-03 08:47:10,659  INFO      collector — FanGraphs pitching leaderboard: 72 rows
+2026-06-03 08:47:11,285  INFO      collector — Collected 30 season leader candidates
+2026-06-03 08:47:11,299  INFO      collector — Collected 2 team game candidates
+2026-06-03 08:47:11,397  INFO      collector — Collected 2 team streak candidates
+2026-06-03 08:47:11,398  INFO      collector — Built 8 combined hitting candidates
+2026-06-03 08:47:11,398  INFO      collector — Total candidates: 120 (last_tweet=pitching, last_stat=game_pitching)
+2026-06-03 08:47:11,398  INFO      __main__ — 120 fresh candidates after dedup (of 120 total)
+2026-06-03 08:47:11,399  INFO      __main__ — 108 candidates after player-repeat filter
+2026-06-03 08:47:11,399  INFO      __main__ — Selected candidate: 'Pete Alonso' — Pete Alonso last night: 2-for-4, 1 HR, 2 RBI
+Last 3 games: 5-for-12, 1 HR, 4 RBI, 1.129 OPS (score=83.8, type=combined_hitting)
+2026-06-03 08:47:11,399  INFO      __main__ — Generating tweet via Claude…
+2026-06-03 08:47:13,528  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-03 08:47:13,550  INFO      __main__ — ──────────────────────────────────────────────────
+2026-06-03 08:47:13,550  INFO      __main__ — TWEET PREVIEW:
+Pete Alonso last night: 2-for-4, 1 HR, 2 RBI
+Last 3 games: 5-for-12, 1 HR, 4 RBI, 1.129 OPS
+
+settling in nicely in Baltimore
+
+https://thedugoutapi.com/player?mlbId=624413&name=Pete+Alonso
+2026-06-03 08:47:13,550  INFO      __main__ — Length: 124 chars (body) + 23 (t.co URL) = 148 total
+2026-06-03 08:47:13,550  INFO      __main__ — ──────────────────────────────────────────────────
+2026-06-03 08:47:13,550  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-06-03 08:47:13,550  INFO      __main__ — Posting tweet…
+2026-06-03 08:47:13,752  ERROR     poster — Failed to post tweet: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+2026-06-03 08:47:13,752  ERROR     __main__ — Tweet posting failed: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+Traceback (most recent call last):
+  File "/home/runner/work/TheDugout/TheDugout/bot/main.py", line 204, in run
+    tweet_id = poster.post_tweet(full_tweet, image_bytes)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/TheDugout/TheDugout/bot/poster.py", line 95, in post_tweet
+    response = client.create_tweet(
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 845, in create_tweet
+    return self._make_request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 129, in _make_request
+    response = self.request(method, route, params=request_params,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 119, in request
+    raise HTTPException(response)
+tweepy.errors.HTTPException: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
