@@ -3087,3 +3087,61 @@ Traceback (most recent call last):
     raise HTTPException(response)
 tweepy.errors.HTTPException: 402 Payment Required
 Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+2026-06-04 08:12:12,772  INFO      __main__ — ============================================================
+2026-06-04 08:12:12,772  INFO      __main__ — TheDugout tweet bot starting — 2026-06-04T08:12:12.772436+00:00
+2026-06-04 08:12:12,772  INFO      __main__ — Season: 2026  |  Dry-run: False
+2026-06-04 08:12:12,772  INFO      __main__ — Collecting stat candidates…
+2026-06-04 08:12:12,772  INFO      __main__ — Pitching drought (consecutive non-pitcher tweets): 0
+2026-06-04 08:12:12,773  INFO      collector — Fetching schedule for 2026-06-03
+2026-06-04 08:12:13,538  INFO      collector — Collected 58 game candidates
+2026-06-04 08:12:13,618  WARNING   collector — Request failed (attempt 1/3): https://www.fangraphs.com/api/leaders/major-league/data — 403 Client Error: Forbidden for url: https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=y&season=2026&season1=2026&startdate=&enddate=&month=0&hand=&team=0&pageitems=500&pagenum=1&ind=0&rost=0&players=0&type=8&sortdir=default&sortstat=WAR
+2026-06-04 08:12:14,704  WARNING   collector — Request failed (attempt 2/3): https://www.fangraphs.com/api/leaders/major-league/data — 403 Client Error: Forbidden for url: https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=y&season=2026&season1=2026&startdate=&enddate=&month=0&hand=&team=0&pageitems=500&pagenum=1&ind=0&rost=0&players=0&type=8&sortdir=default&sortstat=WAR
+2026-06-04 08:12:16,779  WARNING   collector — FanGraphs batting unavailable for weekly trends: 403 Client Error: Forbidden for url: https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=y&season=2026&season1=2026&startdate=&enddate=&month=0&hand=&team=0&pageitems=500&pagenum=1&ind=0&rost=0&players=0&type=8&sortdir=default&sortstat=WAR
+2026-06-04 08:12:16,907  WARNING   collector — Request failed (attempt 1/3): https://www.fangraphs.com/api/leaders/major-league/data — 403 Client Error: Forbidden for url: https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=y&season=2026&season1=2026&startdate=&enddate=&month=0&hand=&team=0&pageitems=500&pagenum=1&ind=0&rost=0&players=0&type=8&sortdir=default&sortstat=WAR
+2026-06-04 08:12:18,048  WARNING   collector — Request failed (attempt 2/3): https://www.fangraphs.com/api/leaders/major-league/data — 403 Client Error: Forbidden for url: https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=y&season=2026&season1=2026&startdate=&enddate=&month=0&hand=&team=0&pageitems=500&pagenum=1&ind=0&rost=0&players=0&type=8&sortdir=default&sortstat=WAR
+2026-06-04 08:12:20,084  WARNING   collector — FanGraphs batting fetch failed: 403 Client Error: Forbidden for url: https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=bat&lg=all&qual=y&season=2026&season1=2026&startdate=&enddate=&month=0&hand=&team=0&pageitems=500&pagenum=1&ind=0&rost=0&players=0&type=8&sortdir=default&sortstat=WAR
+2026-06-04 08:12:20,126  WARNING   collector — Request failed (attempt 1/3): https://www.fangraphs.com/api/leaders/major-league/data — 403 Client Error: Forbidden for url: https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=y&season=2026&season1=2026&startdate=&enddate=&month=0&hand=&team=0&pageitems=500&pagenum=1&ind=0&rost=0&players=0&type=8&sortdir=default&sortstat=WAR
+2026-06-04 08:12:21,258  WARNING   collector — Request failed (attempt 2/3): https://www.fangraphs.com/api/leaders/major-league/data — 403 Client Error: Forbidden for url: https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=y&season=2026&season1=2026&startdate=&enddate=&month=0&hand=&team=0&pageitems=500&pagenum=1&ind=0&rost=0&players=0&type=8&sortdir=default&sortstat=WAR
+2026-06-04 08:12:23,293  WARNING   collector — FanGraphs pitching fetch failed: 403 Client Error: Forbidden for url: https://www.fangraphs.com/api/leaders/major-league/data?pos=all&stats=pit&lg=all&qual=y&season=2026&season1=2026&startdate=&enddate=&month=0&hand=&team=0&pageitems=500&pagenum=1&ind=0&rost=0&players=0&type=8&sortdir=default&sortstat=WAR
+2026-06-04 08:12:23,294  INFO      collector — Collected 0 season leader candidates
+2026-06-04 08:12:23,312  INFO      collector — Collected 6 team game candidates
+2026-06-04 08:12:23,383  INFO      collector — Collected 0 team streak candidates
+2026-06-04 08:12:23,383  INFO      collector — Built 0 combined hitting candidates
+2026-06-04 08:12:23,383  INFO      collector — Total candidates: 64 (last_tweet=pitching, last_stat=game_pitching)
+2026-06-04 08:12:23,384  INFO      __main__ — 64 fresh candidates after dedup (of 64 total)
+2026-06-04 08:12:23,384  INFO      __main__ — 61 candidates after player-repeat filter
+2026-06-04 08:12:23,384  INFO      __main__ — Selected candidate: 'Sam Antonacci' — Sam Antonacci went 4/4 with 4-for-4 (score=45.2, type=game_hitting)
+2026-06-04 08:12:23,384  INFO      __main__ — Generating tweet via Claude…
+2026-06-04 08:12:25,498  INFO      httpx — HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-06-04 08:12:25,513  INFO      __main__ — ──────────────────────────────────────────────────
+2026-06-04 08:12:25,513  INFO      __main__ — TWEET PREVIEW:
+Sam Antonacci went 4-for-4 last night, 1 RBI, 6 total bases
+
+lock him up
+
+https://thedugoutapi.com/player?mlbId=803011&name=Sam+Antonacci
+2026-06-04 08:12:25,513  INFO      __main__ — Length: 72 chars (body) + 23 (t.co URL) = 96 total
+2026-06-04 08:12:25,513  INFO      __main__ — ──────────────────────────────────────────────────
+2026-06-04 08:12:25,513  INFO      __main__ — Image upload disabled (INCLUDE_IMAGE=false)
+2026-06-04 08:12:25,513  INFO      __main__ — Posting tweet…
+2026-06-04 08:12:25,632  ERROR     poster — Failed to post tweet: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+2026-06-04 08:12:25,633  ERROR     __main__ — Tweet posting failed: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
+Traceback (most recent call last):
+  File "/home/runner/work/TheDugout/TheDugout/bot/main.py", line 204, in run
+    tweet_id = poster.post_tweet(full_tweet, image_bytes)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/TheDugout/TheDugout/bot/poster.py", line 95, in post_tweet
+    response = client.create_tweet(
+               ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 845, in create_tweet
+    return self._make_request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 129, in _make_request
+    response = self.request(method, route, params=request_params,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/tweepy/client.py", line 119, in request
+    raise HTTPException(response)
+tweepy.errors.HTTPException: 402 Payment Required
+Your enrolled account [2049291892181827585] does not have any credits to fulfill this request.
