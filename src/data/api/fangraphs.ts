@@ -16,7 +16,11 @@
  * "FanGraphs data unavailable" notice in the UI rather than silent zeros.
  */
 
-const FG_BASE = 'https://www.fangraphs.com';
+// In dev, route through the Vite proxy to avoid CORS / 403 blocks from FanGraphs.
+// In production, requests go directly (requires FanGraphs to allow CORS from this origin).
+const FG_BASE = import.meta.env.DEV
+  ? '/fg-proxy'   // Vite rewrites /fg-proxy/* → https://www.fangraphs.com/*
+  : 'https://www.fangraphs.com';
 
 // ─── Module-level cache (one fetch per season per type) ───────────────
 
