@@ -1145,17 +1145,6 @@ export default function PlayerPage() {
                   <span>Bats/Throws: {person.bats ?? '—'}/{person.throws ?? '—'}</span>
                 )}
                 {person?.height && <span>{person.height}</span>}
-                {draftInfo?.draftYear && (
-                  <span className="player-hero-draft">
-                    {[
-                      `${draftInfo.draftYear} Draft`,
-                      draftInfo.round     ? `Rd ${draftInfo.round}` : null,
-                      draftInfo.pickNumber != null ? `Pick ${draftInfo.pickNumber}` : null,
-                      draftInfo.draftTeam?.name ?? null,
-                      draftInfo.school?.name ? `(${draftInfo.school.name})` : null,
-                    ].filter(Boolean).join(' · ')}
-                  </span>
-                )}
               </div>
             </div>
             {/* Two-way player toggle */}
