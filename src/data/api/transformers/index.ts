@@ -98,6 +98,11 @@ export function transformPerson(raw: RawMLBPerson): Player {
     height: raw.height ?? '',
     weight: raw.weight ?? 0,
     birthdate: raw.birthDate ?? '',
+    birthCity: raw.birthCity,
+    birthStateProvince: raw.birthStateProvince,
+    mlbDebutDate: raw.mlbDebutDate,
+    nickName: raw.nickName,
+    positionName: raw.primaryPosition?.name,
   };
 }
 

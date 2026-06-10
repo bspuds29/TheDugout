@@ -596,6 +596,125 @@ function SplitsPitching({ splits }: { splits: PitchingSplitsData | null | undefi
   );
 }
 
+// ─── Player Info Tab ──────────────────────────────────────────────────
+
+function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
+  if (!value && value !== 0) return null;
+  return (
+    <div style={{
+      display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+      padding: '10px 0', borderBottom: '1px solid var(--color-border)',
+      gap: 16,
+    }}>
+      <span style={{ fontSize: 12, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', flexShrink: 0 }}>
+        {label}
+      </span>
+      <span style={{ fontSize: 14, color: 'var(--color-text-primary)', fontWeight: 500, textAlign: 'right' }}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function InfoSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div style={{
+      background: 'var(--color-surface)',
+      border: '1px solid var(--color-border)',
+      borderRadius: 12,
+      padding: '20px 24px',
+    }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>
+        {title}
+      </div>
+      <div style={{ width: 32, height: 2, background: 'var(--color-accent)', borderRadius: 2, marginBottom: 12 }} />
+      {children}
+    </div>
+  );
+}
+
+function handLabel(code: string, type: 'bat' | 'throw') {
+  if (code === 'S') return 'Switch';
+  if (code === 'R') return type === 'bat' ? 'Right' : 'Right';
+  if (code === 'L') return 'Left';
+  return code;
+}
+
+function fmtDate(iso: string) {
+  if (!iso) return null;
+  const d = new Date(iso + 'T12:00:00Z');
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function fmtBirthLocation(city?: string, state?: string, country?: string) {
+  const parts = [city, state, country].filter(Boolean);
+  return parts.length ? parts.join(', ') : null;
+}
+
+function PlayerInfoTab({ person, draftInfo }: {
+  person: import('../../data/types').Player | null;
+  draftInfo: import('../../data/api/mlbStats').RawDraftInfo | null;
+}) {
+  if (!person) return (
+    <p style={{ color: 'var(--color-text-muted)', fontSize: 13, padding: '24px 0' }}>
+      Player info not available.
+    </p>
+  );
+
+  const birthLocation = fmtBirthLocation(person.birthCity, person.birthStateProvince, person.nationality);
+  const batsLabel = handLabel(person.bats, 'bat') + (person.bats === 'S' ? ' Hitter' : '');
+  const throwsLabel = handLabel(person.throws, 'throw');
+
+  const draftLine = draftInfo?.draftYear ? [
+    `${draftInfo.draftYear} MLB Draft`,
+    draftInfo.round     ? `Round ${draftInfo.round}`           : null,
+    draftInfo.pickNumber != null ? `Pick ${draftInfo.pickNumber}` : null,
+  ].filter(Boolean).join(' · ') : null;
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16, marginTop: 8 }}>
+
+      {/* Personal */}
+      <InfoSection title="Personal">
+        <InfoRow label="Full Name"   value={person.name} />
+        {person.nickName && <InfoRow label="Nickname" value={`"${person.nickName}"`} />}
+        <InfoRow label="Date of Birth" value={fmtDate(person.birthdate)} />
+        <InfoRow label="Age"          value={person.age > 0 ? person.age : null} />
+        <InfoRow label="Birthplace"   value={birthLocation} />
+        <InfoRow label="Height"       value={person.height || null} />
+        <InfoRow label="Weight"       value={person.weight > 0 ? `${person.weight} lbs` : null} />
+      </InfoSection>
+
+      {/* Playing Info */}
+      <InfoSection title="Playing Info">
+        <InfoRow label="Position"     value={person.positionName || null} />
+        <InfoRow label="Jersey #"     value={person.jersey > 0 ? `#${person.jersey}` : null} />
+        <InfoRow label="Bats"         value={batsLabel} />
+        <InfoRow label="Throws"       value={throwsLabel} />
+        <InfoRow label="Team"         value={person.isFreeAgent ? 'Free Agent' : (person.teamName || null)} />
+        <InfoRow label="MLB Debut"    value={fmtDate(person.mlbDebutDate ?? '')} />
+      </InfoSection>
+
+      {/* Draft */}
+      {(draftInfo?.draftYear || draftInfo?.school?.name) && (
+        <InfoSection title="Draft">
+          <InfoRow label="Draft"        value={draftLine} />
+          {draftInfo.draftTeam?.name && (
+            <InfoRow label="Drafted By" value={draftInfo.draftTeam.name} />
+          )}
+          {draftInfo.school?.name && (
+            <InfoRow label="School"     value={[
+              draftInfo.school.name,
+              draftInfo.school.state ?? draftInfo.school.country,
+            ].filter(Boolean).join(', ')} />
+          )}
+        </InfoSection>
+      )}
+
+    </div>
+  );
+}
+
 // ─── Career Stats Tab ─────────────────────────────────────────────────
 
 import type {
@@ -821,7 +940,7 @@ export default function PlayerPage() {
   const [searchParams] = useSearchParams();
   const mlbId     = searchParams.get('mlbId') ? parseInt(searchParams.get('mlbId')!, 10) : null;
   const playerName = searchParams.get('name') ?? '';
-  const [tab, setTab]           = useState<'overview' | 'stats' | 'gamelog' | 'splits' | 'career'>('overview');
+  const [tab, setTab]           = useState<'overview' | 'stats' | 'gamelog' | 'splits' | 'career' | 'info'>('overview');
   const [twoWayRole, setTwoWayRole] = useState<'hitting' | 'pitching'>('hitting');
 
   // Reset tab + role when player changes
@@ -1122,6 +1241,7 @@ export default function PlayerPage() {
               { id: 'gamelog',  label: 'Game Log'   },
               { id: 'splits',   label: 'Splits'     },
               { id: 'career',   label: 'Career'     },
+              { id: 'info',     label: 'Player Info' },
             ] as const).map(t => (
               <button
                 key={t.id}
@@ -1181,6 +1301,11 @@ export default function PlayerPage() {
               showHitting={showHittingNow}
               showPitching={showPitchingNow}
             />
+          )}
+
+          {/* ─── Info tab ─────────────────────────────────────────── */}
+          {tab === 'info' && (
+            <PlayerInfoTab person={person} draftInfo={draftInfo} />
           )}
 
           {/* ─── Overview tab ─────────────────────────────────────── */}

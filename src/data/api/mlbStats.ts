@@ -27,18 +27,23 @@ export interface RawMLBPerson {
   fullName: string;
   firstName: string;
   lastName: string;
+  nickName?: string;
   birthDate: string;
+  birthCity?: string;
+  birthStateProvince?: string;
+  birthCountry?: string;
   currentAge: number;
   height: string;
   weight: number;
   primaryNumber: string;
-  birthCity: string;
-  birthCountry: string;
-  batSide: { code: string };
-  pitchHand: { code: string };
-  primaryPosition: { abbreviation: string; name: string };
+  batSide: { code: string; description: string };
+  pitchHand: { code: string; description: string };
+  primaryPosition: { abbreviation: string; name: string; type: string };
   currentTeam?: { id: number; name: string; abbreviation: string };
   mlbDebutDate?: string;
+  nameFirstLast?: string;
+  strikeZoneTop?: number;
+  strikeZoneBottom?: number;
   rosterEntries?: Array<{
     isActive: boolean;
     status: { code: string; description: string };

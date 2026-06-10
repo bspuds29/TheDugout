@@ -45,6 +45,11 @@ export interface Player {
   height: string;
   weight: number;
   birthdate: string;
+  birthCity?: string;
+  birthStateProvince?: string;
+  mlbDebutDate?: string;
+  nickName?: string;
+  positionName?: string;
 }
 
 // ─── Pitching Stats ─────────────────────────────────────────────────
