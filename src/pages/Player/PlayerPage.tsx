@@ -598,18 +598,49 @@ function SplitsPitching({ splits }: { splits: PitchingSplitsData | null | undefi
 
 // ─── Career Stats Tab ─────────────────────────────────────────────────
 
-import type { CareerHittingSeason, CareerPitchingSeason } from '../../data/api/mlbStats';
+import type {
+  CareerHittingSeason, CareerPitchingSeason,
+  CareerHittingTotals, CareerPitchingTotals,
+} from '../../data/api/mlbStats';
+
+// WAR isn't returned by the stats=career endpoint so we still sum it from seasons.
+// Multi-team seasons have a combined "N Teams" row — use that to avoid double-counting.
+function careerWAR<T extends { season: string; teamAbbr: string; war: number }>(rows: T[]): number {
+  const seen = new Set<string>();
+  let total = 0;
+  for (const r of rows) {
+    // If a combined row exists for this season, only count it once
+    if (r.teamAbbr.endsWith('Teams')) {
+      total += r.war;
+      seen.add(r.season);
+    } else if (!seen.has(r.season)) {
+      total += r.war;
+    }
+  }
+  return total;
+}
 
 function CareerStatsTab({
-  hitting, pitching, isLoading, showHitting, showPitching,
+  hitting, pitching, hittingTotals, pitchingTotals, isLoading, showHitting, showPitching,
 }: {
   hitting: CareerHittingSeason[];
   pitching: CareerPitchingSeason[];
+  hittingTotals: CareerHittingTotals | null;
+  pitchingTotals: CareerPitchingTotals | null;
   isLoading: boolean;
   showHitting: boolean;
   showPitching: boolean;
 }) {
   if (isLoading) return <StatSkeleton />;
+
+  const hitWAR = careerWAR(hitting);
+  const pitWAR = careerWAR(pitching);
+
+  const careerRowStyle: React.CSSProperties = {
+    borderTop: '2px solid var(--color-border)',
+    background: 'color-mix(in srgb, var(--color-surface) 60%, var(--color-bg))',
+    fontWeight: 700,
+  };
 
   return (
     <>
@@ -643,6 +674,25 @@ function CareerStatsTab({
                   </tr>
                 ))}
               </tbody>
+              {pitchingTotals && (
+                <tfoot>
+                  <tr style={careerRowStyle}>
+                    <td className="career-td-season" style={{ color: 'var(--color-text-primary)' }}>Career</td>
+                    <td className="career-td-team" style={{ color: 'var(--color-text-secondary)' }}>MLB</td>
+                    <td>{pitchingTotals.g}</td><td>{pitchingTotals.gs}</td>
+                    <td>{pitchingTotals.w}</td><td>{pitchingTotals.l}</td><td>{pitchingTotals.sv}</td>
+                    <td>{pitchingTotals.ip.toFixed(1)}</td>
+                    <td>{pitchingTotals.era.toFixed(2)}</td>
+                    <td>{pitchingTotals.whip.toFixed(2)}</td>
+                    <td>{pitchingTotals.k9.toFixed(1)}</td>
+                    <td>{pitchingTotals.bb9.toFixed(1)}</td>
+                    <td>{pitchingTotals.k}</td><td>{pitchingTotals.bb}</td><td>{pitchingTotals.hr}</td>
+                    <td className="career-td-key" style={{ color: 'var(--color-accent)' }}>
+                      {pitWAR !== 0 ? pitWAR.toFixed(1) : '—'}
+                    </td>
+                  </tr>
+                </tfoot>
+              )}
             </table>
           </div>
         </>
@@ -677,6 +727,24 @@ function CareerStatsTab({
                   </tr>
                 ))}
               </tbody>
+              {hittingTotals && (
+                <tfoot>
+                  <tr style={careerRowStyle}>
+                    <td className="career-td-season" style={{ color: 'var(--color-text-primary)' }}>Career</td>
+                    <td className="career-td-team" style={{ color: 'var(--color-text-secondary)' }}>MLB</td>
+                    <td>{hittingTotals.g}</td><td>{hittingTotals.pa}</td>
+                    <td>{hittingTotals.h}</td><td>{hittingTotals.doubles}</td><td>{hittingTotals.triples}</td><td>{hittingTotals.hr}</td>
+                    <td>{hittingTotals.rbi}</td><td>{hittingTotals.r}</td><td>{hittingTotals.sb}</td>
+                    <td>{hittingTotals.avg.toFixed(3)}</td>
+                    <td>{hittingTotals.obp.toFixed(3)}</td>
+                    <td>{hittingTotals.slg.toFixed(3)}</td>
+                    <td>{hittingTotals.ops.toFixed(3)}</td>
+                    <td className="career-td-key" style={{ color: 'var(--color-green)' }}>
+                      {hitWAR !== 0 ? hitWAR.toFixed(1) : '—'}
+                    </td>
+                  </tr>
+                </tfoot>
+              )}
             </table>
           </div>
         </>
@@ -783,7 +851,7 @@ export default function PlayerPage() {
   const { data: hittingSplits }                         = useHittingSplits(mlbId);
   const { data: pitchingSplits }                        = usePitchingSplits(mlbId);
   const pitchSpin                                       = usePitchSpinStats(mlbId);
-  const { hitting: careerHitting, pitching: careerPitching, isLoading: careerLoading } = useCareerStats(mlbId);
+  const { hitting: careerHitting, pitching: careerPitching, hittingTotals: careerHitTotals, pitchingTotals: careerPitTotals, isLoading: careerLoading } = useCareerStats(mlbId);
   const { data: statcastSpray, isLoading: sprayLoading } = useStatcastSprayChart(mlbId);
   const { data: zoneData }      = useStatcastZoneData(mlbId);
   const { data: hitRanks }      = useHittingPercentileRanks(mlbId);
@@ -1107,6 +1175,8 @@ export default function PlayerPage() {
             <CareerStatsTab
               hitting={careerHitting}
               pitching={careerPitching}
+              hittingTotals={careerHitTotals}
+              pitchingTotals={careerPitTotals}
               isLoading={careerLoading}
               showHitting={showHittingNow}
               showPitching={showPitchingNow}

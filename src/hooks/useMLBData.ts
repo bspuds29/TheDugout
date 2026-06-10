@@ -20,6 +20,8 @@ import {
   searchAllLevelsPlayers,
   fetchCareerHitting,
   fetchCareerPitching,
+  fetchCareerHittingTotals,
+  fetchCareerPitchingTotals,
   fetchMLBPipelineTeamProspects,
   fetchMLBPipelineTop100,
   fetchHittingSplits,
@@ -699,13 +701,14 @@ export function useStatcastZoneData(mlbId: number | null) {
 // ─── Career year-by-year stats ─────────────────────────────────────────
 
 export type { CareerHittingSeason, CareerPitchingSeason };
+export type { CareerHittingTotals, CareerPitchingTotals } from '../data/api/mlbStats';
 
 export function useCareerStats(mlbId: number | null) {
   const { data: hitting = [], isLoading: hitLoad } = useQuery({
     queryKey: ['careerHitting', mlbId],
     queryFn: () => fetchCareerHitting(mlbId!),
     enabled: !!mlbId,
-    staleTime: 60 * 60 * 1000, // 1 hour — career data changes rarely
+    staleTime: 60 * 60 * 1000,
   });
   const { data: pitching = [], isLoading: pitLoad } = useQuery({
     queryKey: ['careerPitching', mlbId],
@@ -713,7 +716,19 @@ export function useCareerStats(mlbId: number | null) {
     enabled: !!mlbId,
     staleTime: 60 * 60 * 1000,
   });
-  return { hitting, pitching, isLoading: hitLoad || pitLoad };
+  const { data: hittingTotals = null } = useQuery({
+    queryKey: ['careerHittingTotals', mlbId],
+    queryFn: () => fetchCareerHittingTotals(mlbId!),
+    enabled: !!mlbId,
+    staleTime: 60 * 60 * 1000,
+  });
+  const { data: pitchingTotals = null } = useQuery({
+    queryKey: ['careerPitchingTotals', mlbId],
+    queryFn: () => fetchCareerPitchingTotals(mlbId!),
+    enabled: !!mlbId,
+    staleTime: 60 * 60 * 1000,
+  });
+  return { hitting, pitching, hittingTotals, pitchingTotals, isLoading: hitLoad || pitLoad };
 }
 
 // ─── Savant expected statistics (leaderboard, keyed by mlbId) ────────

@@ -1091,6 +1091,79 @@ export async function fetchCareerPitching(mlbId: number): Promise<CareerPitching
   });
 }
 
+// ─── Career totals (single-row summary from stats=career endpoint) ────
+
+export interface CareerHittingTotals {
+  g: number; pa: number; ab: number;
+  h: number; doubles: number; triples: number; hr: number;
+  rbi: number; r: number; sb: number; bb: number; k: number;
+  avg: number; obp: number; slg: number; ops: number;
+}
+
+export interface CareerPitchingTotals {
+  g: number; gs: number; w: number; l: number; sv: number;
+  ip: number; k: number; bb: number; hr: number;
+  era: number; whip: number; k9: number; bb9: number;
+}
+
+export async function fetchCareerHittingTotals(mlbId: number): Promise<CareerHittingTotals | null> {
+  try {
+    const data = await get<{ stats: Array<{ group: { displayName: string }; splits: Array<Record<string, unknown>> }> }>(
+      `/people/${mlbId}/stats?stats=career&group=hitting&sportId=1&gameType=R`
+    );
+    const group = data.stats?.find(s => s.group.displayName === 'hitting');
+    if (!group?.splits?.length) return null;
+    const s = group.splits[0].stat as Record<string, unknown>;
+    return {
+      g:       Number(s.gamesPlayed ?? 0),
+      pa:      Number(s.plateAppearances ?? 0),
+      ab:      Number(s.atBats ?? 0),
+      h:       Number(s.hits ?? 0),
+      doubles: Number(s.doubles ?? 0),
+      triples: Number(s.triples ?? 0),
+      hr:      Number(s.homeRuns ?? 0),
+      rbi:     Number(s.rbi ?? 0),
+      r:       Number(s.runs ?? 0),
+      sb:      Number(s.stolenBases ?? 0),
+      bb:      Number(s.baseOnBalls ?? 0),
+      k:       Number(s.strikeOuts ?? 0),
+      avg:     parseFloat(String(s.avg ?? '0')),
+      obp:     parseFloat(String(s.obp ?? '0')),
+      slg:     parseFloat(String(s.slg ?? '0')),
+      ops:     parseFloat(String(s.ops ?? '0')),
+    };
+  } catch { return null; }
+}
+
+export async function fetchCareerPitchingTotals(mlbId: number): Promise<CareerPitchingTotals | null> {
+  try {
+    const data = await get<{ stats: Array<{ group: { displayName: string }; splits: Array<Record<string, unknown>> }> }>(
+      `/people/${mlbId}/stats?stats=career&group=pitching&sportId=1&gameType=R`
+    );
+    const group = data.stats?.find(s => s.group.displayName === 'pitching');
+    if (!group?.splits?.length) return null;
+    const s = group.splits[0].stat as Record<string, unknown>;
+    const ip = parseIPCareer(String(s.inningsPitched ?? '0'));
+    const k  = Number(s.strikeOuts ?? 0);
+    const bb = Number(s.baseOnBalls ?? 0);
+    return {
+      g:    Number(s.gamesPlayed ?? 0),
+      gs:   Number(s.gamesStarted ?? 0),
+      w:    Number(s.wins ?? 0),
+      l:    Number(s.losses ?? 0),
+      sv:   Number(s.saves ?? 0),
+      ip,
+      k,
+      bb,
+      hr:   Number(s.homeRuns ?? 0),
+      era:  parseFloat(String(s.era ?? '0')),
+      whip: parseFloat(String(s.whip ?? '0')),
+      k9:   ip > 0 ? (k  / ip) * 9 : 0,
+      bb9:  ip > 0 ? (bb / ip) * 9 : 0,
+    };
+  } catch { return null; }
+}
+
 // ─── Team schedule (recent & upcoming games) ─────────────────────────
 
 export interface TeamScheduleGame {
