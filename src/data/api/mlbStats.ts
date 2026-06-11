@@ -1096,6 +1096,31 @@ export async function fetchCareerPitching(mlbId: number): Promise<CareerPitching
   });
 }
 
+// ─── Positions played this season ─────────────────────────────────────
+
+export interface PositionAppearance {
+  pos: string;   // abbreviation, e.g. "LF", "2B", "DH"
+  games: number;
+}
+
+export async function fetchPositionsPlayed(
+  mlbId: number,
+  season: number,
+): Promise<PositionAppearance[]> {
+  try {
+    const data = await get<{ stats: Array<{ splits: Array<Record<string, unknown>> }> }>(
+      `/people/${mlbId}/stats?stats=season&group=fielding&season=${season}&sportId=1`
+    );
+    const splits = data.stats?.[0]?.splits ?? [];
+    return splits.map(sp => ({
+      pos:   (sp.position as Record<string, string>)?.abbreviation ?? '?',
+      games: Number((sp.stat as Record<string, unknown>)?.gamesPlayed ?? 0),
+    })).filter(p => p.games > 0);
+  } catch {
+    return [];
+  }
+}
+
 // ─── Career totals (single-row summary from stats=career endpoint) ────
 
 export interface CareerHittingTotals {

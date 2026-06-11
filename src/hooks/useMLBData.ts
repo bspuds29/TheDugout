@@ -22,6 +22,7 @@ import {
   fetchCareerPitching,
   fetchCareerHittingTotals,
   fetchCareerPitchingTotals,
+  fetchPositionsPlayed,
   fetchMLBPipelineTeamProspects,
   fetchMLBPipelineTop100,
   fetchHittingSplits,
@@ -729,6 +730,17 @@ export function useCareerStats(mlbId: number | null) {
     staleTime: 60 * 60 * 1000,
   });
   return { hitting, pitching, hittingTotals, pitchingTotals, isLoading: hitLoad || pitLoad };
+}
+
+export type { PositionAppearance } from '../data/api/mlbStats';
+
+export function usePositionsPlayed(mlbId: number | null) {
+  return useQuery({
+    queryKey: ['positionsPlayed', mlbId, SEASON],
+    queryFn: () => fetchPositionsPlayed(mlbId!, SEASON),
+    enabled: !!mlbId,
+    staleTime: 30 * 60 * 1000,
+  });
 }
 
 // ─── Savant expected statistics (leaderboard, keyed by mlbId) ────────

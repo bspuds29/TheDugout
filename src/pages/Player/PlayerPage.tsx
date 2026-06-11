@@ -37,6 +37,7 @@ import {
   useSavantExpectedPitcherStats,
   useSavantCustomBatterMap,
   useSavantCustomPitcherMap,
+  usePositionsPlayed,
   type HittingPercentileRanks,
   type PitchingPercentileRanks,
   type HittingSplitEntry,
@@ -976,6 +977,7 @@ export default function PlayerPage() {
   const { data: hitRanks }      = useHittingPercentileRanks(mlbId);
   const { data: pitchRanks }    = usePitchingPercentileRanks(mlbId);
   const { draftInfo }           = useDraftInfo(mlbId);
+  const { data: positionsPlayed = [] } = usePositionsPlayed(mlbId);
 
   // Savant expected / custom maps
   const { data: xBatMap }  = useSavantExpectedBatterStats();
@@ -1643,6 +1645,28 @@ export default function PlayerPage() {
           {defense && defense.games > 0 && !PITCHER_POS.includes(position) && (
             <>
               <SectionDivider title="Defensive Stats" color="var(--color-teal)" />
+              {positionsPlayed.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+                  {positionsPlayed
+                    .sort((a, b) => b.games - a.games)
+                    .map(p => (
+                      <span key={p.pos} style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                        padding: '0.25rem 0.65rem',
+                        borderRadius: '999px',
+                        background: 'var(--color-surface)',
+                        border: '1px solid var(--color-border)',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        color: 'var(--color-text)',
+                      }}>
+                        <span style={{ color: 'var(--color-teal)' }}>{p.pos}</span>
+                        <span style={{ color: 'var(--color-text-secondary)', fontWeight: 400 }}>{p.games}G</span>
+                      </span>
+                    ))
+                  }
+                </div>
+              )}
               <div className="stat-grid-4">
                 <StatCard
                   label="OAA"
@@ -1702,6 +1726,33 @@ export default function PlayerPage() {
                 <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)', padding: '3rem 0' }}>
                   No {new Date().getFullYear()} stats available yet.
                 </p>
+              )}
+
+              {/* ── POSITIONS PLAYED (position players only) ── */}
+              {hasHitting && positionsPlayed.length > 0 && (
+                <div className="allstats-section">
+                  <div className="allstats-section-header" style={{ borderLeftColor: 'var(--color-teal)' }}>Positions Played</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', padding: '0.75rem 0' }}>
+                    {positionsPlayed
+                      .sort((a, b) => b.games - a.games)
+                      .map(p => (
+                        <span key={p.pos} style={{
+                          display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+                          padding: '0.25rem 0.65rem',
+                          borderRadius: '999px',
+                          background: 'var(--color-surface)',
+                          border: '1px solid var(--color-border)',
+                          fontSize: '0.85rem',
+                          fontWeight: 600,
+                          color: 'var(--color-text)',
+                        }}>
+                          <span style={{ color: 'var(--color-accent)' }}>{p.pos}</span>
+                          <span style={{ color: 'var(--color-text-secondary)', fontWeight: 400 }}>{p.games}G</span>
+                        </span>
+                      ))
+                    }
+                  </div>
+                </div>
               )}
 
               {/* ── HITTING ── */}
