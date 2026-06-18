@@ -426,8 +426,7 @@ export default function GemsPage() {
               accentColor="#ef4444"
               stats={[
                 { label: 'DRS', value: f.drs !== null ? (f.drs >= 0 ? `+${f.drs}` : String(f.drs)) : '—' },
-                { label: 'UZR/150', value: f.uzr150 !== null ? dec2(f.uzr150) : '—' },
-                { label: 'Inn', value: String(f.innings) },
+                { label: 'Errors', value: String(f.errors) },
               ]}
               onClick={() => go(f.mlbId)}
             />
