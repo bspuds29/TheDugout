@@ -372,7 +372,7 @@ export default function GemsPage() {
               rank={i + 1}
               mlbId={f.mlbId}
               name={f.name}
-              team={''}
+              team={f.team}
               pos={f.pos}
               accentStat={f.oaa! >= 0 ? `+${f.oaa}` : String(f.oaa)}
               accentLabel="OAA"

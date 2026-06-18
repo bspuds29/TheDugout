@@ -249,6 +249,7 @@ export interface FanGraphsFieldingStats {
   mlbId:      number;
   year:       number;
   name:       string;
+  team:       string;
   pos:        string;
   games:      number;
   innings:    number;
@@ -281,6 +282,7 @@ export async function fetchFanGraphsFieldingLeaderboard(year: number): Promise<F
           mlbId:       Number(r['xMLBAMID']),
           year,
           name:        String(r['PlayerName'] ?? ''),
+          team:        String(r['TeamNameAbb'] ?? r['Team'] ?? ''),
           pos:         String(r['Pos'] ?? r['Position'] ?? ''),
           games:       Number(r['G'] ?? 0),
           innings:     Math.round(inn),
