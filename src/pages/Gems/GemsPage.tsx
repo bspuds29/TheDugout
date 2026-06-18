@@ -135,7 +135,7 @@ export default function GemsPage() {
   const { data: scBatMap = new Map(), isLoading: scLoad } = useSavantCustomBatterMap();
   const { data: standingsData, isLoading: stdLoad }       = useTeamStandings();
 
-  const go = (mlbId: number) => navigate(`/player?id=${mlbId}`);
+  const go = (mlbId: number) => navigate(`/player?mlbId=${mlbId}`);
 
   // ── 1. Getting Robbed — biggest xwOBA > wOBA gap, min 200 PA ─────────────
   const robbed = useMemo(() =>
