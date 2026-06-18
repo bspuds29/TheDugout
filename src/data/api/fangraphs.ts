@@ -335,6 +335,7 @@ function buildFieldingStats(mlbId: number, year: number, r: Record<string, unkno
     mlbId,
     year,
     name:        String(r['PlayerName'] ?? ''),
+    team:        String(r['TeamNameAbb'] ?? r['Team'] ?? ''),
     pos:         String(r['Pos'] ?? r['Position'] ?? ''),
     games:       Number(r['G'] ?? 0),
     innings:     Math.round(inn),
