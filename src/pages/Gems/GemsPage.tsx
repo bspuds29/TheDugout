@@ -135,7 +135,7 @@ export default function GemsPage() {
   const { data: scBatMap = new Map(), isLoading: scLoad } = useSavantCustomBatterMap();
   const { data: standingsData, isLoading: stdLoad }       = useTeamStandings();
 
-  const go = (mlbId: number) => navigate(`/player?mlbId=${mlbId}`);
+  const go = (mlbId: number, name: string) => navigate(`/player?mlbId=${mlbId}&name=${encodeURIComponent(name)}`);
 
   // ── 1. Getting Robbed — biggest xwOBA > wOBA gap, min 200 PA ─────────────
   const robbed = useMemo(() =>
@@ -279,7 +279,7 @@ export default function GemsPage() {
                 { label: 'xwOBA', value: dec3(b.xwoba) },
                 { label: 'PA', value: String(b.pa) },
               ]}
-              onClick={() => go(b.mlbId)}
+              onClick={() => go(b.mlbId, b.name)}
             />
           ))}
         </Section>
@@ -309,7 +309,7 @@ export default function GemsPage() {
                 { label: 'HR', value: String(b.hr) },
                 { label: 'Hard%', value: pct1(b.hardPct) },
               ]}
-              onClick={() => go(b.mlbId)}
+              onClick={() => go(b.mlbId, b.name)}
             />
           ))}
         </Section>
@@ -339,7 +339,7 @@ export default function GemsPage() {
                 { label: 'AVG', value: dec3(b.avg) },
                 { label: 'PA', value: String(b.pa) },
               ]}
-              onClick={() => go(b.mlbId)}
+              onClick={() => go(b.mlbId, b.name)}
             />
           ))}
         </Section>
@@ -369,7 +369,7 @@ export default function GemsPage() {
                 { label: 'xFIP', value: dec2(p.xfip) },
                 { label: 'IP', value: p.ip.toFixed(1) },
               ]}
-              onClick={() => go(p.mlbId)}
+              onClick={() => go(p.mlbId, p.name)}
             />
           ))}
         </Section>
@@ -399,7 +399,7 @@ export default function GemsPage() {
                 { label: 'xFIP', value: dec2(p.xfip) },
                 { label: 'IP', value: p.ip.toFixed(1) },
               ]}
-              onClick={() => go(p.mlbId)}
+              onClick={() => go(p.mlbId, p.name)}
             />
           ))}
         </Section>
@@ -428,7 +428,7 @@ export default function GemsPage() {
                 { label: 'DRS', value: f.drs !== null ? (f.drs >= 0 ? `+${f.drs}` : String(f.drs)) : '—' },
                 { label: 'Errors', value: String(f.errors) },
               ]}
-              onClick={() => go(f.mlbId)}
+              onClick={() => go(f.mlbId, f.name)}
             />
           ))}
         </Section>
@@ -456,7 +456,7 @@ export default function GemsPage() {
               stats={[
                 { label: 'PA', value: String(s.pa) },
               ]}
-              onClick={() => go(s.mlbId)}
+              onClick={() => go(s.mlbId, s.name)}
             />
           ))}
         </Section>
@@ -486,7 +486,7 @@ export default function GemsPage() {
                 { label: 'W%', value: `${(b.winPct * 100).toFixed(0)}%` },
                 { label: 'PA', value: String(b.pa) },
               ]}
-              onClick={() => go(b.mlbId)}
+              onClick={() => go(b.mlbId, b.name)}
             />
           ))}
         </Section>

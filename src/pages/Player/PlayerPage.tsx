@@ -112,7 +112,7 @@ function buildHittingPercentiles(stats: HittingStats, real?: HittingPercentileRa
   const rows = [
     { label: 'wRC+',          value: real?.wrcPlus    ?? calc(50 + (stats.wrcPlus - 100) / 60 * 50),                              raw: stats.wrcPlus > 0 ? stats.wrcPlus.toString() : '—' },
     { label: 'Exit Velocity', value: real?.exitVelo   ?? (stats.exitVelo > 0 ? calc(50 + (stats.exitVelo - 88.5) / 7 * 50) : 50),  raw: stats.exitVelo > 0 ? `${stats.exitVelo.toFixed(1)} mph` : '—' },
-    { label: 'Barrel %',      value: real?.barrelPct  ?? (stats.barrelPct > 0 ? calc(50 + (stats.barrelPct - 7.5) / 12 * 50) : 1), raw: stats.barrelPct > 0 ? `${stats.barrelPct.toFixed(1)}%` : '—' },
+    { label: 'Barrel %',      value: real?.barrelPct  ?? (stats.exitVelo > 0 ? calc(50 + (stats.barrelPct - 7.5) / 12 * 50) : 1),  raw: stats.exitVelo > 0 ? `${stats.barrelPct.toFixed(1)}%` : '—' },
     { label: 'Hard Hit %',    value: real?.hardHitPct ?? (stats.hardHitPct > 0 ? calc(50 + (stats.hardHitPct - 37) / 20 * 50) : 1),raw: stats.hardHitPct > 0 ? `${stats.hardHitPct.toFixed(1)}%` : '—' },
     { label: 'wOBA',          value: real?.woba       ?? (stats.woba > 0 ? calc(50 + (stats.woba - 0.320) / 0.080 * 50) : 50),   raw: stats.woba > 0 ? stats.woba.toFixed(3) : '—' },
     { label: 'BB%',           value: real?.bbPct      ?? calc(50 + (stats.bbPct - 8.5) / 8 * 50),                                 raw: `${stats.bbPct.toFixed(1)}%` },
@@ -1130,9 +1130,9 @@ export default function PlayerPage() {
         <>
           {/* Player hero */}
           <div className="player-hero">
-            <PlayerAvatar mlbId={mlbId} name={playerName} size={110} className="player-avatar--hero" />
+            <PlayerAvatar mlbId={mlbId} name={resolvedName} size={110} className="player-avatar--hero" />
             <div className="player-hero-info">
-              <h2 className="player-hero-name">{playerName}</h2>
+              <h2 className="player-hero-name">{resolvedName}</h2>
               <div className="player-hero-meta">
                 <Badge variant={PITCHER_POS.includes(position) ? 'accent' : 'green'}>
                   {position || '—'}
@@ -1459,7 +1459,7 @@ export default function PlayerPage() {
               {/* Contact quality */}
               <div className="stat-grid-4">
                 <StatCard label="Exit Velo"   value={hitting.exitVelo   > 0 ? `${hitting.exitVelo.toFixed(1)}`    : '—'} sub="Avg Exit Velocity (mph)" trend="up" color="amber" />
-                <StatCard label="Barrel %"    value={hitting.barrelPct  > 0 ? `${hitting.barrelPct.toFixed(1)}%`  : '—'} sub="Barrel Rate"             color="red" accent />
+                <StatCard label="Barrel %"    value={hitting.exitVelo > 0 ? `${hitting.barrelPct.toFixed(1)}%`  : '—'} sub="Barrel Rate"             color="red" accent />
                 <StatCard label="Hard Hit %"  value={hitting.hardHitPct > 0 ? `${hitting.hardHitPct.toFixed(1)}%` : '—'} sub="Hard Hit Rate"           color="amber" />
                 <StatCard label="Sweet Spot%" value={hitting.sweetSpotPct > 0 ? `${hitting.sweetSpotPct.toFixed(1)}%` : '—'} sub="8–32° Launch Angle" />
                 <StatCard label="K%"   value={`${hitting.kPct.toFixed(1)}%`} sub="Strikeout Rate" />
@@ -1807,7 +1807,7 @@ export default function PlayerPage() {
                     {[
                       { l: 'Exit Velo',   v: hitting.exitVelo > 0     ? `${hitting.exitVelo.toFixed(1)} mph`    : '—', c: hitting.exitVelo >= 92 ? 'var(--color-teal)' : hitting.exitVelo > 0 && hitting.exitVelo < 87 ? '#ef4444' : undefined },
                       { l: 'Launch Ang',  v: hitting.launchAngle !== 0 ? `${hitting.launchAngle.toFixed(1)}°`   : '—' },
-                      { l: 'Barrel%',     v: hitting.barrelPct > 0    ? `${hitting.barrelPct.toFixed(1)}%`      : '—', c: hitting.barrelPct >= 10 ? 'var(--color-teal)' : hitting.barrelPct > 0 && hitting.barrelPct < 4 ? '#ef4444' : undefined },
+                      { l: 'Barrel%',     v: hitting.exitVelo > 0     ? `${hitting.barrelPct.toFixed(1)}%`      : '—', c: hitting.barrelPct >= 10 ? 'var(--color-teal)' : hitting.exitVelo > 0 && hitting.barrelPct < 4 ? '#ef4444' : undefined },
                       { l: 'Hard Hit%',   v: hitting.hardHitPct > 0   ? `${hitting.hardHitPct.toFixed(1)}%`    : '—', c: hitting.hardHitPct >= 45 ? 'var(--color-teal)' : hitting.hardHitPct > 0 && hitting.hardHitPct < 30 ? '#ef4444' : undefined },
                       { l: 'Sweet Spot%', v: hitting.sweetSpotPct > 0 ? `${hitting.sweetSpotPct.toFixed(1)}%`  : '—', c: hitting.sweetSpotPct >= 35 ? 'var(--color-teal)' : undefined },
                       { l: 'GB%',         v: hitting.gbPct > 0        ? `${hitting.gbPct.toFixed(1)}%`         : '—' },
