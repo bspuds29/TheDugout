@@ -18,6 +18,7 @@ const ToolsPage          = lazy(() => import('./pages/Tools/ToolsPage'));
 const PlayerComparePage  = lazy(() => import('./pages/Tools/PlayerComparePage'));
 const TeamPage           = lazy(() => import('./pages/Team/TeamPage'));
 const GlossaryPage       = lazy(() => import('./pages/Glossary/GlossaryPage'));
+const GemsPage           = lazy(() => import('./pages/Gems/GemsPage'));
 
 // ── Minimal inline spinner shown while a page chunk loads ───────────
 // Also signals the NavProgressBar to hold while suspending.
@@ -75,6 +76,7 @@ function AppRoutes() {
         <Route path="/stats"         element={<Navigate to="/player" replace />} />
         <Route path="/team/:teamId"  element={<TeamPage />} />
         <Route path="/glossary"      element={<GlossaryPage />} />
+        <Route path="/gems"          element={<GemsPage />} />
         <Route path="*"              element={<NotFound />} />
       </Routes>
     </Suspense>

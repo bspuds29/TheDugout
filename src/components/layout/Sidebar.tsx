@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, TrendingUp, Shield, ArrowLeftRight,
   Wrench, ChevronRight, Zap, Users, Menu, X, BarChart2,
-  Trophy, Building2, BookOpen,
+  Trophy, Building2, BookOpen, Gem,
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -32,6 +32,7 @@ const NAV: NavGroup[] = [
       { label: 'Player Stats',  path: '/player',      icon: <TrendingUp size={16} /> },
       { label: 'Leaderboard',  path: '/leaderboard', icon: <BarChart2 size={16} /> },
       { label: 'Defense',      path: '/defense',     icon: <Shield size={16} /> },
+      { label: 'Hidden Gems',  path: '/gems',        icon: <Gem size={16} />, badge: 'NEW' },
       { label: 'Clutch Analytics', path: '/clutch', icon: <Zap size={16} />, badge: 'HOT' },
     ],
   },

@@ -1,0 +1,213 @@
+.gems-page {
+  padding: 2rem 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+
+.gems-header {
+  margin-bottom: 2.5rem;
+}
+
+.gems-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0 0 0.4rem;
+  letter-spacing: -0.03em;
+}
+
+.gems-subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ── Grid layout — 2 columns on wide screens ─────────────────────────── */
+
+.gems-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .gems-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Section card ────────────────────────────────────────────────────── */
+
+.gem-section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.gem-section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.1rem 1.25rem 0.9rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gem-section-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.gem-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  letter-spacing: -0.01em;
+}
+
+.gem-section-subtitle {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.gem-section-body {
+  padding: 0.25rem 0;
+}
+
+/* ── Player row ──────────────────────────────────────────────────────── */
+
+.gem-row {
+  display: grid;
+  grid-template-columns: 24px 36px 1fr auto auto;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.gem-row:hover {
+  background: color-mix(in srgb, var(--color-surface) 60%, var(--color-bg));
+}
+
+.gem-rank {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.gem-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.gem-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gem-team {
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Accent stat (the "gem") ─────────────────────────────────────────── */
+
+.gem-accent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 56px;
+}
+
+.gem-accent-value {
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.gem-accent-label {
+  font-size: 0.65rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 1px;
+}
+
+/* ── Supporting stats ────────────────────────────────────────────────── */
+
+.gem-stats {
+  display: flex;
+  gap: 0.9rem;
+}
+
+.gem-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 36px;
+}
+
+.gem-stat-value {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.gem-stat-label {
+  font-size: 0.62rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Loading skeletons ───────────────────────────────────────────────── */
+
+.gem-skeleton-list {
+  padding: 0.25rem 0;
+}
+
+.gem-skeleton-row {
+  height: 52px;
+  margin: 0 1.25rem;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--color-border) 25%,
+    color-mix(in srgb, var(--color-border) 50%, transparent) 50%,
+    var(--color-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  margin-bottom: 4px;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.gem-empty {
+  padding: 2rem 1.25rem;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  text-align: center;
+}
