@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PlayerAvatar from '../../components/ui/PlayerAvatar';
-import TeamLogo from '../../components/ui/TeamLogo';
+import TeamLogo, { ABBR_TO_MLB_ID } from '../../components/ui/TeamLogo';
 import {
   useBattingLeaderboard,
   usePitchingLeaderboard,
   useDefenseLeaderboard,
+  useSavantCustomBatterMap,
+  useTeamStandings,
 } from '../../hooks/useMLBData';
 import type { FanGraphsBatterRow, FanGraphsPitcherRow, FanGraphsFieldingStats } from '../../data/api/fangraphs';
 import '../../styles/shared.css';
@@ -130,6 +132,8 @@ export default function GemsPage() {
   const { data: batters = [], isLoading: batLoad }  = useBattingLeaderboard();
   const { data: pitchers = [], isLoading: pitLoad } = usePitchingLeaderboard();
   const { data: fielders = [], isLoading: defLoad } = useDefenseLeaderboard();
+  const { data: scBatMap = new Map(), isLoading: scLoad } = useSavantCustomBatterMap();
+  const { data: standingsData, isLoading: stdLoad }       = useTeamStandings();
 
   const go = (mlbId: number) => navigate(`/player?id=${mlbId}`);
 
@@ -195,6 +199,49 @@ export default function GemsPage() {
       })
       .slice(0, 8);
   }, [fielders]);
+
+  // ── 7. Speed Demons — fastest sprint speed (Savant), joined with FG for name/team ──
+  const speedsters = useMemo(() => {
+    if (!scBatMap.size || !batters.length) return [];
+    const fgMap = new Map(batters.map(b => [b.mlbId, b]));
+    return [...scBatMap.entries()]
+      .map(([mlbId, row]) => {
+        const speed = parseFloat(row['sprint_speed'] ?? '0');
+        const fg = fgMap.get(mlbId);
+        if (!speed || speed < 1 || !fg) return null;
+        return { mlbId, speed, name: fg.name, team: fg.team, pos: fg.pos, pa: fg.pa };
+      })
+      .filter((r): r is NonNullable<typeof r> => r !== null && r.pa >= 100)
+      .sort((a, b) => b.speed - a.speed)
+      .slice(0, 8);
+  }, [scBatMap, batters]);
+
+  // ── 8. Lone Stars — high WAR on a losing team (<.450 win%) ──────────────────
+  const loneStars = useMemo(() => {
+    if (!standingsData || !batters.length) return [];
+    // Build teamId → win% map from standings
+    const winPctById = new Map<number, number>();
+    for (const div of standingsData.records) {
+      for (const tr of div.teamRecords) {
+        const total = tr.wins + tr.losses;
+        winPctById.set(tr.team.id, total > 0 ? tr.wins / total : 0);
+      }
+    }
+    // Convert FanGraphs abbr → win% via ABBR_TO_MLB_ID
+    const getWinPct = (abbr: string) => {
+      const id = ABBR_TO_MLB_ID[abbr.toUpperCase()];
+      return id ? (winPctById.get(id) ?? null) : null;
+    };
+    return batters
+      .filter(b => {
+        if (b.pa < 150 || b.war < 1.0) return false;
+        const pct = getWinPct(b.team);
+        return pct !== null && pct < 0.450;
+      })
+      .map(b => ({ ...b, winPct: getWinPct(b.team)! }))
+      .sort((a, b) => b.war - a.war)
+      .slice(0, 8);
+  }, [standingsData, batters]);
 
   return (
     <div className="gems-page">
@@ -383,6 +430,64 @@ export default function GemsPage() {
                 { label: 'Inn', value: String(f.innings) },
               ]}
               onClick={() => go(f.mlbId)}
+            />
+          ))}
+        </Section>
+
+        {/* ── Speed Demons ───────────────────────────────────────────────── */}
+        <Section
+          title="Speed Demons"
+          subtitle="Fastest sprint speeds per Baseball Savant, min 100 PA. Pure burning-jet-fuel baserunning ability."
+          accent="var(--color-amber)"
+          icon="💨"
+          isLoading={batLoad || scLoad}
+          empty={speedsters.length === 0}
+        >
+          {speedsters.map((s, i) => (
+            <GemRow
+              key={s.mlbId}
+              rank={i + 1}
+              mlbId={s.mlbId}
+              name={s.name}
+              team={s.team}
+              pos={s.pos}
+              accentStat={`${s.speed.toFixed(1)}`}
+              accentLabel="ft/s"
+              accentColor="var(--color-amber)"
+              stats={[
+                { label: 'PA', value: String(s.pa) },
+              ]}
+              onClick={() => go(s.mlbId)}
+            />
+          ))}
+        </Section>
+
+        {/* ── Lone Stars ─────────────────────────────────────────────────── */}
+        <Section
+          title="Lone Stars"
+          subtitle="Highest WAR among hitters on teams with a win% below .450. Carrying a bad team on their back."
+          accent="var(--color-purple)"
+          icon="⭐"
+          isLoading={batLoad || stdLoad}
+          empty={loneStars.length === 0}
+        >
+          {loneStars.map((b, i) => (
+            <GemRow
+              key={b.mlbId}
+              rank={i + 1}
+              mlbId={b.mlbId}
+              name={b.name}
+              team={b.team}
+              pos={b.pos}
+              accentStat={b.war >= 0 ? `+${b.war.toFixed(1)}` : b.war.toFixed(1)}
+              accentLabel="WAR"
+              accentColor="var(--color-purple)"
+              stats={[
+                { label: 'wRC+', value: String(b.wrcPlus) },
+                { label: 'W%', value: `${(b.winPct * 100).toFixed(0)}%` },
+                { label: 'PA', value: String(b.pa) },
+              ]}
+              onClick={() => go(b.mlbId)}
             />
           ))}
         </Section>
