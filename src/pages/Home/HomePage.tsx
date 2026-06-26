@@ -8,6 +8,7 @@ import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 import { useBattingLeaderboard, usePitchingLeaderboard, useTeamStandings, useWeeklyLeaders } from '../../hooks/useMLBData';
 import PlayerHeadshot from '../../components/ui/PlayerHeadshot';
 import TeamLogo from '../../components/ui/TeamLogo';
+import './HomePage.css';
 
 const YEAR = new Date().getFullYear();
 
@@ -44,7 +45,7 @@ function spark(base: number, amp: number, seed: number, n = 14) {
 function Sparkline({ data, color }: { data: { i: number; v: number }[]; color: string }) {
   const id = `sg-${color.replace(/[^a-z0-9]/gi, '')}`;
   return (
-    <div style={{ width: 260, height: 80, flexShrink: 0 }}>
+    <div className="home-sparkline" style={{ width: 260, height: 80, flexShrink: 0 }}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 8, right: 6, left: 6, bottom: 8 }}>
           <defs>
@@ -149,7 +150,7 @@ export default function HomePage() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section style={{
+      <section className="home-hero-grid" style={{
         ...cardStyle,
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
@@ -164,7 +165,7 @@ export default function HomePage() {
         <div style={{ position: 'absolute', top: -60, left: -60, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(32,178,255,0.07) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
         {/* Left */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'var(--color-accent-dim)', border: '1px solid rgba(32,178,255,0.2)', borderRadius: 'var(--radius-full)', padding: '4px 12px', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-accent)', marginBottom: 'var(--space-4)', alignSelf: 'flex-start' }}>
             <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--color-green)', boxShadow: '0 0 6px var(--color-green)', flexShrink: 0 }} />
             {YEAR} MLB Season · Live Data
@@ -195,7 +196,7 @@ export default function HomePage() {
         </div>
 
         {/* Right: live metrics */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: 0 }}>
           {batLoading ? (
             <div style={{ color: 'var(--color-text-muted)', fontSize: 13, padding: 'var(--space-8) 0', textAlign: 'center' }}>Loading live stats…</div>
           ) : (
@@ -215,7 +216,7 @@ export default function HomePage() {
           <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--color-text-primary)' }}>Analytics Suite</h2>
           <p style={{ fontSize: 13, color: 'var(--color-text-tertiary)', marginTop: 3 }}>Six powerful tools built for the modern front office</p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-3)' }}>
+        <div className="home-tools-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-3)' }}>
           {TOOLS.map(tool => (
             <Link key={tool.path} to={tool.path}
               className="tool-card-new"
@@ -249,7 +250,7 @@ export default function HomePage() {
           <p style={{ fontSize: 13, color: 'var(--color-text-tertiary)', marginTop: 3 }}>{WEEK_LABEL} · Last 7 days of performance</p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-5)' }}>
+        <div className="weekly-spotlight-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-5)' }}>
 
           {/* Hot Bats */}
           <div style={{ ...cardStyle, overflow: 'hidden', position: 'relative' }}>
@@ -284,9 +285,9 @@ export default function HomePage() {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--color-text-tertiary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--color-text-tertiary)', overflow: 'hidden', whiteSpace: 'nowrap', minWidth: 0 }}>
                       <TeamLogo abbr={r.team} size={13} />
-                      {r.pos} · {r.team} · {r.pa} PA
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.pos} · {r.team} · {r.pa} PA</span>
                     </div>
                   </div>
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
@@ -331,9 +332,9 @@ export default function HomePage() {
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.name}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--color-text-tertiary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--color-text-tertiary)', overflow: 'hidden', whiteSpace: 'nowrap', minWidth: 0 }}>
                       <TeamLogo abbr={r.team} size={13} />
-                      {r.pos} · {r.team} · {r.ip} IP
+                      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{r.pos} · {r.team} · {r.ip} IP</span>
                     </div>
                   </div>
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
@@ -349,7 +350,7 @@ export default function HomePage() {
       </section>
 
       {/* ── WPA Risers / Watchers ─────────────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-5)' }}>
+      <div className="home-wpa-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-5)' }}>
         {[
           { title: 'WPA Risers 🔥', sub: `Highest Win Probability Added · ${YEAR}`, players: wpaRisers,   up: true  },
           { title: 'Watch List 📉', sub: `Lowest Win Probability Added · ${YEAR}`,  players: wpaWatchers, up: false },
@@ -406,7 +407,7 @@ export default function HomePage() {
             Full leaderboard <ArrowRight size={13} />
           </Link>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-3)' }}>
+        <div className="home-war-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-3)' }}>
           {batLoading
             ? Array.from({ length: 6 }).map((_, i) => <div key={i} style={{ ...cardStyle, height: 72, animation: 'pulse 1.4s ease-in-out infinite' }} />)
             : warLeaders.map((p, i) => (
