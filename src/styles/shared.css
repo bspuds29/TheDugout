@@ -907,10 +907,22 @@
     line-height: 1.4;
   }
 
+  /* Two-way toggle wraps to its own full-width row below avatar+info */
+  .twoway-toggle {
+    order: 9;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .twoway-toggle-btn {
+    flex: 1;
+  }
+
   /* WAR card wraps to its own full-width row below avatar+info */
   .player-hero-war {
     order: 10;
     flex-direction: row;
+    flex-wrap: wrap;
     width: 100%;
     justify-content: space-between;
     align-items: center;
@@ -922,8 +934,16 @@
     font-size: 24px;
   }
 
+  /* Split bar always takes its own full-width row within the WAR card */
+  .player-hero-war-split {
+    flex: 1 1 100%;
+  }
+
   .player-hero-actions {
     margin-top: 0;
+    order: 11;
+    width: 100%;
+    justify-content: flex-end;
   }
 
   /* ── Tab strip ── */

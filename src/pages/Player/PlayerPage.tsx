@@ -1188,7 +1188,7 @@ export default function PlayerPage() {
                 const batPct = Math.max(0, Math.min(100, (batWar / total) * 100));
                 const pitPct = 100 - batPct;
                 return (
-                  <div style={{ marginTop: 8, width: '100%' }}>
+                  <div className="player-hero-war-split" style={{ marginTop: 8, width: '100%' }}>
                     {/* Segmented bar */}
                     <div style={{ display: 'flex', height: 6, borderRadius: 4, overflow: 'hidden', gap: 2 }}>
                       <div style={{ width: `${batPct}%`, background: 'var(--color-accent)', borderRadius: 4, transition: 'width 600ms ease' }} />
