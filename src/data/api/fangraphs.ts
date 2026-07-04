@@ -577,14 +577,36 @@ function isMultiTeamRow(r: Record<string, unknown>): boolean {
 
 export async function fetchFanGraphsBattingLeaderboard(year: number): Promise<FanGraphsBatterRow[]> {
   try {
-    const rows = await getBattingLeaderboard(year);
+    const [rows, fldRows] = await Promise.all([
+      getBattingLeaderboard(year),
+      getFieldingLeaderboard(year).catch(() => [] as Record<string, unknown>[]),
+    ]);
+
+    // Build current-year primary position map: mlbId → position with most innings.
+    // Fielding leaderboard has one row per player per position, so this gives us the
+    // actual position played most this season rather than the career positionDB value.
+    const fldPrimary = new Map<number, string>();
+    const fldMaxInn  = new Map<number, number>();
+    for (const r of fldRows) {
+      const id  = Number(r['xMLBAMID'] ?? r['MLBAMID'] ?? 0);
+      const pos = String(r['Pos'] ?? '').trim();
+      const inn = Number(r['Inn'] ?? 0);
+      if (!id || !pos || pos === 'DH') continue;
+      if (inn > (fldMaxInn.get(id) ?? -1)) {
+        fldPrimary.set(id, pos);
+        fldMaxInn.set(id, inn);
+      }
+    }
+
     return rows
       .filter(r => Number(r['xMLBAMID']) > 0 && !isMultiTeamRow(r))
-      .map(r => ({
-        mlbId:     Number(r['xMLBAMID']),
+      .map(r => {
+        const mlbId = Number(r['xMLBAMID']);
+        return {
+        mlbId,
         name:      String(r['PlayerName'] ?? ''),
         team:      String(r['TeamNameAbb'] ?? r['TeamName'] ?? ''),
-        pos:       String(r['positionDB'] ?? r['position'] ?? r['Pos'] ?? ''),
+        pos:       fldPrimary.get(mlbId) ?? String(r['positionDB'] ?? r['position'] ?? r['Pos'] ?? ''),
         g:         Number(r['G']   ?? 0),
         pa:        Number(r['PA']  ?? 0),
         hr:        Number(r['HR']  ?? 0),
@@ -612,7 +634,8 @@ export async function fetchFanGraphsBattingLeaderboard(year: number): Promise<Fa
         wpa:       asNum(r['WPA'], 2),
         re24:      asNum(r['RE24'],1),
         clutch:    asNum(r['Clutch'],2),
-      }));
+        };
+      });
   } catch {
     return [];
   }
