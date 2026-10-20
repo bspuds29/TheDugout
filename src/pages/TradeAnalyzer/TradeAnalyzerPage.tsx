@@ -75,10 +75,12 @@ const GRADE_COLOR: Record<ProspectGrade, string> = {
  *   Top 100: 3.0 WAR × 35% = 1.05 eff WAR → ~$10M at age 21
  *   Other:   1.5 WAR × 21% = 0.32 eff WAR → ~$3M  at age 21
  */
-// Calibrated to FanGraphs Prospect Valuation (Clemens, July 2026): surplus value = effWAR × ageFactor(21) × $8M
-// tier → FV mapping: top10≈FV65 ($95M), top25≈FV57.5 ($63M), top50≈FV50 ($39M), top100≈FV45 ($14M), other≈FV40 ($5M)
-const PROSPECT_EFF_WAR:  Record<ProspectGrade, number> = { top10: 8.5,  top25: 5.6,  top50: 3.5,  top100: 1.3,  other: 0.42 };
-const PROSPECT_PEAK_WAR: Record<ProspectGrade, number> = { top10: 13.5, top25: 9.5,  top50: 6.0,  top100: 2.5,  other: 0.65 };
+// effWAR drives trade value on same per-season scale as MLB players (projWAR × ageFactor × $8M)
+// At age 21 (ageFactor 1.40): top10 ≈ $39M, top25 ≈ $25M, top50 ≈ $16M, top100 ≈ $8M, other ≈ $3M
+const PROSPECT_EFF_WAR:  Record<ProspectGrade, number> = { top10: 3.5,  top25: 2.2,  top50: 1.4,  top100: 0.75, other: 0.28 };
+// Peak WAR = realistic single-season ceiling if the prospect hits
+const PROSPECT_PEAK_WAR: Record<ProspectGrade, number> = { top10: 6.5,  top25: 5.0,  top50: 4.0,  top100: 3.0,  other: 1.5  };
+// Star odds from FG Clemens (Jul 2026): P(2+ seasons of 4+ WAR), blended hitter/pitcher per tier
 const PROSPECT_HIT_RATE: Record<ProspectGrade, number> = { top10: 0.40, top25: 0.20, top50: 0.10, top100: 0.035, other: 0.006 };
 
 function gradeFromAge(age: number): ProspectGrade {
@@ -256,9 +258,11 @@ function FairnessMeter({ score, labelA, labelB }: { score: number; labelA: strin
   const abs    = Math.abs(score);
   const isLeft = score > 0;
   const pct    = Math.min(abs, 100);
-  let verdict = 'FAIR TRADE', color = '#22c55e';
-  if (abs > 25) { verdict = isLeft ? `FAVORS ${labelA}` : `FAVORS ${labelB}`; color = '#f59e0b'; }
-  if (abs > 50) { verdict = isLeft ? `HEAVILY FAVORS ${labelA}` : `HEAVILY FAVORS ${labelB}`; color = '#ef4444'; }
+  const winner = isLeft ? labelA : labelB;
+  let verdict = 'Even trade', color = '#22c55e';
+  if (abs > 10)  { verdict = `Slight edge to ${winner}`;  color = '#22c55e'; }
+  if (abs > 25)  { verdict = `${winner} wins this trade`; color = '#f59e0b'; }
+  if (abs > 50)  { verdict = `Lopsided for ${winner}`;    color = '#ef4444'; }
 
   return (
     <div className="fairness-meter">
