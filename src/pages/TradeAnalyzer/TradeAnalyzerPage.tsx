@@ -75,9 +75,11 @@ const GRADE_COLOR: Record<ProspectGrade, string> = {
  *   Top 100: 3.0 WAR × 35% = 1.05 eff WAR → ~$10M at age 21
  *   Other:   1.5 WAR × 21% = 0.32 eff WAR → ~$3M  at age 21
  */
-const PROSPECT_EFF_WAR:  Record<ProspectGrade, number> = { top10: 4.16, top25: 2.60, top50: 1.68, top100: 1.05, other: 0.32 };
-const PROSPECT_PEAK_WAR: Record<ProspectGrade, number> = { top10: 6.5,  top25: 5.0,  top50: 4.0,  top100: 3.0,  other: 1.5  };
-const PROSPECT_HIT_RATE: Record<ProspectGrade, number> = { top10: 0.64, top25: 0.52, top50: 0.42, top100: 0.35, other: 0.21 };
+// Calibrated to FanGraphs Prospect Valuation (Clemens, July 2026): surplus value = effWAR × ageFactor(21) × $8M
+// tier → FV mapping: top10≈FV65 ($95M), top25≈FV57.5 ($63M), top50≈FV50 ($39M), top100≈FV45 ($14M), other≈FV40 ($5M)
+const PROSPECT_EFF_WAR:  Record<ProspectGrade, number> = { top10: 8.5,  top25: 5.6,  top50: 3.5,  top100: 1.3,  other: 0.42 };
+const PROSPECT_PEAK_WAR: Record<ProspectGrade, number> = { top10: 13.5, top25: 9.5,  top50: 6.0,  top100: 2.5,  other: 0.65 };
+const PROSPECT_HIT_RATE: Record<ProspectGrade, number> = { top10: 0.40, top25: 0.20, top50: 0.10, top100: 0.035, other: 0.006 };
 
 function gradeFromAge(age: number): ProspectGrade {
   if (age > 0 && age <= 19) return 'top25';
@@ -489,7 +491,10 @@ function TradeColumn({
   // in the batting leaderboard at 0 PA with qual=0) from getting a batting projection.
   // When pos is unknown, fall back to pitching if the player is in the pitching leaderboard.
   function getProj(id: number, pos?: string): number {
-    if ((pos && isPitcherPos(pos)) || pitById.has(id)) return pitProj.get(id) ?? 0;
+    const inBat = batById.has(id);
+    const inPit = pitById.has(id);
+    if (inBat && inPit) return (batProj.get(id) ?? 0) + (pitProj.get(id) ?? 0);
+    if ((pos && isPitcherPos(pos)) || inPit) return pitProj.get(id) ?? 0;
     return batProj.get(id) ?? pitProj.get(id) ?? 0;
   }
 
@@ -631,7 +636,7 @@ function TradeColumn({
                     <span className="ta-roster-name">{r.fullName}</span>
                     <span className="ta-roster-meta">
                       {r.primaryPosition?.abbreviation ?? '—'}
-                      {r.currentTeam ? ` · ${r.currentTeam.abbreviation}` : ''}
+                      {r.currentTeam ? ` · ${allTeams.find(t => t.id === r.currentTeam!.id)?.abbreviation ?? '?'}` : ''}
                       {r.currentAge ? ` · ${r.currentAge}y` : ''}
                     </span>
                   </div>
