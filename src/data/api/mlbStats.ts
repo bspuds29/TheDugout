@@ -570,7 +570,7 @@ export async function searchAllLevelsPlayers(
   try {
     // No sportId filter → returns all levels (MLB + AAA + AA + A + Rookie)
     const data = await get<RawMLBSearchResult>(
-      `/people/search?names=${encodeURIComponent(query.trim())}`
+      `/people/search?names=${encodeURIComponent(query.trim())}&hydrate=currentTeam`
     );
     return data.people ?? [];
   } catch {
