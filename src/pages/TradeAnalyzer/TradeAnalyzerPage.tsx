@@ -223,9 +223,41 @@ function posScarcity(pos: string): number {
 }
 
 /**
- * All values in $M at ≈$8M/WAR free-agent market rate.
- * MLB players: blend(projWAR, actualWAR) × ageFactor × posScarcity × $8M
- * Prospects:   effectiveWAR × ageFactor × $8M
+ * Contract factor: rewards cheap/controlled deals, penalizes expensive/expiring ones.
+ * Pre-arb ~1.35, arb-controlled ~1.10, market-rate FA ~1.00, overpaid ~0.70, expiring ~0.80.
+ */
+function contractFactor(p: TradePlayer): number {
+  const c = lookupContract(p.name);
+  if (!c) {
+    // No contract found → assume pre-arb / minor leaguer
+    return 1.30;
+  }
+  const marketWAR = (p.projWar * 0.6 + p.war * 0.4);
+  const marketSalary = marketWAR * 8; // $M/WAR
+  const actualSalary = c.salary2026 ?? c.aav ?? 0;
+  const yearsLeft = Math.max(0, c.contractEnd - 2026);
+
+  // Salary efficiency: how cheap relative to market (capped at ±0.35)
+  const efficiency = actualSalary > 0
+    ? Math.max(-0.35, Math.min(0.35, (marketSalary - actualSalary) / marketSalary * 0.5))
+    : 0.15; // no salary data → slight pre-arb bonus
+
+  // Control premium: more years locked up = more valuable to acquiring team
+  const controlBonus =
+    yearsLeft >= 5 ? 0.15 :
+    yearsLeft === 4 ? 0.10 :
+    yearsLeft === 3 ? 0.05 :
+    yearsLeft === 2 ? 0.00 :
+    yearsLeft === 1 ? -0.10 :
+    c.status === 'fa' ? -0.15 : 0.00; // 0 years left = expiring / FA
+
+  return Math.max(0.5, 1.0 + efficiency + controlBonus);
+}
+
+/**
+ * Trade value in abstract points (≈$M / 8 internally, displayed without units).
+ * MLB players: blend(projWAR, actualWAR) × ageFactor × posScarcity × contractFactor × 8
+ * Prospects:   effectiveWAR × ageFactor × 8  (contracts not relevant — all pre-arb)
  *
  * Blending 60% projection + 40% actual prevents Marcel from underselling
  * elite players (e.g. Ohtani) who consistently outperform the mean.
@@ -236,7 +268,7 @@ function tradeValue(p: TradePlayer): number {
     return effWAR * ageFactor(p.age > 0 ? p.age : 21) * 8;
   }
   const blendedWAR = p.projWar * 0.6 + p.war * 0.4;
-  return Math.max(0, blendedWAR * ageFactor(p.age) * posScarcity(p.pos) * 8);
+  return Math.max(0, blendedWAR * ageFactor(p.age) * posScarcity(p.pos) * contractFactor(p) * 8);
 }
 
 function analyzeTrade(s1: TradePlayer[], s2: TradePlayer[]) {
@@ -822,7 +854,7 @@ function BreakdownCard({ players, label }: { players: TradePlayer[]; label: stri
                 </div>
                 <div className="tpr-stat tpr-stat--value">
                   <span>Value</span>
-                  <span>${tradeValue(p).toFixed(1)}M</span>
+                  <span>{tradeValue(p).toFixed(1)}</span>
                 </div>
               </> : <>
                 <div className="tpr-stat">
@@ -845,7 +877,7 @@ function BreakdownCard({ players, label }: { players: TradePlayer[]; label: stri
                 {p.type === 'unknown' && <div className="tpr-no-stats">No {YEAR} stats yet</div>}
                 <div className="tpr-stat tpr-stat--value">
                   <span>Value</span>
-                  <span>${tradeValue(p).toFixed(1)}M</span>
+                  <span>{tradeValue(p).toFixed(1)}</span>
                 </div>
               </>}
             </div>
@@ -1005,16 +1037,16 @@ export default function TradeAnalyzerPage() {
             </div>
             <div className="trade-summary-item">
               <span className="tsi-label">Side A Value</span>
-              <span className="tsi-value">${analysis.s1Val.toFixed(0)}M</span>
+              <span className="tsi-value">{analysis.s1Val.toFixed(0)}</span>
             </div>
             <div className="trade-summary-item">
               <span className="tsi-label">Side B Value</span>
-              <span className="tsi-value">${analysis.s2Val.toFixed(0)}M</span>
+              <span className="tsi-value">{analysis.s2Val.toFixed(0)}</span>
             </div>
             <div className="trade-summary-item">
               <span className="tsi-label">Gap</span>
               <span className={`tsi-value ${analysis.s1Val > analysis.s2Val ? 'tsi-pos' : 'tsi-neg'}`}>
-                {analysis.s1Val > analysis.s2Val ? '+' : ''}${(analysis.s1Val - analysis.s2Val).toFixed(0)}M
+                {analysis.s1Val > analysis.s2Val ? '+' : ''}{(analysis.s1Val - analysis.s2Val).toFixed(0)}
               </span>
             </div>
           </div>
