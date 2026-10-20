@@ -822,6 +822,72 @@
   .trade-breakdown-row { grid-template-columns: 1fr; }
 }
 
+/* ─── Global player search ───────────────────────────────────────── */
+
+.ta-global-search {
+  position: relative;
+}
+
+.ta-global-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-tertiary);
+  transition: border-color 0.15s;
+}
+
+.ta-global-search-wrap:focus-within {
+  border-color: var(--color-teal);
+}
+
+.ta-global-search-icon {
+  flex-shrink: 0;
+}
+
+.ta-global-search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--color-text-primary);
+  font-size: 13px;
+  font-family: var(--font-sans);
+}
+
+.ta-global-search-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.ta-global-search-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  transition: color 0.15s;
+}
+
+.ta-global-search-clear:hover {
+  color: var(--color-text-primary);
+}
+
+.ta-global-results {
+  border: 1px solid var(--color-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  background: var(--color-bg-card);
+  overflow: hidden;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
 @media (max-width: 600px) {
   .trade-section-title { font-size: 13px; }
 

@@ -23,7 +23,7 @@ const YEAR = new Date().getFullYear();
 
 // ─── Types ────────────────────────────────────────────────────────────
 
-type ProspectGrade = 'A' | 'B' | 'C' | 'D';
+type ProspectGrade = 'top10' | 'top25' | 'top50' | 'top100' | 'other';
 
 interface TradePlayer {
   mlbId:          number;
@@ -32,8 +32,8 @@ interface TradePlayer {
   teamId:         number;
   pos:            string;
   age:            number;
-  war:            number;      // current season raw WAR
-  projWar:        number;      // multi-season projected WAR
+  war:            number;
+  projWar:        number;
   pa?:            number;
   ip?:            number;
   wrcPlus?:       number;
@@ -48,38 +48,38 @@ interface TradePlayer {
 // ─── Prospect grade definitions ───────────────────────────────────────
 
 const GRADE_LABEL: Record<ProspectGrade, string> = {
-  A: 'Elite (Top 50)',
-  B: 'Top 100',
-  C: 'Solid Prospect',
-  D: 'Org Depth',
+  top10:  'Top 10',
+  top25:  'Top 25',
+  top50:  'Top 50',
+  top100: 'Top 100',
+  other:  'Other',
+};
+
+const GRADE_COLOR: Record<ProspectGrade, string> = {
+  top10:  '#a855f7',
+  top25:  '#3b82f6',
+  top50:  '#22c55e',
+  top100: '#f59e0b',
+  other:  '#94a3b8',
 };
 
 /**
- * Prospect expected value:
- *   peak WAR/yr  ×  hit-rate (probability of reaching that ceiling)
- *
- *   A: 4.0 WAR/yr × 60% =  2.40 effective WAR
- *   B: 2.5 WAR/yr × 45% =  1.13 effective WAR
- *   C: 1.5 WAR/yr × 30% =  0.45 effective WAR
- *   D: 1.0 WAR/yr × 15% =  0.15 effective WAR
+ * Prospect expected value: peak WAR/yr × hit-rate
+ *   Top 10:  4.5 WAR × 65% = 2.93 eff WAR
+ *   Top 25:  3.5 WAR × 55% = 1.93 eff WAR
+ *   Top 50:  3.0 WAR × 50% = 1.50 eff WAR
+ *   Top 100: 2.0 WAR × 40% = 0.80 eff WAR
+ *   Other:   1.0 WAR × 20% = 0.20 eff WAR
  */
-const PROSPECT_EFF_WAR:  Record<ProspectGrade, number> = { A: 2.40, B: 1.13, C: 0.45, D: 0.15 };
-const PROSPECT_PEAK_WAR: Record<ProspectGrade, number> = { A: 4.0,  B: 2.5,  C: 1.5,  D: 1.0  };
-const PROSPECT_HIT_RATE: Record<ProspectGrade, number> = { A: 0.60, B: 0.45, C: 0.30, D: 0.15 };
+const PROSPECT_EFF_WAR:  Record<ProspectGrade, number> = { top10: 2.93, top25: 1.93, top50: 1.50, top100: 0.80, other: 0.20 };
+const PROSPECT_PEAK_WAR: Record<ProspectGrade, number> = { top10: 4.5,  top25: 3.5,  top50: 3.0,  top100: 2.0,  other: 1.0  };
+const PROSPECT_HIT_RATE: Record<ProspectGrade, number> = { top10: 0.65, top25: 0.55, top50: 0.50, top100: 0.40, other: 0.20 };
 
-/**
- * Suggest a default prospect grade from age.
- * Pipeline rankings aren't available via public API, so this is just a
- * starting-point — users should bump up to A/B for elite prospects.
- *
- *   Age ≤ 21  → B  (young, high-ceiling)
- *   Age ≤ 23  → C  (solid prospect age)
- *   Age 24+   → D  (org depth / career minor leaguer)
- */
 function gradeFromAge(age: number): ProspectGrade {
-  if (age > 0 && age <= 21) return 'B';
-  if (age <= 23)            return 'C';
-  return 'D';
+  if (age > 0 && age <= 19) return 'top25';
+  if (age <= 21)            return 'top50';
+  if (age <= 23)            return 'top100';
+  return 'other';
 }
 
 // ─── Marcel-style multi-season projection ────────────────────────────
@@ -93,18 +93,31 @@ const REGRESSION_WT    = 2;     // weight of the mean anchor (equivalent to 2 "a
 const SEASON_WEIGHTS = [5, 4, 3, 2];
 
 /**
+ * Age-curve delta applied AFTER regression.
+ * Young players are typically still ascending; veterans declining.
+ * Values are in WAR/season added or subtracted from the projection.
+ */
+function ageCurveDelta(age: number): number {
+  if (age <= 0)  return 0;
+  if (age <= 22) return +0.4;
+  if (age <= 24) return +0.2;
+  if (age <= 27) return  0.0;  // peak plateau
+  if (age <= 29) return -0.1;
+  if (age <= 31) return -0.3;
+  if (age <= 33) return -0.5;
+  return -0.8;
+}
+
+/**
  * Build per-player projected WAR maps for batters and pitchers.
  *
  * seasons[0] = current year (partial — pace-adjusted)
  * seasons[1..3] = prior full seasons (raw WAR used as-is)
  *
- * Formula (simplified Marcel):
- *   weighted_sum = Σ (warPerSeason_i × weight_i)
- *   projWAR = (weighted_sum + LEAGUE_MEAN_WAR × REGRESSION_WT)
- *             / (total_weight + REGRESSION_WT)
- *
- * This regresses hot starters toward their career average and gives
- * players with no prior history a sensible baseline.
+ * Formula:
+ *   1. Weighted average of available seasons (weights 5/4/3/2)
+ *   2. Regress toward league mean (anchors players with thin history)
+ *   3. Apply age-curve delta (young players +, veterans -)
  */
 function buildProjectionMaps(
   batSeasons: FanGraphsBatterRow[][],
@@ -121,7 +134,6 @@ function buildProjectionMaps(
     batByYear.forEach((map, i) => {
       const r = map.get(id);
       if (!r) return;
-      // Pace current season; prior seasons are full-year already
       const warFs = i === 0 && r.pa != null && r.pa >= 30
         ? (r.war / r.pa) * BATTER_FULL_PA
         : r.war;
@@ -163,18 +175,30 @@ function ageFactor(age: number): number {
   return 0.65;
 }
 
+/** Positional scarcity multiplier — scarce positions command a premium */
+function posScarcity(pos: string): number {
+  const p = pos.toUpperCase();
+  if (p === 'C')                  return 1.20;
+  if (p === 'SS')                 return 1.20;
+  if (p === 'CF')                 return 1.15;
+  if (p === '2B' || p === '3B')   return 1.10;
+  if (p === 'SP')                 return 1.10;
+  if (p === '1B' || p === 'DH')   return 0.90;
+  if (p === 'RP')                 return 0.85;
+  return 1.00;
+}
+
 /**
  * All values in $M at ≈$8M/WAR free-agent market rate.
- *
- * MLB:      projWAR × ageFactor × $8M
- * Prospect: effectiveWAR × ageFactor × $8M
+ * MLB players: projWAR × ageFactor × posScarcity × $8M
+ * Prospects:   effectiveWAR × ageFactor × $8M
  */
 function tradeValue(p: TradePlayer): number {
   if (p.type === 'prospect') {
-    const effWAR = PROSPECT_EFF_WAR[p.prospectGrade ?? 'B'];
+    const effWAR = PROSPECT_EFF_WAR[p.prospectGrade ?? 'top100'];
     return effWAR * ageFactor(p.age > 0 ? p.age : 21) * 8;
   }
-  return Math.max(0, p.projWar * ageFactor(p.age) * 8);
+  return Math.max(0, p.projWar * ageFactor(p.age) * posScarcity(p.pos) * 8);
 }
 
 function analyzeTrade(s1: TradePlayer[], s2: TradePlayer[]) {
@@ -196,19 +220,19 @@ function analyzeTrade(s1: TradePlayer[], s2: TradePlayer[]) {
 
 // ─── Fairness meter ───────────────────────────────────────────────────
 
-function FairnessMeter({ score }: { score: number }) {
+function FairnessMeter({ score, labelA, labelB }: { score: number; labelA: string; labelB: string }) {
   const abs    = Math.abs(score);
   const isLeft = score > 0;
   const pct    = Math.min(abs, 100);
   let verdict = 'FAIR TRADE', color = '#22c55e';
-  if (abs > 25) { verdict = isLeft ? 'FAVORS SIDE A' : 'FAVORS SIDE B'; color = '#f59e0b'; }
-  if (abs > 50) { verdict = isLeft ? 'HEAVILY FAVORS SIDE A' : 'HEAVILY FAVORS SIDE B'; color = '#ef4444'; }
+  if (abs > 25) { verdict = isLeft ? `FAVORS ${labelA}` : `FAVORS ${labelB}`; color = '#f59e0b'; }
+  if (abs > 50) { verdict = isLeft ? `HEAVILY FAVORS ${labelA}` : `HEAVILY FAVORS ${labelB}`; color = '#ef4444'; }
 
   return (
     <div className="fairness-meter">
       <div className="fairness-title">Trade Fairness</div>
       <div className="fairness-track">
-        <div className="fairness-label-left">Side A</div>
+        <div className="fairness-label-left">{labelA}</div>
         <div className="fairness-bar-wrap">
           <div className="fairness-bar-bg">
             <div className="fairness-bar-fill"
@@ -219,7 +243,7 @@ function FairnessMeter({ score }: { score: number }) {
             <span style={{ color }}>{score > 0 ? '+' : ''}{score}%</span>
           </div>
         </div>
-        <div className="fairness-label-right">Side B</div>
+        <div className="fairness-label-right">{labelB}</div>
       </div>
       <div className="fairness-verdict" style={{ color }}>{verdict}</div>
     </div>
@@ -307,12 +331,12 @@ function PlayerChip({
       {player.type === 'prospect' ? (
         <select
           className="prospect-grade-select"
-          value={player.prospectGrade ?? 'B'}
+          value={player.prospectGrade ?? 'top100'}
           onChange={e => onGradeChange?.(e.target.value as ProspectGrade)}
-          title="Prospect Grade"
+          title="Prospect Tier"
         >
-          {(['A','B','C','D'] as ProspectGrade[]).map(g => (
-            <option key={g} value={g}>Grade {g}</option>
+          {(['top10','top25','top50','top100','other'] as ProspectGrade[]).map(g => (
+            <option key={g} value={g}>{GRADE_LABEL[g]}</option>
           ))}
         </select>
       ) : (
@@ -367,7 +391,7 @@ function ProspectRow({
 }) {
   const age   = result.currentAge ?? 0;
   const grade = gradeFromAge(age);
-  const gradeColor = { A: '#a855f7', B: '#3b82f6', C: '#22c55e', D: '#94a3b8' }[grade];
+  const gradeColor = GRADE_COLOR[grade];
 
   return (
     <button className={`ta-roster-row ${isSelected ? 'ta-roster-row--on' : ''}`} onClick={onAdd}>
@@ -389,7 +413,7 @@ function ProspectRow({
           </span>
         )}
         <span className="ta-roster-prospect-badge" style={{ color: gradeColor, borderColor: gradeColor }}>
-          {grade}
+          {GRADE_LABEL[grade]}
         </span>
       </div>
       <div className={`ta-roster-toggle ${isSelected ? 'ta-roster-toggle--on' : ''}`}>
@@ -424,9 +448,11 @@ function TradeColumn({
 }: TradeColumnProps) {
   const [tab, setTab]                   = useState<'roster' | 'prospects'>('roster');
   const [prospectQuery, setProspectQuery] = useState('');
+  const [globalQuery, setGlobalQuery]     = useState('');
 
   const { data: roster = [], isLoading: rosterLoading } = useTeamRoster(team?.id ?? null);
   const { data: prospectResults = [], isFetching: prospectFetching } = useProspectSearch(prospectQuery);
+  const { data: globalResults  = [], isFetching: globalFetching  } = useProspectSearch(globalQuery);
 
   const selectedIds = new Set(players.map(p => p.mlbId));
   const takenSet    = new Set(allTakenIds);
@@ -438,18 +464,43 @@ function TradeColumn({
     return batProj.get(id) ?? pitProj.get(id) ?? 0;
   }
 
+  function withAgeCurve(rawProj: number, age: number): number {
+    return rawProj > 0 ? Math.max(0, rawProj + ageCurveDelta(age)) : 0;
+  }
+
+  function globalResultToPlayer(r: typeof globalResults[0]): TradePlayer {
+    const id   = r.id;
+    const bat  = batById.get(id);
+    const pit  = pitById.get(id);
+    const age  = r.currentAge ?? 0;
+    const proj = withAgeCurve(getProj(id), age);
+    const base = {
+      mlbId:   id,
+      name:    r.fullName,
+      team:    r.currentTeam?.abbreviation ?? team?.abbreviation ?? '?',
+      teamId:  r.currentTeam?.id ?? team?.id ?? 0,
+      pos:     r.primaryPosition?.abbreviation ?? '?',
+      age,
+      projWar: proj,
+    };
+    if (bat) return { ...base, war: bat.war, pa: bat.pa, wrcPlus: bat.wrcPlus, woba: bat.woba, type: 'bat' };
+    if (pit) return { ...base, war: pit.war, ip: pit.ip, era: pit.era, fip: pit.fip, type: 'pit' };
+    return { ...base, war: 0, projWar: 0, type: 'prospect', prospectGrade: gradeFromAge(age) };
+  }
+
   function rosterEntryToPlayer(entry: RawMLBRosterPlayerHydrated): TradePlayer {
     const id   = entry.person.id;
     const bat  = batById.get(id);
     const pit  = pitById.get(id);
-    const proj = getProj(id);
+    const age  = entry.person.currentAge ?? 0;
+    const proj = withAgeCurve(getProj(id), age);
     const base = {
       mlbId:   id,
       name:    entry.person.fullName,
       team:    team?.abbreviation ?? '—',
       teamId:  team?.id ?? 0,
       pos:     entry.position.abbreviation,
-      age:     entry.person.currentAge ?? 0,
+      age,
       projWar: proj,
     };
     if (bat) return { ...base, war: bat.war, pa: bat.pa, wrcPlus: bat.wrcPlus, woba: bat.woba, type: 'bat' };
@@ -489,11 +540,73 @@ function TradeColumn({
 
   return (
     <div className="trade-column">
+
+      {/* Global player search — no team required */}
+      <div className="ta-global-search">
+        <div className="ta-global-search-wrap">
+          <Search size={14} className="ta-global-search-icon" />
+          <input
+            className="ta-global-search-input"
+            placeholder="Search any player…"
+            value={globalQuery}
+            onChange={e => setGlobalQuery(e.target.value)}
+          />
+          {globalQuery && (
+            <button className="ta-global-search-clear" onClick={() => setGlobalQuery('')}>
+              <X size={12} />
+            </button>
+          )}
+        </div>
+        {globalQuery.length >= 2 && (
+          <div className="ta-global-results">
+            {globalFetching && <div className="ta-roster-loading">Searching…</div>}
+            {!globalFetching && globalResults.length === 0 && (
+              <div className="ta-roster-empty">No players found</div>
+            )}
+            {!globalFetching && globalResults.slice(0, 8).map(r => {
+              const isSelected = selectedIds.has(r.id);
+              const proj = getProj(r.id);
+              const isProspect = proj === 0 && !batById.has(r.id) && !pitById.has(r.id);
+              return (
+                <button
+                  key={r.id}
+                  className={`ta-roster-row ${isSelected ? 'ta-roster-row--on' : ''}`}
+                  onClick={() => {
+                    if (isSelected) { onRemove(r.id); }
+                    else { onAdd(globalResultToPlayer(r)); setGlobalQuery(''); }
+                  }}
+                >
+                  <div className="ta-roster-headshot">
+                    <PlayerHeadshot mlbId={r.id} size={28} alt={r.fullName} />
+                  </div>
+                  <div className="ta-roster-info">
+                    <span className="ta-roster-name">{r.fullName}</span>
+                    <span className="ta-roster-meta">
+                      {r.primaryPosition?.abbreviation ?? '—'}
+                      {r.currentTeam ? ` · ${r.currentTeam.abbreviation}` : ''}
+                      {r.currentAge ? ` · ${r.currentAge}y` : ''}
+                    </span>
+                  </div>
+                  {isProspect ? (
+                    <span className="ta-roster-war" style={{ color: '#94a3b8', fontSize: '10px' }}>PROS</span>
+                  ) : proj > 0 ? (
+                    <span className="ta-roster-war">{proj.toFixed(1)}▸</span>
+                  ) : null}
+                  <div className={`ta-roster-toggle ${isSelected ? 'ta-roster-toggle--on' : ''}`}>
+                    {isSelected ? <Check size={11} /> : <Plus size={11} />}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
       <TeamPicker
         teams={allTeams}
         selected={team}
         onSelect={onTeamChange}
-        label={`Pick ${label} Team`}
+        label={`Browse ${label} roster (optional)`}
       />
 
       {players.length > 0 && (
@@ -558,13 +671,14 @@ function TradeColumn({
                 />
               </div>
               <div className="ta-prospect-grade-key">
-                <span><strong style={{ color: '#a855f7' }}>A</strong> Elite / Top 50</span>
-                <span><strong style={{ color: '#3b82f6' }}>B</strong> Top 100</span>
-                <span><strong style={{ color: '#22c55e' }}>C</strong> Solid prospect</span>
-                <span><strong style={{ color: '#94a3b8' }}>D</strong> Org depth</span>
+                <span><strong style={{ color: '#a855f7' }}>T10</strong> Top 10</span>
+                <span><strong style={{ color: '#3b82f6' }}>T25</strong> Top 25</span>
+                <span><strong style={{ color: '#22c55e' }}>T50</strong> Top 50</span>
+                <span><strong style={{ color: '#f59e0b' }}>T100</strong> Top 100</span>
+                <span><strong style={{ color: '#94a3b8' }}>OTH</strong> Other</span>
               </div>
               <div className="ta-prospect-note">
-                Grade auto-set by age — adjust to match Pipeline rankings
+                Tier auto-set by age — adjust to match Pipeline rankings
               </div>
               <div className="ta-roster-list">
                 {prospectQuery.length < 2 && (
@@ -625,16 +739,16 @@ function BreakdownCard({ players, label }: { players: TradePlayer[]; label: stri
             <div className="tpr-stats">
               {p.type === 'prospect' ? <>
                 <div className="tpr-stat">
-                  <span>Grade</span>
-                  <span style={{ color: '#a855f7' }}>{p.prospectGrade}</span>
+                  <span>Tier</span>
+                  <span style={{ color: GRADE_COLOR[p.prospectGrade ?? 'top100'] }}>{GRADE_LABEL[p.prospectGrade ?? 'top100']}</span>
                 </div>
                 <div className="tpr-stat">
                   <span>Peak</span>
-                  <span>{PROSPECT_PEAK_WAR[p.prospectGrade ?? 'B']}W</span>
+                  <span>{PROSPECT_PEAK_WAR[p.prospectGrade ?? 'top100']}W</span>
                 </div>
                 <div className="tpr-stat">
                   <span>Hit%</span>
-                  <span>{(PROSPECT_HIT_RATE[p.prospectGrade ?? 'B'] * 100).toFixed(0)}%</span>
+                  <span>{(PROSPECT_HIT_RATE[p.prospectGrade ?? 'top100'] * 100).toFixed(0)}%</span>
                 </div>
                 <div className="tpr-stat tpr-stat--value">
                   <span>Value</span>
@@ -719,15 +833,19 @@ export default function TradeAnalyzerPage() {
   const insights = useMemo(() => {
     if (!bothSides) return [];
     const out: string[] = [];
-    const abs = Math.abs(analysis.fairness);
-    const gap = Math.abs(analysis.s1Val - analysis.s2Val).toFixed(0);
+    const abs  = Math.abs(analysis.fairness);
+    const gap  = Math.abs(analysis.s1Val - analysis.s2Val).toFixed(0);
+    const nameA = team1?.name ?? 'Side A';
+    const nameB = team2?.name ?? 'Side B';
+    const loser = analysis.fairness > 0 ? nameA : nameB;
 
     if (abs <= 15)      out.push('✅ Roughly fair — both sides exchange comparable value.');
-    else if (abs <= 40) out.push(`⚠️ Moderate imbalance — ${analysis.fairness > 0 ? 'Side A' : 'Side B'} gives up ~$${gap}M more in projected value.`);
-    else                out.push(`🚨 Large imbalance — ${analysis.fairness > 0 ? 'Side A' : 'Side B'} gives up ~$${gap}M more in projected value. One side wins this decisively.`);
+    else if (abs <= 40) out.push(`⚠️ Moderate imbalance — ${loser} gives up ~$${gap}M more in projected value.`);
+    else                out.push(`🚨 Large imbalance — ${loser} gives up ~$${gap}M more in projected value. One side wins this decisively.`);
 
     if (Math.abs(analysis.warDelta) >= 1) {
-      out.push(`📈 Projected WAR gap of ${Math.abs(analysis.warDelta).toFixed(1)} W/season — ${analysis.warDelta > 0 ? 'Side A' : 'Side B'} sends more on-field production.`);
+      const warSender = analysis.warDelta > 0 ? nameA : nameB;
+      out.push(`📈 Projected WAR gap of ${Math.abs(analysis.warDelta).toFixed(1)} W/season — ${warSender} sends more on-field production.`);
     }
 
     const young = [...side1, ...side2].filter(p => p.type !== 'prospect' && p.age > 0 && p.age <= 25);
@@ -735,13 +853,13 @@ export default function TradeAnalyzerPage() {
 
     const prospects = [...side1, ...side2].filter(p => p.type === 'prospect');
     if (prospects.length) {
-      const gradeA = prospects.filter(p => p.prospectGrade === 'A');
-      if (gradeA.length) out.push(`🔮 Grade-A prospect${gradeA.length > 1 ? 's' : ''} valued at 4 WAR/yr ceiling × 60% hit rate — adjust grade if rankings differ.`);
-      else out.push(`🔮 ${prospects.length} prospect${prospects.length > 1 ? 's' : ''} included — value = peak WAR × hit-rate discount. Update grades to match current org rankings.`);
+      const elite = prospects.filter(p => p.prospectGrade === 'top10' || p.prospectGrade === 'top25');
+      if (elite.length) out.push(`🔮 Elite prospect${elite.length > 1 ? 's' : ''} included — value based on peak WAR ceiling × hit-rate. Adjust tier to match current Pipeline rankings.`);
+      else out.push(`🔮 ${prospects.length} prospect${prospects.length > 1 ? 's' : ''} included — value = peak WAR × hit-rate discount. Update tiers to match current org rankings.`);
     }
 
     return out;
-  }, [side1, side2, analysis, bothSides]);
+  }, [side1, side2, analysis, bothSides, team1, team2]);
 
   return (
     <div className="trade-page">
@@ -801,7 +919,11 @@ export default function TradeAnalyzerPage() {
       {/* Fairness meter */}
       {bothSides && (
         <Card glow>
-          <FairnessMeter score={analysis.fairness} />
+          <FairnessMeter
+            score={analysis.fairness}
+            labelA={team1?.abbreviation ?? 'Side A'}
+            labelB={team2?.abbreviation ?? 'Side B'}
+          />
           <div className="trade-summary-grid">
             <div className="trade-summary-item">
               <span className="tsi-label">Proj WAR Δ</span>
