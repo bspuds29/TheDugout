@@ -2,8 +2,11 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
+import { inject } from '@vercel/analytics';
 import './styles/globals.css';
 import App from './App.tsx';
+
+inject();
 
 const queryClient = new QueryClient({
   defaultOptions: {
