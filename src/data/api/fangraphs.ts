@@ -572,7 +572,7 @@ export interface FanGraphsPitcherRow {
 /** Returns true for multi-team aggregate rows like "2TM", "3TM", "- - -" */
 function isMultiTeamRow(r: Record<string, unknown>): boolean {
   const t = String(r['TeamNameAbb'] ?? r['TeamName'] ?? '').trim();
-  return /^\d/.test(t) || /^-+/.test(t) || t === '';
+  return /^-+/.test(t) || t === '';
 }
 
 export async function fetchFanGraphsBattingLeaderboard(year: number): Promise<FanGraphsBatterRow[]> {
