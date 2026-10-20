@@ -16,6 +16,8 @@ import {
 } from '../../hooks/useMLBData';
 import type { FanGraphsBatterRow, FanGraphsPitcherRow } from '../../data/api/fangraphs';
 import type { RawMLBTeam, RawMLBSearchResult } from '../../data/api/mlbStats';
+import { PROSPECT_DATA, PROSPECT_TIERS } from '../../data/prospectTiers';
+import type { ProspectEntry } from '../../data/prospectTiers';
 import '../../styles/shared.css';
 import './TradeAnalyzerPage.css';
 
@@ -23,7 +25,7 @@ const YEAR = new Date().getFullYear();
 
 // ─── Types ────────────────────────────────────────────────────────────
 
-type ProspectGrade = 'top10' | 'top25' | 'top50' | 'top100' | 'other';
+export type ProspectGrade = 'top10' | 'top25' | 'top50' | 'top100' | 'other';
 
 interface TradePlayer {
   mlbId:          number;
@@ -82,26 +84,34 @@ function gradeFromAge(age: number): ProspectGrade {
   return 'other';
 }
 
+function gradeForPlayer(mlbId: number, age: number): ProspectGrade {
+  return PROSPECT_TIERS[mlbId] ?? gradeFromAge(age);
+}
+
 // ─── Marcel-style multi-season projection ────────────────────────────
 
 const BATTER_FULL_PA   = 550;
 const PITCHER_FULL_IP  = 170;
-const LEAGUE_MEAN_WAR  = 1.5;   // average WAR for a roster player per full season
-const REGRESSION_WT    = 2;     // weight of the mean anchor (equivalent to 2 "average" seasons)
+const LEAGUE_MEAN_WAR  = 1.5;   // average WAR for a qualifying roster player
+const REGRESSION_WT    = 2;     // Marcel regression anchor (≈ 2 league-avg seasons)
 
-// Weights: [current year, y-1, y-2, y-3] — more recent = heavier
-const SEASON_WEIGHTS = [5, 4, 3, 2];
+// Prior-season Marcel weights: [y-1, y-2, y-3]
+const PRIOR_WEIGHTS = [5, 4, 3];
+
+// Bayesian in-season update: how many "equivalent PA/IP" the Marcel prior counts as.
+// A full 550-PA season of prior Marcel is worth ~300 PA of in-season evidence.
+const BAT_PRIOR_PA = 300;
+const PIT_PRIOR_IP = 120;
 
 /**
  * Age-curve delta applied AFTER regression.
  * Young players are typically still ascending; veterans declining.
- * Values are in WAR/season added or subtracted from the projection.
  */
 function ageCurveDelta(age: number): number {
   if (age <= 0)  return 0;
   if (age <= 22) return +0.4;
   if (age <= 24) return +0.2;
-  if (age <= 27) return  0.0;  // peak plateau
+  if (age <= 27) return  0.0;
   if (age <= 29) return -0.1;
   if (age <= 31) return -0.3;
   if (age <= 33) return -0.5;
@@ -111,52 +121,70 @@ function ageCurveDelta(age: number): number {
 /**
  * Build per-player projected WAR maps for batters and pitchers.
  *
- * seasons[0] = current year (partial — pace-adjusted)
- * seasons[1..3] = prior full seasons (raw WAR used as-is)
+ * Two-step approach:
+ *   1. Marcel prior: weighted avg of prior 3 full seasons + regression to mean
+ *   2. Bayesian in-season update: blend Marcel prior with current-year per-PA/IP rate.
+ *      The more current-year volume accumulates, the more current performance dominates.
  *
- * Formula:
- *   1. Weighted average of available seasons (weights 5/4/3/2)
- *   2. Regress toward league mean (anchors players with thin history)
- *   3. Apply age-curve delta (young players +, veterans -)
+ * This ensures late-season data (e.g. a player having a terrible year) properly
+ * overrides a strong prior history rather than being diluted by fixed season weights.
  */
 function buildProjectionMaps(
   batSeasons: FanGraphsBatterRow[][],
   pitSeasons: FanGraphsPitcherRow[][],
 ): { batProj: Map<number, number>; pitProj: Map<number, number> } {
+  // batSeasons[0] = current year, [1..3] = prior years (same for pit)
   const batByYear = batSeasons.map(s => new Map(s.map(r => [r.mlbId, r])));
   const pitByYear = pitSeasons.map(s => new Map(s.map(r => [r.mlbId, r])));
 
   const allBatIds = new Set(batSeasons.flat().map(r => r.mlbId));
   const allPitIds = new Set(pitSeasons.flat().map(r => r.mlbId));
 
-  function projectBatter(id: number): number {
+  function marcellBatter(id: number): number {
     let wSum = 0, wTotal = 0;
-    batByYear.forEach((map, i) => {
-      const r = map.get(id);
-      if (!r) return;
-      const warFs = i === 0 && r.pa != null && r.pa >= 30
-        ? (r.war / r.pa) * BATTER_FULL_PA
-        : r.war;
-      wSum   += warFs * SEASON_WEIGHTS[i];
-      wTotal += SEASON_WEIGHTS[i];
-    });
-    if (wTotal === 0) return 0;
-    return Math.max(0, (wSum + LEAGUE_MEAN_WAR * REGRESSION_WT) / (wTotal + REGRESSION_WT));
+    for (let i = 1; i <= 3; i++) {
+      const r = batByYear[i]?.get(id);
+      if (!r) continue;
+      wSum   += r.war * PRIOR_WEIGHTS[i - 1];
+      wTotal += PRIOR_WEIGHTS[i - 1];
+    }
+    if (wTotal === 0) return LEAGUE_MEAN_WAR; // pure rookie — regress fully to mean
+    return (wSum + LEAGUE_MEAN_WAR * REGRESSION_WT) / (wTotal + REGRESSION_WT);
+  }
+
+  function marcelPitcher(id: number): number {
+    let wSum = 0, wTotal = 0;
+    for (let i = 1; i <= 3; i++) {
+      const r = pitByYear[i]?.get(id);
+      if (!r) continue;
+      wSum   += r.war * PRIOR_WEIGHTS[i - 1];
+      wTotal += PRIOR_WEIGHTS[i - 1];
+    }
+    if (wTotal === 0) return LEAGUE_MEAN_WAR;
+    return (wSum + LEAGUE_MEAN_WAR * REGRESSION_WT) / (wTotal + REGRESSION_WT);
+  }
+
+  function projectBatter(id: number): number {
+    const prior    = marcellBatter(id);
+    const priorRate = prior / BATTER_FULL_PA;          // WAR per PA
+    const curr     = batByYear[0]?.get(id);
+    const currPA   = curr?.pa ?? 0;
+    if (currPA < 30) return Math.max(0, prior);        // too few PAs — trust prior
+    const currRate = curr!.war / currPA;               // current-year WAR per PA
+    // Bayesian blend: more current PA → current rate dominates
+    const updatedRate = (currRate * currPA + priorRate * BAT_PRIOR_PA) / (currPA + BAT_PRIOR_PA);
+    return Math.max(0, updatedRate * BATTER_FULL_PA);
   }
 
   function projectPitcher(id: number): number {
-    let wSum = 0, wTotal = 0;
-    pitByYear.forEach((map, i) => {
-      const r = map.get(id);
-      if (!r) return;
-      const warFs = i === 0 && r.ip != null && r.ip >= 15
-        ? (r.war / r.ip) * PITCHER_FULL_IP
-        : r.war;
-      wSum   += warFs * SEASON_WEIGHTS[i];
-      wTotal += SEASON_WEIGHTS[i];
-    });
-    if (wTotal === 0) return 0;
-    return Math.max(0, (wSum + LEAGUE_MEAN_WAR * REGRESSION_WT) / (wTotal + REGRESSION_WT));
+    const prior     = marcelPitcher(id);
+    const priorRate = prior / PITCHER_FULL_IP;
+    const curr      = pitByYear[0]?.get(id);
+    const currIP    = curr?.ip ?? 0;
+    if (currIP < 15) return Math.max(0, prior);
+    const currRate  = curr!.war / currIP;
+    const updatedRate = (currRate * currIP + priorRate * PIT_PRIOR_IP) / (currIP + PIT_PRIOR_IP);
+    return Math.max(0, updatedRate * PITCHER_FULL_IP);
   }
 
   const batProj = new Map([...allBatIds].map(id => [id, projectBatter(id)]));
@@ -380,42 +408,31 @@ function RosterRow({
   );
 }
 
-// ─── Prospect search row ──────────────────────────────────────────────
+// ─── Prospect row (uses local PROSPECT_DATA, no API) ─────────────────
 
 function ProspectRow({
-  result, isSelected, onAdd,
+  mlbId, entry, isSelected, onAdd,
 }: {
-  result:     RawMLBSearchResult['people'][number];
+  mlbId:      number;
+  entry:      ProspectEntry;
   isSelected: boolean;
   onAdd:      () => void;
 }) {
-  const age   = result.currentAge ?? 0;
-  const grade = gradeFromAge(age);
-  const gradeColor = GRADE_COLOR[grade];
-
+  const gradeColor = GRADE_COLOR[entry.tier];
   return (
     <button className={`ta-roster-row ${isSelected ? 'ta-roster-row--on' : ''}`} onClick={onAdd}>
       <div className="ta-roster-headshot">
-        <PlayerHeadshot mlbId={result.id} size={28} alt={result.fullName} />
+        <PlayerHeadshot mlbId={mlbId} size={28} alt={entry.name} />
       </div>
       <div className="ta-roster-info">
-        <span className="ta-roster-name">{result.fullName}</span>
+        <span className="ta-roster-name">{entry.name}</span>
         <span className="ta-roster-meta">
-          {result.primaryPosition?.abbreviation ?? '—'}
-          {result.currentTeam ? ` · ${result.currentTeam.abbreviation}` : ''}
-          {age > 0 ? ` · ${age}y` : ''}
+          {entry.pos}{entry.age > 0 ? ` · ${entry.age}y` : ''}
         </span>
       </div>
-      <div className="ta-prospect-badges">
-        {result.mlbDebutDate && (
-          <span className="ta-prospect-national-badge" style={{ color: '#94a3b8', borderColor: 'rgba(148,163,184,0.3)' }}>
-            MLB
-          </span>
-        )}
-        <span className="ta-roster-prospect-badge" style={{ color: gradeColor, borderColor: gradeColor }}>
-          {GRADE_LABEL[grade]}
-        </span>
-      </div>
+      <span className="ta-roster-prospect-badge" style={{ color: gradeColor, borderColor: gradeColor }}>
+        {GRADE_LABEL[entry.tier]}
+      </span>
       <div className={`ta-roster-toggle ${isSelected ? 'ta-roster-toggle--on' : ''}`}>
         {isSelected ? <Check size={11} /> : <Plus size={11} />}
       </div>
@@ -436,6 +453,7 @@ interface TradeColumnProps {
   batProj:        Map<number, number>;
   pitProj:        Map<number, number>;
   onTeamChange:   (t: RawMLBTeam) => void;
+  onTeamSet:      (t: RawMLBTeam) => void; // sets team without clearing players
   onAdd:          (p: TradePlayer) => void;
   onRemove:       (id: number) => void;
   onGradeChange:  (id: number, grade: ProspectGrade) => void;
@@ -444,14 +462,13 @@ interface TradeColumnProps {
 function TradeColumn({
   label, team, allTeams, players, allTakenIds,
   batLeaderboard, pitLeaderboard, batProj, pitProj,
-  onTeamChange, onAdd, onRemove, onGradeChange,
+  onTeamChange, onTeamSet, onAdd, onRemove, onGradeChange,
 }: TradeColumnProps) {
   const [tab, setTab]                   = useState<'roster' | 'prospects'>('roster');
   const [prospectQuery, setProspectQuery] = useState('');
   const [globalQuery, setGlobalQuery]     = useState('');
 
   const { data: roster = [], isLoading: rosterLoading } = useTeamRoster(team?.id ?? null);
-  const { data: prospectResults = [], isFetching: prospectFetching } = useProspectSearch(prospectQuery);
   const { data: globalResults  = [], isFetching: globalFetching  } = useProspectSearch(globalQuery);
 
   const selectedIds = new Set(players.map(p => p.mlbId));
@@ -460,7 +477,16 @@ function TradeColumn({
   const batById = useMemo(() => new Map(batLeaderboard.map(r => [r.mlbId, r])), [batLeaderboard]);
   const pitById = useMemo(() => new Map(pitLeaderboard.map(r => [r.mlbId, r])), [pitLeaderboard]);
 
-  function getProj(id: number): number {
+  const PITCHER_POS = new Set(['P', 'SP', 'RP', 'CP']);
+
+  function isPitcherPos(pos: string) {
+    return PITCHER_POS.has(pos.toUpperCase());
+  }
+
+  // Use position to pick the right leaderboard — prevents pitchers (who appear
+  // in the batting leaderboard at 0 PA with qual=0) from getting a batting projection.
+  function getProj(id: number, pos?: string): number {
+    if (pos && isPitcherPos(pos)) return pitProj.get(id) ?? 0;
     return batProj.get(id) ?? pitProj.get(id) ?? 0;
   }
 
@@ -470,57 +496,64 @@ function TradeColumn({
 
   function globalResultToPlayer(r: typeof globalResults[0]): TradePlayer {
     const id   = r.id;
+    const pos  = r.primaryPosition?.abbreviation ?? '?';
     const bat  = batById.get(id);
     const pit  = pitById.get(id);
     const age  = r.currentAge ?? 0;
-    const proj = withAgeCurve(getProj(id), age);
+    const proj = withAgeCurve(getProj(id, pos), age);
     const base = {
       mlbId:   id,
       name:    r.fullName,
       team:    r.currentTeam?.abbreviation ?? team?.abbreviation ?? '?',
       teamId:  r.currentTeam?.id ?? team?.id ?? 0,
-      pos:     r.primaryPosition?.abbreviation ?? '?',
+      pos,
       age,
       projWar: proj,
     };
-    if (bat) return { ...base, war: bat.war, pa: bat.pa, wrcPlus: bat.wrcPlus, woba: bat.woba, type: 'bat' };
+    if (isPitcherPos(pos) && pit) return { ...base, war: pit.war, ip: pit.ip, era: pit.era, fip: pit.fip, type: 'pit' };
+    if (!isPitcherPos(pos) && bat) return { ...base, war: bat.war, pa: bat.pa, wrcPlus: bat.wrcPlus, woba: bat.woba, type: 'bat' };
     if (pit) return { ...base, war: pit.war, ip: pit.ip, era: pit.era, fip: pit.fip, type: 'pit' };
-    return { ...base, war: 0, projWar: 0, type: 'prospect', prospectGrade: gradeFromAge(age) };
+    if (bat) return { ...base, war: bat.war, pa: bat.pa, wrcPlus: bat.wrcPlus, woba: bat.woba, type: 'bat' };
+    return { ...base, war: 0, projWar: 0, type: 'prospect', prospectGrade: gradeForPlayer(id, age) };
   }
 
   function rosterEntryToPlayer(entry: RawMLBRosterPlayerHydrated): TradePlayer {
     const id   = entry.person.id;
+    const pos  = entry.position.abbreviation;
     const bat  = batById.get(id);
     const pit  = pitById.get(id);
     const age  = entry.person.currentAge ?? 0;
-    const proj = withAgeCurve(getProj(id), age);
+    const proj = withAgeCurve(getProj(id, pos), age);
     const base = {
       mlbId:   id,
       name:    entry.person.fullName,
       team:    team?.abbreviation ?? '—',
       teamId:  team?.id ?? 0,
-      pos:     entry.position.abbreviation,
+      pos,
       age,
       projWar: proj,
     };
-    if (bat) return { ...base, war: bat.war, pa: bat.pa, wrcPlus: bat.wrcPlus, woba: bat.woba, type: 'bat' };
+    if (isPitcherPos(pos) && pit) return { ...base, war: pit.war, ip: pit.ip, era: pit.era, fip: pit.fip, type: 'pit' };
+    if (!isPitcherPos(pos) && bat) return { ...base, war: bat.war, pa: bat.pa, wrcPlus: bat.wrcPlus, woba: bat.woba, type: 'bat' };
     if (pit) return { ...base, war: pit.war, ip: pit.ip, era: pit.era, fip: pit.fip, type: 'pit' };
+    if (bat) return { ...base, war: bat.war, pa: bat.pa, wrcPlus: bat.wrcPlus, woba: bat.woba, type: 'bat' };
+    const grade = PROSPECT_TIERS[id];
+    if (grade) return { ...base, war: 0, projWar: 0, type: 'prospect', prospectGrade: grade };
     return { ...base, war: 0, type: 'unknown' };
   }
 
-  function prospectResultToPlayer(r: typeof prospectResults[0]): TradePlayer {
+  function prospectDataToPlayer(mlbId: number, entry: ProspectEntry): TradePlayer {
     return {
-      mlbId:         r.id,
-      name:          r.fullName,
-      team:          r.currentTeam?.abbreviation ?? team?.abbreviation ?? '—',
-      teamId:        r.currentTeam?.id ?? team?.id ?? 0,
-      pos:           r.primaryPosition?.abbreviation ?? '—',
-      age:           r.currentAge ?? 0,
+      mlbId,
+      name:          entry.name,
+      team:          team?.abbreviation ?? '—',
+      teamId:        team?.id ?? entry.teamId,
+      pos:           entry.pos,
+      age:           entry.age,
       war:           0,
       projWar:       0,
       type:          'prospect',
-      // Auto-grade by age — user should adjust to match Pipeline rankings
-      prospectGrade: gradeFromAge(r.currentAge ?? 0),
+      prospectGrade: entry.tier,
     };
   }
 
@@ -532,11 +565,16 @@ function TradeColumn({
     [roster, batProj, pitProj, allTakenIds, players],
   );
 
-  // Show all search results — do NOT filter by FanGraphs leaderboard.
-  // Players like Konnor Griffin have MLB debuts but are still true prospects.
-  const visibleProspects = prospectResults.filter(
-    r => !takenSet.has(r.id) || selectedIds.has(r.id),
-  );
+  // Local prospect list — only players in PROSPECT_DATA for this team, sorted by rank
+  const teamProspectList = useMemo(() => {
+    if (!team) return [];
+    const q = prospectQuery.trim().toLowerCase();
+    return Object.entries(PROSPECT_DATA)
+      .filter(([, e]) => e.teamId === team.id)
+      .filter(([, e]) => !q || e.name.toLowerCase().includes(q))
+      .sort((a, b) => a[1].sortKey - b[1].sortKey)
+      .map(([id, e]) => ({ mlbId: Number(id), entry: e }));
+  }, [team, prospectQuery]);
 
   return (
     <div className="trade-column">
@@ -573,7 +611,14 @@ function TradeColumn({
                   className={`ta-roster-row ${isSelected ? 'ta-roster-row--on' : ''}`}
                   onClick={() => {
                     if (isSelected) { onRemove(r.id); }
-                    else { onAdd(globalResultToPlayer(r)); setGlobalQuery(''); }
+                    else {
+                      onAdd(globalResultToPlayer(r));
+                      setGlobalQuery('');
+                      if (!team && r.currentTeam) {
+                        const matched = allTeams.find(t => t.id === r.currentTeam!.id);
+                        if (matched) onTeamSet(matched);
+                      }
+                    }
                   }}
                 >
                   <div className="ta-roster-headshot">
@@ -665,42 +710,38 @@ function TradeColumn({
                 <Search size={13} />
                 <input
                   className="ta-prospect-search"
-                  placeholder={`Search ${team.name} prospects by name…`}
+                  placeholder={`Search ${team.name} prospects…`}
                   value={prospectQuery}
                   onChange={e => setProspectQuery(e.target.value)}
                 />
-              </div>
-              <div className="ta-prospect-grade-key">
-                <span><strong style={{ color: '#a855f7' }}>T10</strong> Top 10</span>
-                <span><strong style={{ color: '#3b82f6' }}>T25</strong> Top 25</span>
-                <span><strong style={{ color: '#22c55e' }}>T50</strong> Top 50</span>
-                <span><strong style={{ color: '#f59e0b' }}>T100</strong> Top 100</span>
-                <span><strong style={{ color: '#94a3b8' }}>OTH</strong> Other</span>
-              </div>
-              <div className="ta-prospect-note">
-                Tier auto-set by age — adjust to match Pipeline rankings
+                {prospectQuery && (
+                  <button className="ta-global-search-clear" onClick={() => setProspectQuery('')}>
+                    <X size={12} />
+                  </button>
+                )}
               </div>
               <div className="ta-roster-list">
-                {prospectQuery.length < 2 && (
+                {teamProspectList.length === 0 && (
                   <div className="ta-roster-empty">
-                    Type a name to find any player in their system
+                    {prospectQuery ? 'No prospects matching that name' : 'No prospect data for this team'}
                   </div>
                 )}
-                {prospectFetching && <div className="ta-roster-loading">Searching…</div>}
-                {!prospectFetching && prospectQuery.length >= 2 && visibleProspects.slice(0, 10).map(r => (
-                  <ProspectRow
-                    key={r.id}
-                    result={r}
-                    isSelected={selectedIds.has(r.id)}
-                    onAdd={() => {
-                      if (selectedIds.has(r.id)) onRemove(r.id);
-                      else onAdd(prospectResultToPlayer(r));
-                    }}
-                  />
-                ))}
-                {!prospectFetching && prospectQuery.length >= 2 && visibleProspects.length === 0 && (
-                  <div className="ta-roster-empty">No players found matching that name</div>
-                )}
+                {teamProspectList.map(({ mlbId, entry }) => {
+                  const isTaken = takenSet.has(mlbId) && !selectedIds.has(mlbId);
+                  if (isTaken) return null;
+                  return (
+                    <ProspectRow
+                      key={mlbId}
+                      mlbId={mlbId}
+                      entry={entry}
+                      isSelected={selectedIds.has(mlbId)}
+                      onAdd={() => {
+                        if (selectedIds.has(mlbId)) onRemove(mlbId);
+                        else onAdd(prospectDataToPlayer(mlbId, entry));
+                      }}
+                    />
+                  );
+                })}
               </div>
             </div>
           )}
@@ -887,6 +928,7 @@ export default function TradeAnalyzerPage() {
           pitProj={pitProj}
 
           onTeamChange={t => { setTeam1(t); setSide1([]); }}
+          onTeamSet={t => setTeam1(t)}
           onAdd={addTo1}
           onRemove={removeFrom1}
           onGradeChange={gradeChange1}
@@ -910,6 +952,7 @@ export default function TradeAnalyzerPage() {
           pitProj={pitProj}
 
           onTeamChange={t => { setTeam2(t); setSide2([]); }}
+          onTeamSet={t => setTeam2(t)}
           onAdd={addTo2}
           onRemove={removeFrom2}
           onGradeChange={gradeChange2}
