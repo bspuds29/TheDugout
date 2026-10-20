@@ -18,6 +18,7 @@ import type { FanGraphsBatterRow, FanGraphsPitcherRow } from '../../data/api/fan
 import type { RawMLBTeam, RawMLBSearchResult } from '../../data/api/mlbStats';
 import { PROSPECT_DATA, PROSPECT_TIERS } from '../../data/prospectTiers';
 import type { ProspectEntry } from '../../data/prospectTiers';
+import { lookupContract, formatSalary, statusLabel } from '../../data/contractData';
 import '../../styles/shared.css';
 import './TradeAnalyzerPage.css';
 
@@ -67,15 +68,16 @@ const GRADE_COLOR: Record<ProspectGrade, string> = {
 
 /**
  * Prospect expected value: peak WAR/yr × hit-rate
- *   Top 10:  4.5 WAR × 65% = 2.93 eff WAR
- *   Top 25:  3.5 WAR × 55% = 1.93 eff WAR
- *   Top 50:  3.0 WAR × 50% = 1.50 eff WAR
- *   Top 100: 2.0 WAR × 40% = 0.80 eff WAR
- *   Other:   1.0 WAR × 20% = 0.20 eff WAR
+ * Calibrated to real MLB trade markets (2023–2026 comps):
+ *   Top 10:  6.5 WAR × 64% = 4.16 eff WAR → ~$40M at age 21   (Chourio, Holliday tier)
+ *   Top 25:  5.0 WAR × 52% = 2.60 eff WAR → ~$25M at age 21
+ *   Top 50:  4.0 WAR × 42% = 1.68 eff WAR → ~$16M at age 21
+ *   Top 100: 3.0 WAR × 35% = 1.05 eff WAR → ~$10M at age 21
+ *   Other:   1.5 WAR × 21% = 0.32 eff WAR → ~$3M  at age 21
  */
-const PROSPECT_EFF_WAR:  Record<ProspectGrade, number> = { top10: 2.93, top25: 1.93, top50: 1.50, top100: 0.80, other: 0.20 };
-const PROSPECT_PEAK_WAR: Record<ProspectGrade, number> = { top10: 4.5,  top25: 3.5,  top50: 3.0,  top100: 2.0,  other: 1.0  };
-const PROSPECT_HIT_RATE: Record<ProspectGrade, number> = { top10: 0.65, top25: 0.55, top50: 0.50, top100: 0.40, other: 0.20 };
+const PROSPECT_EFF_WAR:  Record<ProspectGrade, number> = { top10: 4.16, top25: 2.60, top50: 1.68, top100: 1.05, other: 0.32 };
+const PROSPECT_PEAK_WAR: Record<ProspectGrade, number> = { top10: 6.5,  top25: 5.0,  top50: 4.0,  top100: 3.0,  other: 1.5  };
+const PROSPECT_HIT_RATE: Record<ProspectGrade, number> = { top10: 0.64, top25: 0.52, top50: 0.42, top100: 0.35, other: 0.21 };
 
 function gradeFromAge(age: number): ProspectGrade {
   if (age > 0 && age <= 19) return 'top25';
@@ -485,8 +487,9 @@ function TradeColumn({
 
   // Use position to pick the right leaderboard — prevents pitchers (who appear
   // in the batting leaderboard at 0 PA with qual=0) from getting a batting projection.
+  // When pos is unknown, fall back to pitching if the player is in the pitching leaderboard.
   function getProj(id: number, pos?: string): number {
-    if (pos && isPitcherPos(pos)) return pitProj.get(id) ?? 0;
+    if ((pos && isPitcherPos(pos)) || pitById.has(id)) return pitProj.get(id) ?? 0;
     return batProj.get(id) ?? pitProj.get(id) ?? 0;
   }
 
@@ -778,6 +781,19 @@ function BreakdownCard({ players, label }: { players: TradePlayer[]; label: stri
               </span>
             </div>
             <div className="tpr-stats">
+              {(() => {
+                const c = lookupContract(p.name);
+                if (!c) return null;
+                return (
+                  <div className="tpr-contract">
+                    <span className="tpr-contract-salary">{formatSalary(c.salary2026)}</span>
+                    <span className="tpr-contract-detail">
+                      {statusLabel(c.status)}
+                      {c.contractYears > 1 ? ` · ${c.contractYears}yr` : ''}
+                    </span>
+                  </div>
+                );
+              })()}
               {p.type === 'prospect' ? <>
                 <div className="tpr-stat">
                   <span>Tier</span>
