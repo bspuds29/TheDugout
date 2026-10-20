@@ -507,7 +507,7 @@ function TradeColumn({
     const base = {
       mlbId:   id,
       name:    r.fullName,
-      team:    r.currentTeam?.abbreviation ?? team?.abbreviation ?? '?',
+      team:    allTeams.find(t => t.id === r.currentTeam?.id)?.abbreviation ?? team?.abbreviation ?? '?',
       teamId:  r.currentTeam?.id ?? team?.id ?? 0,
       pos,
       age,
