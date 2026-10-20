@@ -76,8 +76,8 @@ const GRADE_COLOR: Record<ProspectGrade, string> = {
  *   Other:   1.5 WAR × 21% = 0.32 eff WAR → ~$3M  at age 21
  */
 // effWAR drives trade value on same per-season scale as MLB players (projWAR × ageFactor × $8M)
-// At age 21 (ageFactor 1.40): top10 ≈ $39M, top25 ≈ $25M, top50 ≈ $16M, top100 ≈ $8M, other ≈ $3M
-const PROSPECT_EFF_WAR:  Record<ProspectGrade, number> = { top10: 3.5,  top25: 2.2,  top50: 1.4,  top100: 0.75, other: 0.28 };
+// At age 21 (ageFactor 1.40): top10 ≈ $25M, top25 ≈ $16M, top50 ≈ $10M, top100 ≈ $5M, other ≈ $2M
+const PROSPECT_EFF_WAR:  Record<ProspectGrade, number> = { top10: 2.25, top25: 1.4,  top50: 0.90, top100: 0.48, other: 0.17 };
 // Peak WAR = realistic single-season ceiling if the prospect hits
 const PROSPECT_PEAK_WAR: Record<ProspectGrade, number> = { top10: 6.5,  top25: 5.0,  top50: 4.0,  top100: 3.0,  other: 1.5  };
 // Star odds from FG Clemens (Jul 2026): P(2+ seasons of 4+ WAR), blended hitter/pitcher per tier
