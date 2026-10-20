@@ -224,15 +224,19 @@ function posScarcity(pos: string): number {
 
 /**
  * All values in $M at ≈$8M/WAR free-agent market rate.
- * MLB players: projWAR × ageFactor × posScarcity × $8M
+ * MLB players: blend(projWAR, actualWAR) × ageFactor × posScarcity × $8M
  * Prospects:   effectiveWAR × ageFactor × $8M
+ *
+ * Blending 60% projection + 40% actual prevents Marcel from underselling
+ * elite players (e.g. Ohtani) who consistently outperform the mean.
  */
 function tradeValue(p: TradePlayer): number {
   if (p.type === 'prospect') {
     const effWAR = PROSPECT_EFF_WAR[p.prospectGrade ?? 'top100'];
     return effWAR * ageFactor(p.age > 0 ? p.age : 21) * 8;
   }
-  return Math.max(0, p.projWar * ageFactor(p.age) * posScarcity(p.pos) * 8);
+  const blendedWAR = p.projWar * 0.6 + p.war * 0.4;
+  return Math.max(0, blendedWAR * ageFactor(p.age) * posScarcity(p.pos) * 8);
 }
 
 function analyzeTrade(s1: TradePlayer[], s2: TradePlayer[]) {
