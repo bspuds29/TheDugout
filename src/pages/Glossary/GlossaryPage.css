@@ -26,7 +26,7 @@
   width: 44px;
   height: 44px;
   background: var(--color-accent-dim);
-  border: 1px solid rgba(32, 178, 255, 0.2);
+  border: 1px solid var(--color-accent-border);
   border-radius: var(--radius-lg);
   color: var(--color-accent);
   display: flex;
@@ -144,9 +144,9 @@
 
 .gloss-tab--active {
   background: var(--color-accent-dim);
-  border-color: rgba(32, 178, 255, 0.35);
+  border-color: var(--color-accent-border);
   color: var(--color-accent);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* ─── Sections ───────────────────────────────────────────────────────────── */
@@ -195,12 +195,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast);
+  box-shadow: var(--shadow-card);
 }
 
 .gloss-card:hover {
   border-color: var(--color-border-hover);
   background: var(--color-bg-card-hover);
+  transform: translateY(-1px);
 }
 
 .gloss-card-head {

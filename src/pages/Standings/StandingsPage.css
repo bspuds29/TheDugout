@@ -15,10 +15,11 @@
 .std-league-tabs {
   display: flex;
   gap: 4px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-lg);
   padding: 3px;
+  box-shadow: var(--shadow-card);
 }
 
 .std-league-tab {
@@ -42,6 +43,7 @@
 .std-league-tab--active {
   background: var(--color-accent) !important;
   color: white !important;
+  box-shadow: 0 2px 8px rgba(43, 184, 255, 0.35);
 }
 
 /* ─── Playoff legend ────────────────────────────────────────────────── */
@@ -100,6 +102,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
 .std-division-header {
@@ -131,15 +134,15 @@
 
 .std-th {
   padding: 7px 8px;
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 9.5px;
+  font-weight: 700;
   color: var(--color-text-tertiary);
   letter-spacing: 0.07em;
   text-transform: uppercase;
   text-align: center;
   border-bottom: 1px solid var(--color-border);
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.01);
+  background: var(--color-bg-elevated);
 }
 
 .std-th--team {
@@ -288,6 +291,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
 /* Override division-header for WC to put title + note on same row */

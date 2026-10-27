@@ -15,10 +15,11 @@
 .lb-main-tabs {
   display: flex;
   gap: 4px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-lg);
   padding: 3px;
+  box-shadow: var(--shadow-card);
 }
 
 .lb-main-tab {
@@ -42,6 +43,7 @@
 .lb-main-tab--active {
   background: var(--color-accent) !important;
   color: white !important;
+  box-shadow: 0 2px 8px rgba(43, 184, 255, 0.35);
 }
 
 /* ─── Filter bar ─────────────────────────────────────────────────────── */
@@ -54,6 +56,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 10px 14px;
+  box-shadow: var(--shadow-card);
 }
 
 /* Row 1: position tabs + team/PA selects */
@@ -93,9 +96,10 @@
 }
 
 .lb-tab--active {
-  background: rgba(0, 212, 170, 0.15) !important;
-  border-color: var(--color-teal) !important;
+  background: rgba(0, 212, 170, 0.12) !important;
+  border-color: rgba(0, 212, 170, 0.4) !important;
   color: var(--color-teal) !important;
+  box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.06);
 }
 
 /* ─── Dropdowns in filter bar ───────────────────────────────────────── */

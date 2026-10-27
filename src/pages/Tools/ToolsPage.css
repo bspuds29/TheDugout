@@ -23,6 +23,7 @@
   gap: 2px;
   position: sticky;
   top: calc(var(--topnav-height) + var(--space-6));
+  box-shadow: var(--shadow-card);
 }
 
 .tools-nav-btn {
@@ -51,6 +52,8 @@
 .tools-nav-btn--active {
   background: var(--color-accent-dim);
   color: var(--color-accent);
+  border-left: 2px solid var(--color-accent);
+  padding-left: calc(var(--space-3) - 2px);
 }
 
 .tools-nav-icon { flex-shrink: 0; display: flex; }
@@ -170,6 +173,7 @@
   min-height: 140px;
   transition: border-color var(--transition-fast);
   position: relative;
+  box-shadow: var(--shadow-card);
 }
 
 .cps-slot--filled.cps-slot--accent  { border-color: rgba(32, 178, 255, 0.35); }
@@ -564,6 +568,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
 .compare-table-header {

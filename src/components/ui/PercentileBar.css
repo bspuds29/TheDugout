@@ -11,9 +11,10 @@
 }
 
 .pbar-label {
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11.5px;
+  font-weight: 600;
   color: var(--color-text-secondary);
+  letter-spacing: -0.005em;
 }
 
 .pbar-right {
@@ -37,7 +38,7 @@
 }
 
 .pbar-track {
-  height: 6px;
+  height: 5px;
   background: var(--color-bg-elevated);
   border-radius: var(--radius-full);
   position: relative;

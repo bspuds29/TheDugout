@@ -25,6 +25,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .def-card--pos { border-color: rgba(0, 212, 170, 0.18); }
@@ -170,9 +172,10 @@
 }
 
 .def-pos-tab--active {
-  border-color: var(--color-teal);
-  background: rgba(0, 212, 170, 0.08);
+  border-color: rgba(0, 212, 170, 0.4);
+  background: rgba(0, 212, 170, 0.1);
   color: var(--color-teal);
+  box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.06);
 }
 
 @media (max-width: 900px) {

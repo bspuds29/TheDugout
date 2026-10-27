@@ -1,106 +1,92 @@
 .gems-page {
-  padding: 2rem 1.5rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
-/* ── Header ──────────────────────────────────────────────────────────── */
-
-.gems-header {
-  margin-bottom: 2.5rem;
-}
-
-.gems-title {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--color-text);
-  margin: 0 0 0.4rem;
-  letter-spacing: -0.03em;
-}
-
-.gems-subtitle {
-  color: var(--color-text-secondary);
-  font-size: 0.95rem;
-  margin: 0;
-}
-
-/* ── Grid layout — 2 columns on wide screens ─────────────────────────── */
+/* ─── Grid layout ────────────────────────────────────────────────── */
 
 .gems-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: var(--space-5);
 }
 
 @media (max-width: 900px) {
-  .gems-grid {
-    grid-template-columns: 1fr;
-  }
+  .gems-grid { grid-template-columns: 1fr; }
 }
 
-/* ── Section card ────────────────────────────────────────────────────── */
+/* ─── Section card ────────────────────────────────────────────────── */
 
 .gem-section {
-  background: var(--color-surface);
+  background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
 .gem-section-header {
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
-  padding: 1.1rem 1.25rem 0.9rem;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5) var(--space-3);
   border-bottom: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.015);
 }
 
 .gem-section-icon {
-  font-size: 1.4rem;
+  font-size: 22px;
   line-height: 1;
-  margin-top: 2px;
+  margin-top: 1px;
+  flex-shrink: 0;
 }
 
 .gem-section-title {
-  font-size: 1rem;
+  font-size: 14px;
   font-weight: 700;
-  margin: 0 0 0.2rem;
+  margin: 0 0 2px;
   letter-spacing: -0.01em;
+  color: var(--color-text-primary);
 }
 
 .gem-section-subtitle {
-  font-size: 0.78rem;
-  color: var(--color-text-secondary);
+  font-size: 12px;
+  color: var(--color-text-tertiary);
   margin: 0;
   line-height: 1.45;
 }
 
 .gem-section-body {
-  padding: 0.25rem 0;
+  padding: var(--space-1) 0;
 }
 
-/* ── Player row ──────────────────────────────────────────────────────── */
+/* ─── Player row ──────────────────────────────────────────────────── */
 
 .gem-row {
   display: grid;
-  grid-template-columns: 24px 36px 1fr auto auto;
+  grid-template-columns: 22px 34px 1fr auto auto;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.6rem 1.25rem;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background var(--transition-fast);
 }
 
 .gem-row:hover {
-  background: color-mix(in srgb, var(--color-surface) 60%, var(--color-bg));
+  background: rgba(255, 255, 255, 0.025);
+}
+
+[data-theme="light"] .gem-row:hover {
+  background: rgba(0, 0, 0, 0.025);
 }
 
 .gem-rank {
-  font-size: 0.75rem;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
   text-align: right;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
 }
 
 .gem-identity {
@@ -111,23 +97,23 @@
 }
 
 .gem-name {
-  font-size: 0.875rem;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .gem-team {
-  font-size: 0.72rem;
-  color: var(--color-text-secondary);
+  font-size: 11px;
+  color: var(--color-text-tertiary);
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-/* ── Accent stat (the "gem") ─────────────────────────────────────────── */
+/* ─── Accent stat ─────────────────────────────────────────────────── */
 
 .gem-accent {
   display: flex;
@@ -137,25 +123,27 @@
 }
 
 .gem-accent-value {
-  font-size: 1rem;
+  font-size: 16px;
   font-weight: 800;
   line-height: 1;
-  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
 }
 
 .gem-accent-label {
-  font-size: 0.65rem;
-  color: var(--color-text-secondary);
+  font-size: 9.5px;
+  color: var(--color-text-tertiary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-top: 1px;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+  font-weight: 700;
 }
 
-/* ── Supporting stats ────────────────────────────────────────────────── */
+/* ─── Supporting stats ────────────────────────────────────────────── */
 
 .gem-stats {
   display: flex;
-  gap: 0.9rem;
+  gap: var(--space-3);
 }
 
 .gem-stat {
@@ -166,38 +154,39 @@
 }
 
 .gem-stat-value {
-  font-size: 0.82rem;
+  font-size: 12.5px;
   font-weight: 600;
-  color: var(--color-text);
-  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
 }
 
 .gem-stat-label {
-  font-size: 0.62rem;
-  color: var(--color-text-secondary);
+  font-size: 9.5px;
+  color: var(--color-text-tertiary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  font-weight: 700;
 }
 
-/* ── Loading skeletons ───────────────────────────────────────────────── */
+/* ─── Loading skeletons ───────────────────────────────────────────── */
 
 .gem-skeleton-list {
-  padding: 0.25rem 0;
+  padding: var(--space-1) 0;
 }
 
 .gem-skeleton-row {
-  height: 52px;
-  margin: 0 1.25rem;
-  border-radius: 6px;
+  height: 48px;
+  margin: 0 var(--space-5);
+  border-radius: var(--radius-md);
   background: linear-gradient(
     90deg,
     var(--color-border) 25%,
-    color-mix(in srgb, var(--color-border) 50%, transparent) 50%,
+    rgba(255, 255, 255, 0.04) 50%,
     var(--color-border) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.4s infinite;
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
 }
 
 @keyframes shimmer {
@@ -206,8 +195,8 @@
 }
 
 .gem-empty {
-  padding: 2rem 1.25rem;
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
+  padding: var(--space-8) var(--space-5);
+  color: var(--color-text-tertiary);
+  font-size: 13px;
   text-align: center;
 }

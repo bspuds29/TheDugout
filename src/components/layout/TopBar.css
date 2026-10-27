@@ -9,49 +9,75 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  /* backdrop-filter removed — it compounds with the overlay blur on mobile
-     and causes iOS Safari compositing glitches. Solid bg is sufficient. */
 }
 
+/* Subtle gradient underline matching the sidebar accent line */
+.topbar::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 320px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--color-accent) 40%, transparent 100%);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ─── Mobile menu trigger ──────────────────────────────────────────── */
 .topbar-menu-btn {
   display: none;
+  width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
   background: none;
   border: none;
   color: var(--color-text-secondary);
-  padding: var(--space-2);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: color var(--transition-fast);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .topbar-menu-btn:hover {
   color: var(--color-text-primary);
-  background: var(--color-bg-elevated);
+  background: rgba(255, 255, 255, 0.06);
 }
 
-/* Search */
+[data-theme="light"] .topbar-menu-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* ─── Search ───────────────────────────────────────────────────────── */
 .topbar-search {
   flex: 1;
-  max-width: 480px;
+  max-width: 440px;
   position: relative;
   display: flex;
   align-items: center;
   background: var(--color-bg-input);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  transition: all var(--transition-fast);
+  transition: all var(--transition-base);
 }
 
 .topbar-search--focused {
   border-color: var(--color-border-active);
   box-shadow: 0 0 0 3px var(--color-accent-glow);
+  background: var(--color-bg-surface);
 }
 
 .topbar-search-icon {
   position: absolute;
-  left: 14px;
-  color: var(--color-text-tertiary);
+  left: 13px;
+  color: var(--color-text-muted);
   pointer-events: none;
+  transition: color var(--transition-fast);
+}
+
+.topbar-search--focused .topbar-search-icon {
+  color: var(--color-accent);
 }
 
 .topbar-search-input {
@@ -60,24 +86,39 @@
   border: none;
   outline: none;
   color: var(--color-text-primary);
-  font-size: 13.5px;
-  padding: 10px 36px 10px 38px;
+  font-size: 13px;
+  padding: 9px 36px 9px 37px;
+  letter-spacing: -0.01em;
 }
 
 .topbar-search-input::placeholder {
   color: var(--color-text-muted);
+  font-weight: 400;
 }
 
 .topbar-search-clear {
   position: absolute;
-  right: 12px;
-  background: none;
-  border: none;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
   color: var(--color-text-tertiary);
-  font-size: 16px;
+  font-size: 13px;
   cursor: pointer;
-  padding: 0 4px;
+  padding: 0;
   line-height: 1;
+  transition: all var(--transition-fast);
+}
+
+.topbar-search-clear:hover {
+  background: var(--color-bg-card-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-hover);
 }
 
 .topbar-search-kbd {
@@ -87,37 +128,37 @@
   align-items: center;
   gap: 2px;
   pointer-events: none;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .topbar-search-kbd kbd {
   background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-strong);
   border-radius: 4px;
   padding: 1px 5px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 600;
   color: var(--color-text-tertiary);
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 @media (max-width: 600px) {
   .topbar-search-kbd { display: none; }
 }
 
-/* Dropdown */
+/* ─── Dropdown ─────────────────────────────────────────────────────── */
 .topbar-search-dropdown {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 7px);
   left: 0;
   right: 0;
   background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-lg);
-  animation: fadeIn 150ms ease;
+  animation: fadeIn 140ms ease;
   z-index: 200;
 }
 
@@ -126,7 +167,7 @@
   align-items: center;
   gap: var(--space-3);
   width: 100%;
-  padding: 10px 14px;
+  padding: 9px 13px;
   background: none;
   border: none;
   color: var(--color-text-primary);
@@ -134,10 +175,19 @@
   cursor: pointer;
   text-align: left;
   transition: background var(--transition-fast);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.topbar-search-result:last-child {
+  border-bottom: none;
 }
 
 .topbar-search-result:hover {
-  background: var(--color-bg-card-hover);
+  background: rgba(43, 184, 255, 0.05);
+}
+
+[data-theme="light"] .topbar-search-result:hover {
+  background: rgba(14, 165, 233, 0.05);
 }
 
 .topbar-result-position {
@@ -148,22 +198,26 @@
   background: var(--color-accent-dim);
   color: var(--color-accent);
   font-family: var(--font-mono);
+  border: 1px solid var(--color-accent-border);
+  flex-shrink: 0;
 }
 
 .topbar-result-name {
   flex: 1;
   font-weight: 500;
+  font-size: 13px;
 }
 
 .topbar-result-team {
   font-size: 11px;
   color: var(--color-text-tertiary);
   font-family: var(--font-mono);
+  font-weight: 500;
 }
 
 .topbar-search-spinner {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   border: 2px solid var(--color-border);
   border-top-color: var(--color-accent);
   border-radius: 50%;
@@ -173,17 +227,14 @@
   flex-shrink: 0;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
 .topbar-search-empty {
-  padding: 12px 14px;
-  font-size: 12px;
+  padding: 14px;
+  font-size: 12.5px;
   color: var(--color-text-tertiary);
+  text-align: center;
 }
 
-/* Right */
+/* ─── Right section ────────────────────────────────────────────────── */
 .topbar-right {
   display: flex;
   align-items: center;
@@ -195,13 +246,14 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11.5px;
+  font-weight: 600;
   color: var(--color-text-secondary);
-  padding: 6px 10px;
-  background: var(--color-bg-elevated);
+  padding: 5px 11px;
+  background: var(--color-bg-surface);
   border-radius: var(--radius-full);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-strong);
+  letter-spacing: -0.01em;
 }
 
 .topbar-season-dot {
@@ -209,17 +261,19 @@
   height: 6px;
   border-radius: 50%;
   background: var(--color-green);
-  box-shadow: 0 0 6px var(--color-green);
+  box-shadow: 0 0 5px var(--color-green);
+  flex-shrink: 0;
+  animation: pulse-dot 2.5s ease-in-out infinite;
 }
 
 .topbar-icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-bg-elevated);
-  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-md);
   color: var(--color-text-secondary);
   cursor: pointer;
@@ -229,37 +283,31 @@
 .topbar-icon-btn:hover {
   color: var(--color-text-primary);
   border-color: var(--color-border-hover);
+  background: var(--color-bg-elevated);
 }
 
 .topbar-theme-btn {
-  transition: all var(--transition-fast), transform var(--transition-fast);
+  transition: all var(--transition-fast), transform var(--transition-spring);
 }
 
 .topbar-theme-btn:hover {
   color: var(--color-amber);
-  border-color: var(--color-amber);
+  border-color: rgba(245, 158, 11, 0.35);
   background: var(--color-amber-dim);
-  transform: rotate(15deg);
+  transform: rotate(18deg);
 }
 
 [data-theme="light"] .topbar-theme-btn:hover {
   color: var(--color-accent);
-  border-color: var(--color-accent);
+  border-color: var(--color-accent-border);
   background: var(--color-accent-dim);
-  transform: rotate(-15deg);
+  transform: rotate(-18deg);
 }
 
-
+/* ─── Mobile ───────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .topbar-menu-btn {
-    display: flex;
-  }
-
-  .topbar-season-tag {
-    display: none;
-  }
-
-  .topbar {
-    padding: 0 var(--space-4);
-  }
+  .topbar-menu-btn { display: flex; }
+  .topbar-season-tag { display: none; }
+  .topbar { padding: 0 var(--space-4); }
+  .topbar::after { display: none; }
 }
